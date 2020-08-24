@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>List Student</title>
+</h:head>
+<h:body>
+    <h2>Student Table - Test JDBC</h2>
+    <h:form>
+        <h:dataTable value="#{studentService.studentsList}" var="s">
+            <h:column>
+                <f:facet name="header">
+                    Student ID
+                </f:facet>
+                #{s.id}
+            </h:column>
+
+            <h:column>
+                <f:facet name="header">
+                    Student Name
+                </f:facet>
+                #{s.sname}
+            </h:column>
+
+            <h:column>
+                <f:facet name="header">
+                    Action
+                </f:facet>
+                <h:commandLink value="Edit">
+
+                </h:commandLink>
+                <br/>
+                <h:commandLink value="Delete">
+
+                </h:commandLink>
+            </h:column>
+        </h:dataTable>
+    </h:form>
+</h:body>
+</html>
