@@ -30,6 +30,8 @@ public class StudentService implements Serializable {
                 Student student = new Student();
                 student.setId(resultSet.getInt(1));
                 student.setSname(resultSet.getString(2));
+                student.setEmail(resultSet.getString(3));
+                student.setPhone(resultSet.getString(4));
                 students.add(student);
             }
         } catch (Exception e) {
