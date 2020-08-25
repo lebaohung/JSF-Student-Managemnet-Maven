@@ -1,7 +1,6 @@
 package com.synergix.service;
 
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
@@ -12,7 +11,7 @@ import java.util.List;
 public class StudentBean implements Serializable {
 
     private int id;
-    private String sname;
+    private String sName;
     private String email;
     private String phone;
 
@@ -32,15 +31,15 @@ public class StudentBean implements Serializable {
     public StudentBean() {
     }
 
-    public StudentBean(int id, String sname, String email, String phone) {
+    public StudentBean(int id, String sName, String email, String phone) {
         this.id = id;
-        this.sname = sname;
+        this.sName = sName;
         this.email = email;
         this.phone = phone;
     }
 
-    public StudentBean(String sname, String email, String phone) {
-        this.sname = sname;
+    public StudentBean(String sName, String email, String phone) {
+        this.sName = sName;
         this.email = email;
         this.phone = phone;
     }
@@ -53,12 +52,12 @@ public class StudentBean implements Serializable {
         this.id = id;
     }
 
-    public String getSname() {
-        return sname;
+    public String getsName() {
+        return sName;
     }
 
-    public void setSname(String sname) {
-        this.sname = sname;
+    public void setsName(String sName) {
+        this.sName = sName;
     }
 
     public String getEmail() {
@@ -83,5 +82,8 @@ public class StudentBean implements Serializable {
 
     public void saveStudent(StudentBean studentBean) {
         studentService.saveStudent(studentBean);
+        this.setMessage(studentService.getMessage());
     }
+
+
 }

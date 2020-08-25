@@ -1,6 +1,5 @@
 package com.synergix.service;
 
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import java.io.Serializable;
@@ -21,7 +20,6 @@ public class StudentService implements Serializable {
     private static final String DELETE_STUDENT = "DELETE FROM public.student\n" +
             "\tWHERE id=?;";
 
-    @RequestScoped
     private String message;
 
     public void setMessage(String message) {
@@ -48,7 +46,7 @@ public class StudentService implements Serializable {
             while (resultSet.next()) {
                 StudentBean studentBean = new StudentBean();
                 studentBean.setId(resultSet.getInt(1));
-                studentBean.setSname(resultSet.getString(2));
+                studentBean.setsName(resultSet.getString(2));
                 studentBean.setEmail(resultSet.getString(3));
                 studentBean.setPhone(resultSet.getString(4));
                 students.add(studentBean);
@@ -61,7 +59,7 @@ public class StudentService implements Serializable {
     }
 
     public void saveStudent(StudentBean studentBean)  {
-        if (studentBean.getSname() == null || studentBean.getSname().equals("")) {
+        if (studentBean.getsName() == null || studentBean.getsName().equals("")) {
             this.setMessage("Name Required! ");
             return;
         }
@@ -73,22 +71,21 @@ public class StudentService implements Serializable {
                 Connection connection = JdbcConnection.getConnection();
                 ) {
             preparedStatement = connection.prepareStatement(INSERT_STUDENT);
-            preparedStatement.setString(1, studentBean.getSname());
+            preparedStatement.setString(1, studentBean.getsName());
             preparedStatement.setString(2, studentBean.getEmail());
             preparedStatement.setString(3, studentBean.getPhone());
 
             result = preparedStatement.executeUpdate();
+            if (result == 1) this.setMessage("Add new Student successfully");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         } finally {
-            close(studentBean);
+            clear(studentBean);
         }
-
-        if (result == 1) message = "Add new Student successfully";
     }
 
-    private void close(StudentBean studentBean) {
-        studentBean.setSname(null);
+    private void clear(StudentBean studentBean) {
+        studentBean.setsName(null);
         studentBean.setEmail(null);
         studentBean.setId(0);
         studentBean.setPhone(null);

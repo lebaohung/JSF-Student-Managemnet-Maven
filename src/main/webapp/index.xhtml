@@ -24,7 +24,7 @@
                 <f:facet name="header">
                     Student Name
                 </f:facet>
-                #{s.sname}
+                #{s.sName}
             </h:column>
 
             <h:column>
@@ -45,10 +45,10 @@
                 <f:facet name="header">
                     Action
                 </f:facet>
-                <h:commandButton value="Edit">
+                <h:commandButton value="Edit" action="editStudent">
                 </h:commandButton>
                 <br/>
-                <h:commandButton value="Delete">
+                <h:commandButton value="Delete" action="deleteStudent">
                 </h:commandButton>
             </h:column>
         </h:dataTable>
