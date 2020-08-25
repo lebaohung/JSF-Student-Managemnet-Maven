@@ -5,7 +5,30 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
-<f:view>
-    <h:outputLabel value="Hello, world"/>
-</f:view>
+<h:head>
+    <title>Add new Student</title>
+</h:head>
+<h:body>
+    <h2>Add new Student</h2>
+    <h:form>
+
+        <br/>
+        <h:outputLabel>Student Name: </h:outputLabel>
+        <h:inputText value="#{studentBean.sname}">
+        </h:inputText>
+        <br/><br/>
+        <h:outputLabel>Student Email: </h:outputLabel>
+        <h:inputText value="#{studentBean.email}">
+        </h:inputText>
+        <br/><br/>
+        <h:outputLabel>Phone Number: </h:outputLabel>
+        <h:inputText value="#{studentBean.phone}">
+        </h:inputText>
+        <br/><br/>
+        <h:outputText value="#{studentService.message}"/>
+        <br/><br/>
+        <h:commandButton action="#{studentBean.saveStudent(studentBean)}" value="Save">
+        </h:commandButton>
+    </h:form>
+</h:body>
 </html>

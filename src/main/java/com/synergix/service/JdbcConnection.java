@@ -8,14 +8,14 @@ public class JdbcConnection {
 
     public static Connection getConnection() {
         Connection con = null;
-        String url = "jdbc:postgresql://localhost:5432/jsfStudent";
+//        String url = "jdbc:postgresql://localhost:5432/jsfStudent";
+        String url = "jdbc:postgresql://localhost:5432/demo";
         String user = "postgres";
         String password = "password";
 
         try {
             con = DriverManager.getConnection(url, user, password);
         } catch (SQLException throwables) {
-            System.out.printf("Database connected");
             System.out.println(throwables.getMessage());
         }
 
