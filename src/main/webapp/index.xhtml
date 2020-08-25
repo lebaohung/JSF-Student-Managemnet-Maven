@@ -12,7 +12,7 @@
     <h2>Student Table - Test JDBC</h2>
     <h:form>
         <h:commandButton value="Add New Student" action="addStudent" />
-        <h:dataTable binding="#{table}" value="#{studentBean.getStudentsList()}" var="s">
+        <h:dataTable binding="#{table}" value="#{studentBean.getStudentsList()}" var="student">
 
             <h:column>
                 <f:facet name="header">
@@ -25,35 +25,35 @@
                 <f:facet name="header">
                     Student ID
                 </f:facet>
-                #{s.id}
+                #{student.id}
             </h:column>
 
             <h:column>
                 <f:facet name="header">
                     Student Name
                 </f:facet>
-                #{s.sName}
+                #{student.sName}
             </h:column>
 
             <h:column>
                 <f:facet name="header">
                     Student Email
                 </f:facet>
-                #{s.email}
+                #{student.email}
             </h:column>
 
             <h:column>
                 <f:facet name="header">
                     Student Phone
                 </f:facet>
-                #{s.phone}
+                #{student.phone}
             </h:column>
 
             <h:column>
                 <f:facet name="header">
                     Action
                 </f:facet>
-                <h:commandButton value="Edit" action="#{studentService.editStudent(s)}">
+                <h:commandButton value="Edit" action="#{studentService.editStudent(student)}">
                 </h:commandButton>
                 <br/>
                 <h:commandButton value="Delete" action="deleteStudent">

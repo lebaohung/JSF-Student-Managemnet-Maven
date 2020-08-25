@@ -24,6 +24,7 @@ public class StudentService implements Serializable {
 
     private String message;
 
+
     public void setMessage(String message) {
         this.message = message;
     }
@@ -93,8 +94,12 @@ public class StudentService implements Serializable {
         studentBean.setPhone(null);
     }
 
-    public String editStudent(StudentBean studentBean) {
+    public static StudentBean getEditStudent(StudentBean studentBean) {
+        return studentBean;
+    }
 
+    public String editStudent(StudentBean studentBean) {
+        System.out.println("Name: " + studentBean.getsName());
         return "/editStudent.xhtml?faces-redirect=true";
     }
 }
