@@ -1,6 +1,8 @@
 package com.synergix.service;
 
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.annotation.RequestParameterMap;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.sql.*;
@@ -89,5 +91,10 @@ public class StudentService implements Serializable {
         studentBean.setEmail(null);
         studentBean.setId(0);
         studentBean.setPhone(null);
+    }
+
+    public String editStudent(StudentBean studentBean) {
+
+        return "/editStudent.xhtml?faces-redirect=true";
     }
 }
