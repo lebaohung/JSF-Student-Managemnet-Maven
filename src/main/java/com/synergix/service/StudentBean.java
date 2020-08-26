@@ -15,16 +15,6 @@ public class StudentBean implements Serializable {
     private String email;
     private String phone;
 
-    private String message;
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
     @Inject
     private StudentService studentService;
 
@@ -76,14 +66,31 @@ public class StudentBean implements Serializable {
         this.phone = phone;
     }
 
+    private String message;
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
     public List<StudentBean> getStudentsList() {
-        return studentService.getStudentsList();
+        return studentService.getAll();
     }
 
     public void saveStudent(StudentBean studentBean) {
-        studentService.saveStudent(studentBean);
+        studentService.save(studentBean);
         this.setMessage(studentService.getMessage());
     }
 
+    public void updateEditedStudent(StudentBean studentBean) {
+        studentService.update(studentBean);
+        this.setMessage(studentService.getMessage());
+    }
 
+    public void deleteStudent(Integer studentId) {
+        studentService.delete(studentId);
+    }
 }

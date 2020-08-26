@@ -53,10 +53,10 @@
                 <f:facet name="header">
                     Action
                 </f:facet>
-                <h:commandButton value="Edit" action="#{studentService.editStudent(student)}">
+                <h:commandButton value="Edit" action="#{studentService.edit(student.id)}">
                 </h:commandButton>
                 <br/>
-                <h:commandButton value="Delete" action="deleteStudent">
+                <h:commandButton value="Detele" action="#{studentBean.deleteStudent(student.id)}" onclick="return confirm('Permanently delete?')">
                 </h:commandButton>
             </h:column>
         </h:dataTable>

@@ -9,32 +9,27 @@
     <title>Edit Student </title>
 </h:head>
 <h:body>
-    <h2>Edit Student ID:
-        <f:metadata>
-            <f:viewParam name="id" value="#{student.id}"/>
-        </f:metadata>
-    </h2>
+    <h2>Edit Student ID: #{editStudent.id}</h2>
     <h:form>
 
         <br/>
         <h:outputLabel>Student Name: </h:outputLabel>
-        <h:inputText value="#{s.sName}">
+        <h:inputText value="#{editStudent.sName}" >
         </h:inputText>
         <br/><br/>
         <h:outputLabel>Student Email: </h:outputLabel>
-        <h:inputText value="#{s.email}">
+        <h:inputText value="#{editStudent.email}">
         </h:inputText>
         <br/><br/>
         <h:outputLabel>Phone Number: </h:outputLabel>
-        <h:inputText value="#{s.phone}">
+        <h:inputText  value="#{editStudent.phone}" >
         </h:inputText>
         <br/><br/>
         <h:outputText style="color: darkred; font-style: italic" value="#{studentBean.message}"/>
         <br/><br/>
-        <h:commandButton action="index?faces-redirect=true" value="Back
-">
+        <h:commandButton action="listStudent?faces-redirect=true" value="Back">
         </h:commandButton>
-        <h:commandButton action="#{studentBean.saveStudent(studentBean)}" value="Save">
+        <h:commandButton action="#{studentBean.updateEditedStudent(editStudent)}" value="Update">
         </h:commandButton>
 
     </h:form>
