@@ -60,9 +60,6 @@ public class StudentRepo implements Serializable, IStudentRepo {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        for (Student student: students) {
-            System.out.println(student.getId() + ",");
-        }
         return students;
     }
 
@@ -70,6 +67,7 @@ public class StudentRepo implements Serializable, IStudentRepo {
     public void save(Student student) {
         if (validateStudent(student)) {
             int result = 0;
+
             try (
                     Connection connection = JdbcConnection.getConnection();
             ) {
@@ -121,7 +119,7 @@ public class StudentRepo implements Serializable, IStudentRepo {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return "/editStudent.xhtml?faces-redirect=true";
+        return "editStudent.xhtml";
     }
 
     @Override

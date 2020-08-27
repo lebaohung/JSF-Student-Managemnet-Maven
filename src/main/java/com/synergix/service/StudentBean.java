@@ -10,7 +10,9 @@ import java.util.List;
 
 @Named
 @RequestScoped
-public class StudentService {
+public class StudentBean {
+
+    public Student student;
 
     @Inject
     private StudentRepo studentRepo;
@@ -29,17 +31,17 @@ public class StudentService {
         return studentRepo.getAll();
     }
 
-    public void saveStudent(Student student) {
+    public void save(Student student) {
         studentRepo.save(student);
         this.setMessage(studentRepo.getMessage());
     }
 
-    public void updateEditedStudent(Student student) {
+    public void update(Student student) {
         studentRepo.update(student);
         this.setMessage(studentRepo.getMessage());
     }
 
-    public void deleteStudent(Integer studentId) {
+    public void delete(Integer studentId) {
         studentRepo.delete(studentId);
     }
 }

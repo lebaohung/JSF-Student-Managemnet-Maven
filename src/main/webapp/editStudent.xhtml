@@ -25,11 +25,12 @@
         <h:inputText  value="#{editStudent.phone}" >
         </h:inputText>
         <br/><br/>
-        <h:outputText style="color: darkred; font-style: italic" value="#{studentService.message}"/>
+        <h:outputText style="color: darkred; font-style: italic" value="#{studentBean.message}"/>
         <br/><br/>
         <h:commandButton action="listStudent?faces-redirect=true" value="Back">
+            <f:ajax execute="@all" render="listStudent.xhtml"/>
         </h:commandButton>
-        <h:commandButton action="#{studentService.updateEditedStudent(editStudent)}" value="Update">
+        <h:commandButton action="#{studentBean.update(editStudent)}" value="Update">
         </h:commandButton>
 
     </h:form>

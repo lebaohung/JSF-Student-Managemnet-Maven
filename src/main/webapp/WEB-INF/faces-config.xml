@@ -3,5 +3,13 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
     http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
+<!--    <navigation-rule>-->
+<!--        <from-view-id>listStudent.xhtml</from-view-id>-->
+<!--        <navigation-case>-->
+<!--            <from-action>#{studentRepo.edit(student.id)}</from-action>-->
+<!--            <to-view-id>./editStudent.xhtml</to-view-id>-->
+<!--        </navigation-case>-->
+<!--    </navigation-rule>-->
+
 
 </faces-config>
