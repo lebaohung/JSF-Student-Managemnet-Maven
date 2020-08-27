@@ -14,22 +14,22 @@
 
         <br/>
         <h:outputLabel>Student Name: </h:outputLabel>
-        <h:inputText value="#{studentBean.sName}">
+        <h:inputText value="#{student.sName}">
         </h:inputText>
         <br/><br/>
         <h:outputLabel>Student Email: </h:outputLabel>
-        <h:inputText value="#{studentBean.email}">
+        <h:inputText value="#{student.email}">
         </h:inputText>
         <br/><br/>
         <h:outputLabel>Phone Number: </h:outputLabel>
-        <h:inputText value="#{studentBean.phone}">
+        <h:inputText value="#{student.phone}">
         </h:inputText>
         <br/><br/>
-        <h:outputText style="color: darkred; font-style: italic" value="#{studentBean.message}"/>
+        <h:outputText style="color: darkred; font-style: italic" value="#{studentService.message}"/>
         <br/><br/>
         <h:commandButton action="listStudent?faces-redirect=true" value="Back">
         </h:commandButton>
-        <h:commandButton action="#{studentBean.saveStudent(studentBean)}" value="Save">
+        <h:commandButton action="#{studentService.saveStudent(student)}" value="Save">
         </h:commandButton>
 
     </h:form>

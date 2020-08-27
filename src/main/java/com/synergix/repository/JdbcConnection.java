@@ -1,4 +1,4 @@
-package com.synergix.service;
+package com.synergix.repository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

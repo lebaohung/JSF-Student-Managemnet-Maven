@@ -12,7 +12,7 @@
     <h2>Student Table - Test JDBC</h2>
     <h:form>
         <h:commandButton value="Add New Student" action="addStudent" />
-        <h:dataTable binding="#{table}" value="#{studentBean.getStudentsList()}" var="student">
+        <h:dataTable binding="#{table}" value="#{studentService.getStudentsList()}" var="student">
 
             <h:column>
                 <f:facet name="header">
@@ -53,10 +53,10 @@
                 <f:facet name="header">
                     Action
                 </f:facet>
-                <h:commandButton value="Edit" action="#{studentService.edit(student.id)}">
+                <h:commandButton value="Edit" action="#{studentRepo.edit(student.id)}">
                 </h:commandButton>
                 <br/>
-                <h:commandButton value="Detele" action="#{studentBean.deleteStudent(student.id)}" onclick="return confirm('Permanently delete?')">
+                <h:commandButton value="Detele" action="#{studentService.deleteStudent(student.id)}" onclick="return confirm('Permanently delete?')">
                 </h:commandButton>
             </h:column>
         </h:dataTable>

@@ -25,11 +25,11 @@
         <h:inputText  value="#{editStudent.phone}" >
         </h:inputText>
         <br/><br/>
-        <h:outputText style="color: darkred; font-style: italic" value="#{studentBean.message}"/>
+        <h:outputText style="color: darkred; font-style: italic" value="#{studentService.message}"/>
         <br/><br/>
         <h:commandButton action="listStudent?faces-redirect=true" value="Back">
         </h:commandButton>
-        <h:commandButton action="#{studentBean.updateEditedStudent(editStudent)}" value="Update">
+        <h:commandButton action="#{studentService.updateEditedStudent(editStudent)}" value="Update">
         </h:commandButton>
 
     </h:form>
