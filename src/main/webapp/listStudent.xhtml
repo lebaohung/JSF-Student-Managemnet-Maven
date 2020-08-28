@@ -11,10 +11,10 @@
 <h:body>
     <h2>Student Table - Test JDBC</h2>
     <h:form>
-        <h:commandButton value="Add New Student" action="addStudent">
-            <f:ajax execute="@all" render="addStuden.xhtml"/>
+        <h:commandButton value="Add New Student" action="#{studentBean.createNewStudent()}">
+            <f:ajax execute="@all" />
         </h:commandButton>
-        <h:dataTable binding="#{table}" value="#{studentBean.getStudentsList()}" var="student">
+        <h:dataTable binding="#{table}" value="#{studentBean.getAll()}" var="student">
 
             <h:column>
                 <f:facet name="header">
@@ -55,12 +55,13 @@
                 <f:facet name="header">
                     Action
                 </f:facet>
-                <h:commandButton value="Edit" action="#{studentRepo.edit(student.id)}">
-                    <f:ajax execute="@all" render="editStudent.xhtml" />
+                <h:commandButton value="Edit" action="#{studentBean.getById(student.id)}">
+                    <f:ajax execute="@all" />
                 </h:commandButton>
                 <br/>
                 <h:commandButton value="Detele" action="#{studentBean.delete(student.id)}"
                                  onclick="return confirm('Permanently delete?')">
+                    <f:ajax execute="@all" render="@form"/>
                 </h:commandButton>
             </h:column>
         </h:dataTable>

@@ -13,24 +13,36 @@
     <h:form>
 
         <br/>
+
         <h:outputLabel>Student Name: </h:outputLabel>
-        <h:inputText value="#{editStudent.sName}" >
+        <h:inputText id="sName" required="true" requiredMessage="  Name required!" value="#{editStudent.sName}">
+            <f:validator validatorId="nameValidator"/>
         </h:inputText>
+        <h:message for="sName" style="color:darkred;"/>
         <br/><br/>
+
         <h:outputLabel>Student Email: </h:outputLabel>
-        <h:inputText value="#{editStudent.email}">
+        <h:inputText id="email" value="#{editStudent.email}">
+            <f:validator validatorId="emailValidator"/>
         </h:inputText>
+        <h:message for="email" style="color:darkred;"/>
         <br/><br/>
+
         <h:outputLabel>Phone Number: </h:outputLabel>
-        <h:inputText  value="#{editStudent.phone}" >
+        <h:inputText id="phone" value="#{editStudent.phone}">
+            <f:validator validatorId="phoneValidator"/>
         </h:inputText>
+        <h:message for="phone" style="color:darkred;"/>
         <br/><br/>
+
         <h:outputText style="color: darkred; font-style: italic" value="#{studentBean.message}"/>
         <br/><br/>
-        <h:commandButton action="listStudent?faces-redirect=true" value="Back">
-            <f:ajax execute="@all" render="listStudent.xhtml"/>
+
+        <h:commandButton immediate="true" action="listStudent" value="Back">
+            <f:ajax execute="@all"/>
         </h:commandButton>
         <h:commandButton action="#{studentBean.update(editStudent)}" value="Update">
+            <f:ajax execute="@form" render="@form"/>
         </h:commandButton>
 
     </h:form>

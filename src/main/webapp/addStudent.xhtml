@@ -11,27 +11,37 @@
 <h:body>
     <h2>Add new Student</h2>
     <h:form>
-
         <br/>
+
         <h:outputLabel>Student Name: </h:outputLabel>
-        <h:inputText value="#{studentBean.student.sName}">
+        <h:inputText id="sName" required="true" requiredMessage="  Name required!" value="#{newStudent.sName}">
+            <f:validator validatorId="nameValidator"/>
         </h:inputText>
+        <h:message for="sName" style="color: darkred"/>
         <br/><br/>
+
         <h:outputLabel>Student Email: </h:outputLabel>
-        <h:inputText value="#{studentBean.student.email}">
+        <h:inputText required="false" id="email" value="#{newStudent.email}">
+            <f:validator validatorId="emailValidator"/>
         </h:inputText>
+        <h:message for="email" style="color: darkred"/>
         <br/><br/>
+
         <h:outputLabel>Phone Number: </h:outputLabel>
-        <h:inputText value="#{studentBean.student.phone}">
+        <h:inputText required="false" id="phone" value="#{newStudent.phone}">
+            <f:validator validatorId="phoneValidator"/>
         </h:inputText>
+        <h:message for="phone" style="color: darkred"/>
         <br/><br/>
-        <h:outputText id="message" style="color: darkred; font-style: italic" value="#{studentBean.message}"/>
+
+        <h:outputText style="color: darkred; font-style: italic" value="#{studentBean.message}"/>
         <br/><br/>
-        <h:commandButton action="listStudent.xthml" immediate="true" value="Back">
-            <f:ajax execute="@all" />
+
+        <h:commandButton immediate="true" action="listStudent" value="Back">
+            <f:ajax execute="@all"/>
         </h:commandButton>
-        <h:commandButton action="#{studentBean.save(studentBean.student)}" value="Save">
-            <f:ajax render="message" />
+        <h:commandButton action="#{studentBean.save(newStudent)}" value="Save">
+            <f:ajax execute="@all" render="@all"/>
         </h:commandButton>
 
     </h:form>
