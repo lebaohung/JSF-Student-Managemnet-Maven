@@ -34,10 +34,15 @@
         <h:message for="phone" style="color: darkred"/>
         <br/><br/>
 
+        <h:outputText>Class: </h:outputText>
+        <h:selectOneMenu value="">
+
+        </h:selectOneMenu>
+
         <h:outputText style="color: darkred; font-style: italic" value="#{studentBean.message}"/>
         <br/><br/>
 
-        <h:commandButton immediate="true" action="listStudent" value="Back">
+        <h:commandButton immediate="true" action="listStudent" value=" &lt; Back">
             <f:ajax execute="@all"/>
         </h:commandButton>
         <h:commandButton action="#{studentBean.save(newStudent)}" value="Save">

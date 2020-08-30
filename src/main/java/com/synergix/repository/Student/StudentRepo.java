@@ -24,8 +24,7 @@ public class StudentRepo implements Serializable, IStudentRepo {
     private static final String SELECT_STUDENT_BY_ID = "SELECT * FROM student WHERE id = ?;";
     private static final String UPDATE_STUDENT = "UPDATE public.student\n" +
             "\tSET sname=?, email=?, phone=? WHERE id = ?";
-    private static final String DELETE_STUDENT = "DELETE FROM public.student\n" +
-            "\tWHERE id=?;";
+    private static final String DELETE_STUDENT = "DELETE FROM public.student WHERE id=?;";
 
     @Override
     public List<Student> getAll() {
@@ -52,20 +51,20 @@ public class StudentRepo implements Serializable, IStudentRepo {
 
     @Override
     public void save(Student student) {
-            try (
-                    Connection connection = JdbcConnection.getConnection();
-            ) {
-                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_STUDENT);
-                preparedStatement.setString(1, student.getsName());
-                preparedStatement.setString(2, student.getEmail());
-                preparedStatement.setString(3, student.getPhone());
+        try (
+                Connection connection = JdbcConnection.getConnection();
+        ) {
+            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_STUDENT);
+            preparedStatement.setString(1, student.getsName());
+            preparedStatement.setString(2, student.getEmail());
+            preparedStatement.setString(3, student.getPhone());
 
-                preparedStatement.executeUpdate();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            } finally {
-                clear(student);
-            }
+            preparedStatement.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            clear(student);
+        }
     }
 
     public void clear(Student student) {
@@ -101,18 +100,18 @@ public class StudentRepo implements Serializable, IStudentRepo {
 
     @Override
     public void update(Student student) {
-            try (
-                    Connection connection = JdbcConnection.getConnection();
-            ) {
-                PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_STUDENT);
-                preparedStatement.setString(1, student.getsName());
-                preparedStatement.setString(2, student.getEmail());
-                preparedStatement.setString(3, student.getPhone());
-                preparedStatement.setInt(4, student.getId());
-                preparedStatement.executeUpdate();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
+        try (
+                Connection connection = JdbcConnection.getConnection();
+        ) {
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_STUDENT);
+            preparedStatement.setString(1, student.getsName());
+            preparedStatement.setString(2, student.getEmail());
+            preparedStatement.setString(3, student.getPhone());
+            preparedStatement.setInt(4, student.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     @Override

@@ -10,12 +10,13 @@
 </h:head>
 <h:body>
     <h:form>
-        <h:commandButton value="Class Management">
+        <h:commandButton value="Class Management" action="/views/sclass/listSClass">
+            <f:ajax render="@all" />
         </h:commandButton>
         <br/><br/>
 
         <h:commandButton value="Student Management" action="/views/student/listStudent">
-            <f:ajax render="@all"/>
+            <f:ajax render="@all" />
         </h:commandButton>
     </h:form>
 </h:body>

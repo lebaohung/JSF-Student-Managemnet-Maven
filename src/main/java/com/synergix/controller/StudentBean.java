@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Named
 @RequestScoped
-public class StudentBean {
+public class StudentBean implements IBean<Student>{
 
     private String message;
 
@@ -31,7 +31,7 @@ public class StudentBean {
         return studentRepo.getAll();
     }
 
-    public String createNewStudent() {
+    public String create() {
         Student newStudent = new Student();
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         sessionMap.put("newStudent", newStudent);
