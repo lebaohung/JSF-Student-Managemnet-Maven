@@ -14,8 +14,7 @@ public class EmailValidator implements Validator {
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
         String email = value.toString();
-
-        if (email.length() != 0 && !email.matches(EMAIL_REGEX)) {
+        if (!email.isEmpty() && !email.matches(EMAIL_REGEX)) {
             FacesMessage facesMessage = new FacesMessage("  Invalid email! Please enter email again!");
             facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
             throw new ValidatorException(facesMessage);

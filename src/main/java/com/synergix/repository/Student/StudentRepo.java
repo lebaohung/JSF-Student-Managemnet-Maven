@@ -52,20 +52,19 @@ public class StudentRepo implements Serializable, IStudentRepo {
 
     @Override
     public void save(Student student) {
-            try (
-                    Connection connection = JdbcConnection.getConnection();
-            ) {
-                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_STUDENT);
-                preparedStatement.setString(1, student.getsName());
-                preparedStatement.setString(2, student.getEmail());
-                preparedStatement.setString(3, student.getPhone());
-
-                preparedStatement.executeUpdate();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            } finally {
-                clear(student);
-            }
+        try (
+                Connection connection = JdbcConnection.getConnection();
+        ) {
+            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_STUDENT);
+            preparedStatement.setString(1, student.getsName());
+            preparedStatement.setString(2, student.getEmail());
+            preparedStatement.setString(3, student.getPhone());
+            preparedStatement.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            clear(student);
+        }
     }
 
     public void clear(Student student) {
@@ -101,27 +100,27 @@ public class StudentRepo implements Serializable, IStudentRepo {
 
     @Override
     public void update(Student student) {
-            try (
-                    Connection connection = JdbcConnection.getConnection();
-            ) {
-                PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_STUDENT);
-                preparedStatement.setString(1, student.getsName());
-                preparedStatement.setString(2, student.getEmail());
-                preparedStatement.setString(3, student.getPhone());
-                preparedStatement.setInt(4, student.getId());
-                preparedStatement.executeUpdate();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
+        try (
+                Connection connection = JdbcConnection.getConnection();
+        ) {
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_STUDENT);
+            preparedStatement.setString(1, student.getsName());
+            preparedStatement.setString(2, student.getEmail());
+            preparedStatement.setString(3, student.getPhone());
+            preparedStatement.setInt(4, student.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(Integer studentId) {
         try (
                 Connection connection = JdbcConnection.getConnection();
         ) {
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_STUDENT);
-            preparedStatement.setInt(1, id);
+            preparedStatement.setInt(1, studentId);
             preparedStatement.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();

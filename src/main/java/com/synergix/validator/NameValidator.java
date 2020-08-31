@@ -14,7 +14,6 @@ public class NameValidator implements Validator {
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
         String sName = value.toString();
-
         if (sName.length() < MINIMUM_LENGTH) {
             FacesMessage facesMessage = new FacesMessage("  Minimum length is 2. Please enter again!");
             facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
