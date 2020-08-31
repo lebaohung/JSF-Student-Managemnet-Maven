@@ -17,14 +17,14 @@
     <h2>Student Table </h2>
     <h:form>
         <h:commandButton value="Add New Student" action="#{studentBean.create()}">
-            <f:ajax execute="@all"/>
+            <f:ajax render="@all"/>
         </h:commandButton>
-        <h:dataTable binding="#{table}" value="#{studentBean.getAll()}" var="student">
+        <h:dataTable binding="#{table}" value="#{studentList}" var="student">
 
             <h:column>
                 <f:facet name="header">
                     No.
-                </f:facet >
+                </f:facet>
                 #{table.rowIndex + 1}
             </h:column>
 
@@ -32,47 +32,69 @@
                 <f:facet name="header">
                     Student ID
                 </f:facet>
-                <h:outputText value="#{student.id}">
-                </h:outputText>
+                <h:outputText value="#{student.id}" />
             </h:column>
 
             <h:column>
                 <f:facet name="header">
                     Student Name
                 </f:facet>
-                <h:outputText value="#{student.sName}" />
-<!--                <h:inputText value="#{student.sName}" rendered="#{studentBean.edit}" />-->
+                <h:outputText rendered="#{student.id ne editStudent.id}" value="#{student.sName}" />
+                <h:inputText rendered="#{student.id eq editStudent.id}" id="editSName" required="true" requiredMessage="  Name required!" value="#{editStudent.sName}">
+                    <f:validator validatorId="nameValidator"/>
+                </h:inputText>
+                <h:message for="editSName" style="color:darkred;"/>
             </h:column>
 
             <h:column>
                 <f:facet name="header">
                     Student Email
                 </f:facet>
-                #{student.email}
+                <h:outputText rendered="#{student.id ne editStudent.id}" value="#{student.email}"/>
+                <h:inputText rendered="#{student.id eq editStudent.id}" id="editEmail" value="#{editStudent.email}">
+                    <f:validator validatorId="emailValidator"/>
+                </h:inputText>
+                <h:message for="editEmail" style="color:darkred;"/>
             </h:column>
 
             <h:column>
                 <f:facet name="header">
                     Student Phone
                 </f:facet>
-                #{student.phone}
+                <h:outputText rendered="#{student.id ne editStudent.id}" value="#{student.phone}"/>
+                <h:inputText rendered="#{student.id eq editStudent.id}" id="editPhone" value="#{editStudent.phone}">
+                    <f:validator validatorId="phoneValidator"/>
+                </h:inputText>
+                <h:message for="editPhone" style="color:darkred;"/>
             </h:column>
 
             <h:column>
                 <f:facet name="header">
                     Class
                 </f:facet>
-                #{sClassRepo.getById(student.sClassId).name}
+                <h:outputText rendered="#{student.id ne editStudent.id}" value="#{sClassRepo.getById(student.sClassId).name}"/>
+                <h:selectOneMenu rendered="#{student.id eq editStudent.id}" value="#{editStudent.sClassId}">
+                    <f:selectItems value="#{sClassRepo.all}" var="sClass" itemValue="#{sClass.id}" itemLabel="#{sClass.name}"/>
+                </h:selectOneMenu>
             </h:column>
 
             <h:column>
                 <f:facet name="header">
                     Action
                 </f:facet>
-                <h:commandButton value="Edit" action="#{studentBean.getById(student.id)}">
-<!--                    <f:ajax execute="@all"/>-->
+                <h:commandButton rendered="#{student.id ne editStudent.id}" value="Edit" action="#{studentBean.getById(student.id)}">
+                    <f:ajax execute="@form" render="@form"/>
+                </h:commandButton>
+
+                <h:commandButton rendered="#{student.id eq editStudent.id}" immediate="true" action="#{studentBean.cancelEdit()}" value=" Cancel">
+                    <f:ajax execute="@form" render="@form"/>
+                </h:commandButton>
+
+                <h:commandButton rendered="#{student.id eq editStudent.id}" action="#{studentBean.update(editStudent)}" value="Update">
+                    <f:ajax execute="@form" render="@all"/>
                 </h:commandButton>
                 <br/>
+
                 <h:commandButton value="Detele" action="#{studentBean.delete(student.id)}"
                                  onclick="return confirm('Permanently delete?')">
                     <f:ajax execute="@all" render="@form"/>

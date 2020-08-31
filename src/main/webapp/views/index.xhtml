@@ -15,7 +15,7 @@
         </h:commandButton>
         <br/><br/>
 
-        <h:commandButton value="Student Management" action="/views/student/listStudent">
+        <h:commandButton value="Student Management" action="#{studentBean.moveToListPage}" >
             <f:ajax render="@all" />
         </h:commandButton>
     </h:form>
