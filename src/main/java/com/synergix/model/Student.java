@@ -8,21 +8,24 @@ public class Student implements Serializable {
     private String sName;
     private String email;
     private String phone;
+    private int sClassId;
 
     public Student() {
     }
 
-    public Student(int id, String sName, String email, String phone) {
+    public Student(String sName, String email, String phone, int sClassId) {
+        this.sName = sName;
+        this.email = email;
+        this.phone = phone;
+        this.sClassId = sClassId;
+    }
+
+    public Student(int id, String sName, String email, String phone, int sClassId) {
         this.id = id;
         this.sName = sName;
         this.email = email;
         this.phone = phone;
-    }
-
-    public Student(String sName, String email, String phone) {
-        this.sName = sName;
-        this.email = email;
-        this.phone = phone;
+        this.sClassId = sClassId;
     }
 
     public int getId() {
@@ -55,5 +58,13 @@ public class Student implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public int getsClassId() {
+        return sClassId;
+    }
+
+    public void setsClassId(int sClassId) {
+        this.sClassId = sClassId;
     }
 }

@@ -9,17 +9,22 @@
     <title>List Student</title>
 </h:head>
 <h:body>
-    <h2>Student Table - Test JDBC</h2>
     <h:form>
-        <h:commandButton value="Add New Student" action="#{studentBean.createNewStudent()}">
-            <f:ajax execute="@all" />
+        <h:commandButton value="&lt; Back to HomePage" action="/views/index">
+            <f:ajax render="@all"/>
+        </h:commandButton>
+    </h:form>
+    <h2>Student Table </h2>
+    <h:form>
+        <h:commandButton value="Add New Student" action="#{studentBean.create()}">
+            <f:ajax execute="@all"/>
         </h:commandButton>
         <h:dataTable binding="#{table}" value="#{studentBean.getAll()}" var="student">
 
             <h:column>
                 <f:facet name="header">
                     No.
-                </f:facet>
+                </f:facet >
                 #{table.rowIndex + 1}
             </h:column>
 
@@ -27,14 +32,16 @@
                 <f:facet name="header">
                     Student ID
                 </f:facet>
-                #{student.id}
+                <h:outputText value="#{student.id}">
+                </h:outputText>
             </h:column>
 
             <h:column>
                 <f:facet name="header">
                     Student Name
                 </f:facet>
-                #{student.sName}
+                <h:outputText value="#{student.sName}" />
+<!--                <h:inputText value="#{student.sName}" rendered="#{studentBean.edit}" />-->
             </h:column>
 
             <h:column>
@@ -53,10 +60,17 @@
 
             <h:column>
                 <f:facet name="header">
+                    Class
+                </f:facet>
+                #{sClassRepo.getById(student.sClassId).name}
+            </h:column>
+
+            <h:column>
+                <f:facet name="header">
                     Action
                 </f:facet>
                 <h:commandButton value="Edit" action="#{studentBean.getById(student.id)}">
-                    <f:ajax execute="@all" />
+<!--                    <f:ajax execute="@all"/>-->
                 </h:commandButton>
                 <br/>
                 <h:commandButton value="Detele" action="#{studentBean.delete(student.id)}"

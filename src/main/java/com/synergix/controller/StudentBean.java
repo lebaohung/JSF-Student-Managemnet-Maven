@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Named
 @RequestScoped
-public class StudentBean {
+public class StudentBean implements IBean<Student>{
 
     private String message;
 
@@ -27,11 +27,19 @@ public class StudentBean {
     @Inject
     private StudentRepo studentRepo;
 
+    public StudentRepo getStudentRepo() {
+        return studentRepo;
+    }
+
+    public void setStudentRepo(StudentRepo studentRepo) {
+        this.studentRepo = studentRepo;
+    }
+
     public List<Student> getAll() {
         return studentRepo.getAll();
     }
 
-    public String createNewStudent() {
+    public String create() {
         Student newStudent = new Student();
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         sessionMap.put("newStudent", newStudent);
@@ -39,7 +47,7 @@ public class StudentBean {
     }
 
     public String getById(Integer studentId) {
-        Student editStudent = null;
+                Student editStudent = null;
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         editStudent = studentRepo.getById(studentId);
         sessionMap.put("editStudent", editStudent);

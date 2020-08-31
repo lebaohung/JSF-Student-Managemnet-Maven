@@ -35,10 +35,16 @@
         <h:message for="phone" style="color:darkred;"/>
         <br/><br/>
 
+        <h:outputLabel>Class: </h:outputLabel>
+        <h:selectOneMenu value="#{editStudent.sClassId}">
+            <f:selectItems value="#{sClassRepo.all}" var="sClass" itemValue="#{sClass.id}" itemLabel="#{sClass.name}"/>
+        </h:selectOneMenu>
+        <br/><br/>
+
         <h:outputText style="color: darkred; font-style: italic" value="#{studentBean.message}"/>
         <br/><br/>
 
-        <h:commandButton immediate="true" action="listStudent" value="Back">
+        <h:commandButton immediate="true" action="listStudent" value=" &lt; Back">
             <f:ajax execute="@all"/>
         </h:commandButton>
         <h:commandButton action="#{studentBean.update(editStudent)}" value="Update">

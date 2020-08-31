@@ -19,13 +19,12 @@ public class StudentRepo implements Serializable, IStudentRepo {
     private static final long serialVersionUID = 1L;
     private static final String SELECT_ALL_STUDENTS = "SELECT * FROM student ORDER BY id ASC ;";
     private static final String INSERT_STUDENT = "INSERT INTO public.student(\n" +
-            "\tsname, email, phone)\n" +
-            "\tVALUES (?, ?, ?);";
+            "\tsname, email, phone, sclass_id)\n" +
+            "\tVALUES (?, ?, ?, ?);";
     private static final String SELECT_STUDENT_BY_ID = "SELECT * FROM student WHERE id = ?;";
     private static final String UPDATE_STUDENT = "UPDATE public.student\n" +
-            "\tSET sname=?, email=?, phone=? WHERE id = ?";
-    private static final String DELETE_STUDENT = "DELETE FROM public.student\n" +
-            "\tWHERE id=?;";
+            "\tSET sname=?, email=?, phone=?, sclass_id=? WHERE id = ?";
+    private static final String DELETE_STUDENT = "DELETE FROM public.student WHERE id=?;";
 
     @Override
     public List<Student> getAll() {
@@ -42,6 +41,7 @@ public class StudentRepo implements Serializable, IStudentRepo {
                 student.setsName(resultSet.getString(2));
                 student.setEmail(resultSet.getString(3));
                 student.setPhone(resultSet.getString(4));
+                student.setsClassId(resultSet.getInt(5));
                 students.add(student);
             }
         } catch (Exception e) {
@@ -59,6 +59,7 @@ public class StudentRepo implements Serializable, IStudentRepo {
             preparedStatement.setString(1, student.getsName());
             preparedStatement.setString(2, student.getEmail());
             preparedStatement.setString(3, student.getPhone());
+            preparedStatement.setInt(4, student.getsClassId());
             preparedStatement.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -72,6 +73,7 @@ public class StudentRepo implements Serializable, IStudentRepo {
         student.setEmail(null);
         student.setId(0);
         student.setPhone(null);
+        student.setsClassId(0);
     }
 
     @Override
@@ -91,6 +93,7 @@ public class StudentRepo implements Serializable, IStudentRepo {
                 student.setsName(resultSet.getString(2));
                 student.setEmail(resultSet.getString(3));
                 student.setPhone(resultSet.getString(4));
+                student.setsClassId(resultSet.getInt(5));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -107,7 +110,8 @@ public class StudentRepo implements Serializable, IStudentRepo {
             preparedStatement.setString(1, student.getsName());
             preparedStatement.setString(2, student.getEmail());
             preparedStatement.setString(3, student.getPhone());
-            preparedStatement.setInt(4, student.getId());
+            preparedStatement.setInt(5, student.getId());
+            preparedStatement.setInt(4, student.getsClassId());
             preparedStatement.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
