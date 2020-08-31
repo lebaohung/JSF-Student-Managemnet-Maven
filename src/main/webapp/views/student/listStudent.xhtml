@@ -15,11 +15,9 @@
         </h:commandButton>
     </h:form>
     <h2>Student Table </h2>
+
     <h:form>
-        <h:commandButton value="Add New Student" action="#{studentBean.create()}">
-            <f:ajax render="@all"/>
-        </h:commandButton>
-        <h:dataTable binding="#{table}" value="#{studentList}" var="student">
+        <h:dataTable id="listForm" binding="#{table}" value="#{studentBean.all}" var="student">
 
             <h:column>
                 <f:facet name="header">
@@ -32,15 +30,16 @@
                 <f:facet name="header">
                     Student ID
                 </f:facet>
-                <h:outputText value="#{student.id}" />
+                <h:outputText value="#{student.id}"/>
             </h:column>
 
             <h:column>
                 <f:facet name="header">
                     Student Name
                 </f:facet>
-                <h:outputText rendered="#{student.id ne editStudent.id}" value="#{student.sName}" />
-                <h:inputText rendered="#{student.id eq editStudent.id}" id="editSName" required="true" requiredMessage="  Name required!" value="#{editStudent.sName}">
+                <h:outputText rendered="#{student.id ne editStudent.id}" value="#{student.sName}"/>
+                <h:inputText rendered="#{student.id eq editStudent.id}" id="editSName" required="true"
+                             requiredMessage="  Name required!" value="#{editStudent.sName}">
                     <f:validator validatorId="nameValidator"/>
                 </h:inputText>
                 <h:message for="editSName" style="color:darkred;"/>
@@ -72,9 +71,11 @@
                 <f:facet name="header">
                     Class
                 </f:facet>
-                <h:outputText rendered="#{student.id ne editStudent.id}" value="#{sClassRepo.getById(student.sClassId).name}"/>
+                <h:outputText rendered="#{student.id ne editStudent.id}"
+                              value="#{sClassRepo.getById(student.sClassId).name}"/>
                 <h:selectOneMenu rendered="#{student.id eq editStudent.id}" value="#{editStudent.sClassId}">
-                    <f:selectItems value="#{sClassRepo.all}" var="sClass" itemValue="#{sClass.id}" itemLabel="#{sClass.name}"/>
+                    <f:selectItems value="#{sClassRepo.all}" var="sClass" itemValue="#{sClass.id}"
+                                   itemLabel="#{sClass.name}"/>
                 </h:selectOneMenu>
             </h:column>
 
@@ -82,16 +83,19 @@
                 <f:facet name="header">
                     Action
                 </f:facet>
-                <h:commandButton rendered="#{student.id ne editStudent.id}" value="Edit" action="#{studentBean.getById(student.id)}">
+                <h:commandButton rendered="#{student.id ne editStudent.id}" value="Edit"
+                                 action="#{studentBean.getById(student.id)}">
                     <f:ajax execute="@form" render="@form"/>
                 </h:commandButton>
 
-                <h:commandButton rendered="#{student.id eq editStudent.id}" immediate="true" action="#{studentBean.cancelEdit()}" value=" Cancel">
+                <h:commandButton rendered="#{student.id eq editStudent.id}" immediate="true"
+                                 action="#{studentBean.cancelEdit()}" value=" Cancel">
                     <f:ajax execute="@form" render="@form"/>
                 </h:commandButton>
 
-                <h:commandButton rendered="#{student.id eq editStudent.id}" action="#{studentBean.update(editStudent)}" value="Update">
-                    <f:ajax execute="@form" render="@all"/>
+                <h:commandButton rendered="#{student.id eq editStudent.id}" action="#{studentBean.update(editStudent)}"
+                                 value="Update">
+                    <f:ajax execute="@form" render="@form"/>
                 </h:commandButton>
                 <br/>
 
@@ -101,6 +105,49 @@
                 </h:commandButton>
             </h:column>
         </h:dataTable>
+    </h:form>
+
+    <h:commandButton value="Add New Student" action="#{studentBean.create()}">
+        <f:ajax render="@all"/>
+    </h:commandButton>
+
+    <h:form rendered="#{studentBean.add}">
+        <br/>
+        <h:outputLabel>Student Name: </h:outputLabel>
+        <h:inputText id="sName" required="true" requiredMessage="  Name required!" value="#{newStudent.sName}">
+            <f:validator validatorId="nameValidator"/>
+        </h:inputText>
+        <h:message for="sName" style="color: darkred"/>
+        <br/><br/>
+
+        <h:outputLabel>Student Email: </h:outputLabel>
+        <h:inputText required="false" id="email" value="#{newStudent.email}">
+            <f:validator validatorId="emailValidator"/>
+        </h:inputText>
+        <h:message for="email" style="color: darkred"/>
+        <br/><br/>
+
+        <h:outputLabel>Phone Number: </h:outputLabel>
+        <h:inputText required="false" id="phone" value="#{newStudent.phone}">
+            <f:validator validatorId="phoneValidator"/>
+        </h:inputText>
+        <h:message for="phone" style="color: darkred"/>
+        <br/><br/>
+
+        <h:outputLabel>Class: </h:outputLabel>
+        <h:selectOneMenu value="#{newStudent.sClassId}">
+            <f:selectItems value="#{sClassRepo.all}" var="sClass" itemValue="#{sClass.id}" itemLabel="#{sClass.name}"/>
+        </h:selectOneMenu>
+
+        <h:outputText style="color: darkred; font-style: italic" value="#{studentBean.message}"/>
+        <br/><br/>
+
+        <h:commandButton immediate="true" action="listStudent" value=" &lt; Back">
+            <f:ajax execute="@all"/>
+        </h:commandButton>
+        <h:commandButton action="#{studentBean.save(newStudent)}" value="Save">
+            <f:ajax execute="@all" render="@all"/>
+        </h:commandButton>
     </h:form>
 </h:body>
 </html>
