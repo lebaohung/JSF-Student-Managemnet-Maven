@@ -3,12 +3,10 @@ package com.synergix.controller;
 import com.synergix.model.Student;
 import com.synergix.repository.Student.StudentRepo;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +61,7 @@ public class StudentBean {
 
     public void save(Student student) {
         studentRepo.save(student);
-        this.cancelEdit();
+        this.cancelAdd();
         this.message = "Add new Student successfully";
     }
 

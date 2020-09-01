@@ -41,7 +41,7 @@
                 <h:inputText rendered="#{student.id eq editStudent.id}" id="editSName" required="true"
                              requiredMessage="  Name required!" value="#{editStudent.sName}">
                     <f:validator validatorId="nameValidator"/>
-                </h:inputText>
+                </h:inputText><br/>
                 <h:message for="editSName" style="color:darkred;"/>
             </h:column>
 
@@ -52,7 +52,7 @@
                 <h:outputText rendered="#{student.id ne editStudent.id}" value="#{student.email}"/>
                 <h:inputText rendered="#{student.id eq editStudent.id}" id="editEmail" value="#{editStudent.email}">
                     <f:validator validatorId="emailValidator"/>
-                </h:inputText>
+                </h:inputText><br/>
                 <h:message for="editEmail" style="color:darkred;"/>
             </h:column>
 
@@ -63,7 +63,7 @@
                 <h:outputText rendered="#{student.id ne editStudent.id}" value="#{student.phone}"/>
                 <h:inputText rendered="#{student.id eq editStudent.id}" id="editPhone" value="#{editStudent.phone}">
                     <f:validator validatorId="phoneValidator"/>
-                </h:inputText>
+                </h:inputText><br/>
                 <h:message for="editPhone" style="color:darkred;"/>
             </h:column>
 
@@ -139,14 +139,11 @@
             <f:selectItems value="#{sClassRepo.all}" var="sClass" itemValue="#{sClass.id}" itemLabel="#{sClass.name}"/>
         </h:selectOneMenu>
 
-        <h:outputText style="color: darkred; font-style: italic" value="#{studentBean.message}"/>
-        <br/><br/>
-
         <h:commandButton immediate="true" action="#{studentBean.cancelAdd}" value="Cancel">
             <f:ajax render="@all"/>
         </h:commandButton>
         <h:commandButton action="#{studentBean.save(newStudent)}" value="Save">
-            <f:ajax execute="addNewStudent" render="listForm"/>
+            <f:ajax execute="addNewStudent" render="@all"/>
         </h:commandButton>
     </h:form>
 </h:body>
