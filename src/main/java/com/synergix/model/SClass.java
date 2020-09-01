@@ -3,15 +3,20 @@ package com.synergix.model;
 import java.io.Serializable;
 
 public class SClass implements Serializable {
+
     private int id;
     private String name;
+
+    public SClass() {
+    }
 
     public SClass(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public SClass() {
+    public SClass(String name) {
+        this.name = name;
     }
 
     public int getId() {

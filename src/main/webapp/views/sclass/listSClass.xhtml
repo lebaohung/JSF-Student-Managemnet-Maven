@@ -15,12 +15,10 @@
         </h:commandButton>
     </h:form>
     <h2>Class Management </h2>
-    <h:form>
-        <h:commandButton value="Add New Class" action="#{sClassBean.create}">
-            <f:ajax execute="@all"/>
-        </h:commandButton>
-        <h:dataTable binding="#{table}" value="#{sClassBean.getAll()}" var="sClass">
 
+    <h:form id="listForm">
+
+        <h:dataTable binding="#{table}" value="#{sClassBean.getAll()}" var="sClass">
             <h:column>
                 <f:facet name="header">
                     No.
@@ -32,30 +30,75 @@
                 <f:facet name="header">
                     Class ID
                 </f:facet>
-                #{sClass.id}
+                <h:outputText value="#{sClass.id}" />
+                <h:outputText rendered="#{sClass.id eq editSClass.id}" value="&#160;" />
             </h:column>
 
             <h:column>
                 <f:facet name="header">
                     Class Name
                 </f:facet>
-                #{sClass.name}
+                <h:outputText rendered="#{sClass.id ne editSClass.id}" value="#{sClass.name}"/>
+                <h:inputText rendered="#{sClass.id eq editSClass.id}" id="editName" required="true"
+                             requiredMessage="  Name required!" value="#{editSClass.name}">
+                    <f:validator validatorId="nameValidator"/>
+                </h:inputText><br/>
+                <h:outputText rendered="#{sClass.id eq editSClass.id}" value="&#160;" />
+                <h:message for="editName" style="color:darkred;" title=""/>
+            </h:column>
+
+            <h:column>
+                <f:facet name="header">
+                    Size
+                </f:facet>
+
             </h:column>
 
             <h:column>
                 <f:facet name="header">
                     Action
                 </f:facet>
-                <h:commandButton value="Edit" action="#{sClassBean.getById(sClass.id)}">
-                    <f:ajax execute="@all"/>
+                <h:commandButton rendered="#{sClass.id ne editSClass.id}" value="Edit"
+                                 action="#{sClassBean.getEdit(sClass.id)}">
+                    <f:ajax execute="@form" render="@form"/>
+                </h:commandButton>
+
+                <h:commandButton rendered="#{sClass.id eq editSClass.id}" immediate="true"
+                                 action="#{sClassBean.cancelEdit()}" value=" Cancel">
+                    <f:ajax execute="@form" render="@form"/>
+                </h:commandButton>
+
+                <h:commandButton rendered="#{sClass.id eq editSClass.id}" action="#{sClassBean.update(editSClass)}"
+                                 value="Update">
+                    <f:ajax execute="@form" render="@form"/>
                 </h:commandButton>
                 <br/>
+
                 <h:commandButton value="Detele" action="#{sClassBean.delete(sClass.id)}"
                                  onclick="return confirm('Permanently delete?')">
                     <f:ajax execute="@all" render="@form"/>
                 </h:commandButton>
             </h:column>
         </h:dataTable>
+
+        <h:commandButton value="Add New Class" action="#{sClassBean.create}">
+            <f:ajax render="@all"/>
+        </h:commandButton>
+    </h:form>
+
+    <h:form id="addNewClass" rendered="#{sClassBean.add}" >
+        <br/>
+        <h:outputLabel>Class Name: </h:outputLabel>
+
+
+        <br/>
+        <h:commandButton immediate="true" action="#{sClassBean.cancelAdd}" value="Cancel">
+            <f:ajax render="@all"/>
+        </h:commandButton>
+        <h:commandButton action="#{sClassBean.save(newSClass)}" value="Save">
+            <f:ajax execute="addNewClass" render="@all"/>
+        </h:commandButton>
+
     </h:form>
 </h:body>
 </html>

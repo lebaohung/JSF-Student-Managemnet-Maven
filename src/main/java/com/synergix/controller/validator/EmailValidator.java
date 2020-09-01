@@ -1,4 +1,4 @@
-package com.synergix.validator;
+package com.synergix.controller.validator;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -8,16 +8,17 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
 @FacesValidator
-public class NameValidator implements Validator {
-    public final static int MINIMUM_LENGTH = 2;
+public class EmailValidator implements Validator {
+    public final static String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-        String sName = value.toString();
-        if (sName.length() < MINIMUM_LENGTH) {
-            FacesMessage facesMessage = new FacesMessage("  Minimum length is 2. Please enter again!");
+        String email = value.toString();
+        if (!email.isEmpty() && !email.matches(EMAIL_REGEX)) {
+            FacesMessage facesMessage = new FacesMessage("  Invalid email! Please enter email again!");
             facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
             throw new ValidatorException(facesMessage);
         }
+
     }
 }

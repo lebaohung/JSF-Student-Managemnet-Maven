@@ -12,70 +12,59 @@ import java.util.Map;
 
 @Named
 @RequestScoped
-public class StudentBean {
-
-    private String message;
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
+public class StudentBean implements IBean<Student> {
 
     @Inject
     private StudentRepo studentRepo;
 
-    public StudentRepo getStudentRepo() {
-        return studentRepo;
-    }
-
-    public void setStudentRepo(StudentRepo studentRepo) {
-        this.studentRepo = studentRepo;
-    }
-
+    @Override
     public String moveToListPage() {
         this.cancelEdit();
         return "/views/student/listStudent";
     }
 
+    @Override
     public List<Student> getAll() {
         return studentRepo.getAll();
     }
 
+    @Override
     public void create() {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         sessionMap.put("newStudent", new Student(null, null, null, 0));
     }
 
-    public void getById(Integer studentId) {
+    @Override
+    public void getEdit(Integer studentId) {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         sessionMap.put("editStudent", studentRepo.getById(studentId));
     }
 
+    @Override
     public void cancelEdit() {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         sessionMap.put("editStudent", null);
     }
 
+    @Override
     public void save(Student student) {
         studentRepo.save(student);
         this.cancelAdd();
-        this.message = "Add new Student successfully";
     }
 
+    @Override
     public void cancelAdd() {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         sessionMap.put("newStudent", null);
     }
 
+    @Override
     public void update(Student student) {
         studentRepo.update(student);
         this.cancelEdit();
-        this.message = "Edit Student ID " + student.getId() + " successfully";
     }
 
+    @Override
     public void delete(Integer studentId) {
         studentRepo.delete(studentId);
     }

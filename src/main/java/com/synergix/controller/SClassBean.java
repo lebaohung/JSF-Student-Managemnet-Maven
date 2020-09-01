@@ -14,18 +14,24 @@ import java.util.Map;
 @RequestScoped
 public class SClassBean implements IBean<SClass> {
 
-    private String message;
+    private boolean isAdd;
 
-    public String getMessage() {
-        return message;
+    public boolean isAdd() {
+        return isAdd;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setAdd(boolean add) {
+        isAdd = add;
     }
 
     @Inject
     private SClassRepo sClassRepo;
+
+    @Override
+    public String moveToListPage() {
+        this.cancelEdit();
+        return "/views/sclass/listSClass";
+    }
 
     @Override
     public List<SClass> getAll() {
@@ -33,36 +39,46 @@ public class SClassBean implements IBean<SClass> {
     }
 
     @Override
-    public String create() {
-        SClass newSClass = new SClass();
+    public void create() {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("newSClass", newSClass);
-        return "addSClass.xhtml";
+        sessionMap.put("newSClass", new SClass(null));
+        this.setAdd(true);
     }
 
     @Override
-    public String getById(Integer sClassId) {
-        SClass editSClass = null;
+    public void getEdit(Integer sClassId) {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        editSClass = sClassRepo.getById(sClassId);
-        sessionMap.put("editSClass", editSClass);
-        return "editSClass.xhtml";
+        sessionMap.put("editSClass", sClassRepo.getById(sClassId));
     }
 
     @Override
     public void save(SClass sClass) {
         sClassRepo.save(sClass);
-        this.message = "Add new Class successfully";
+        this.cancelAdd();
     }
 
     @Override
     public void update(SClass sClass) {
         sClassRepo.update(sClass);
-        this.message = "Edit Class ID " + sClass.getId() + " successfully";
+        this.cancelEdit();
     }
 
     @Override
     public void delete(Integer sclassId) {
         sClassRepo.delete(sclassId);
     }
+
+    @Override
+    public void cancelEdit() {
+        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        sessionMap.put("editSClass", null);
+    }
+
+    @Override
+    public void cancelAdd() {
+        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        sessionMap.put("newSClass", null);
+        this.setAdd(false);
+    }
+
 }

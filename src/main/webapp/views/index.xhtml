@@ -10,7 +10,7 @@
 </h:head>
 <h:body>
     <h:form>
-        <h:commandButton value="Class Management" action="/views/sclass/listSClass">
+        <h:commandButton value="Class Management" action="#{sClassBean.moveToListPage}">
             <f:ajax render="@all" />
         </h:commandButton>
         <br/><br/>

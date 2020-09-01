@@ -22,6 +22,7 @@ public class SClassRepo implements Serializable, ISClassRepo {
     private static final String SELECT_CLASS_BY_ID = "SELECT * FROM sclass WHERE id = ?;";
     private static final String UPDATE_CLASS = "UPDATE public.sclass SET name=? WHERE id = ?;";
     private static final String DELETE_CLASS = "DELETE FROM public.sclass WHERE id=?;";
+    private static final String COUNT_SIZE_CLASS = "SELECT COUNT(id) FROM student GROUP BY sclass_id HAVING sclass_id = ?;";
 
     @Override
     public List<SClass> getAll() {
@@ -112,4 +113,5 @@ public class SClassRepo implements Serializable, ISClassRepo {
             throwables.printStackTrace();
         }
     }
+
 }

@@ -31,6 +31,7 @@
                     Student ID
                 </f:facet>
                 <h:outputText value="#{student.id}"/>
+                <h:outputText rendered="#{student.id eq editStudent.id}" value="&#160;" />
             </h:column>
 
             <h:column>
@@ -42,7 +43,8 @@
                              requiredMessage="  Name required!" value="#{editStudent.sName}">
                     <f:validator validatorId="nameValidator"/>
                 </h:inputText><br/>
-                <h:message for="editSName" style="color:darkred;"/>
+                <h:outputText rendered="#{student.id eq editStudent.id}" value="&#160;" />
+                <h:message for="editSName" style="color:darkred;" title=""/>
             </h:column>
 
             <h:column>
@@ -53,7 +55,8 @@
                 <h:inputText rendered="#{student.id eq editStudent.id}" id="editEmail" value="#{editStudent.email}">
                     <f:validator validatorId="emailValidator"/>
                 </h:inputText><br/>
-                <h:message for="editEmail" style="color:darkred;"/>
+                <h:outputText rendered="#{student.id eq editStudent.id}" value="&#160;" />
+                <h:message for="editEmail" style="color:darkred;" title=""/>
             </h:column>
 
             <h:column>
@@ -64,7 +67,8 @@
                 <h:inputText rendered="#{student.id eq editStudent.id}" id="editPhone" value="#{editStudent.phone}">
                     <f:validator validatorId="phoneValidator"/>
                 </h:inputText><br/>
-                <h:message for="editPhone" style="color:darkred;"/>
+                <h:outputText rendered="#{student.id eq editStudent.id}" value="&#160;" />
+                <h:message for="editPhone" style="color:darkred;" title=""/>
             </h:column>
 
             <h:column>
@@ -77,6 +81,7 @@
                     <f:selectItems value="#{sClassRepo.all}" var="sClass" itemValue="#{sClass.id}"
                                    itemLabel="#{sClass.name}"/>
                 </h:selectOneMenu>
+                <h:outputText rendered="#{student.id eq editStudent.id}" value="&#160;" />
             </h:column>
 
             <h:column>
@@ -84,7 +89,7 @@
                     Action
                 </f:facet>
                 <h:commandButton rendered="#{student.id ne editStudent.id}" value="Edit"
-                                 action="#{studentBean.getById(student.id)}">
+                                 action="#{studentBean.getEdit(student.id)}">
                     <f:ajax execute="@form" render="@form"/>
                 </h:commandButton>
 
