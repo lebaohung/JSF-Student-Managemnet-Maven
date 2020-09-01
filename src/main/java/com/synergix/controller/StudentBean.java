@@ -16,18 +16,6 @@ import java.util.Map;
 @RequestScoped
 public class StudentBean {
 
-    private boolean isAdd;
-
-    public boolean isAdd() {
-        return isAdd;
-    }
-
-    public void setAdd(boolean add) {
-        isAdd = add;
-    }
-
-    private List<Student> studentList = new ArrayList<>();
-
     private String message;
 
     public String getMessage() {
@@ -59,9 +47,8 @@ public class StudentBean {
     }
 
     public void create() {
-        this.setAdd(true);
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("newStudent", new Student("acac", "asdasd", "asdasd", 0));
+        sessionMap.put("newStudent", new Student(null, null, null, 0));
     }
 
     public void getById(Integer studentId) {
@@ -78,6 +65,11 @@ public class StudentBean {
         studentRepo.save(student);
         this.cancelEdit();
         this.message = "Add new Student successfully";
+    }
+
+    public void cancelAdd() {
+        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        sessionMap.put("newStudent", null);
     }
 
     public void update(Student student) {

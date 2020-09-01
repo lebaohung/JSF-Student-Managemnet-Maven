@@ -16,8 +16,8 @@
     </h:form>
     <h2>Student Table </h2>
 
-    <h:form>
-        <h:dataTable id="listForm" binding="#{table}" value="#{studentBean.all}" var="student">
+    <h:form id="listForm">
+        <h:dataTable binding="#{table}" value="#{studentBean.all}" var="student">
 
             <h:column>
                 <f:facet name="header">
@@ -105,13 +105,13 @@
                 </h:commandButton>
             </h:column>
         </h:dataTable>
+
+        <h:commandButton value="Add New Student" action="#{studentBean.create()}">
+            <f:ajax render="@all"/>
+        </h:commandButton>
     </h:form>
 
-    <h:commandButton value="Add New Student" action="#{studentBean.create()}">
-        <f:ajax render="@all"/>
-    </h:commandButton>
-
-    <h:form rendered="#{studentBean.add}">
+    <h:form id="addNewStudent" rendered="#{newStudent ne null}">
         <br/>
         <h:outputLabel>Student Name: </h:outputLabel>
         <h:inputText id="sName" required="true" requiredMessage="  Name required!" value="#{newStudent.sName}">
@@ -142,11 +142,11 @@
         <h:outputText style="color: darkred; font-style: italic" value="#{studentBean.message}"/>
         <br/><br/>
 
-        <h:commandButton immediate="true" action="listStudent" value=" &lt; Back">
-            <f:ajax execute="@all"/>
+        <h:commandButton immediate="true" action="#{studentBean.cancelAdd}" value="Cancel">
+            <f:ajax render="@all"/>
         </h:commandButton>
         <h:commandButton action="#{studentBean.save(newStudent)}" value="Save">
-            <f:ajax execute="@all" render="@all"/>
+            <f:ajax execute="addNewStudent" render="listForm"/>
         </h:commandButton>
     </h:form>
 </h:body>
