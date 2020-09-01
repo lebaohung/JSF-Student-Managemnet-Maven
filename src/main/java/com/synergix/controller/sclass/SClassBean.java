@@ -1,5 +1,6 @@
-package com.synergix.controller;
+package com.synergix.controller.sclass;
 
+import com.synergix.controller.IBean;
 import com.synergix.model.SClass;
 import com.synergix.repository.SClass.SClassRepo;
 
@@ -13,16 +14,6 @@ import java.util.Map;
 @Named(value = "sClassBean")
 @RequestScoped
 public class SClassBean implements IBean<SClass> {
-
-    private boolean isAdd;
-
-    public boolean isAdd() {
-        return isAdd;
-    }
-
-    public void setAdd(boolean add) {
-        isAdd = add;
-    }
 
     @Inject
     private SClassRepo sClassRepo;
@@ -41,8 +32,7 @@ public class SClassBean implements IBean<SClass> {
     @Override
     public void create() {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("newSClass", new SClass(null));
-        this.setAdd(true);
+        sessionMap.put("newSClass", new SClass());
     }
 
     @Override
@@ -78,7 +68,6 @@ public class SClassBean implements IBean<SClass> {
     public void cancelAdd() {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         sessionMap.put("newSClass", null);
-        this.setAdd(false);
     }
 
     public int countClassSize(Integer classId) {

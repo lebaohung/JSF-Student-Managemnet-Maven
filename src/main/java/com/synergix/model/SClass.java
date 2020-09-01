@@ -10,10 +10,6 @@ public class SClass implements Serializable {
     public SClass() {
     }
 
-    public SClass(String name) {
-        this.name = name;
-    }
-
     public SClass(int id, String name) {
         this.id = id;
         this.name = name;

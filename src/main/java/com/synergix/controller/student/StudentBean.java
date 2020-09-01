@@ -1,5 +1,6 @@
-package com.synergix.controller;
+package com.synergix.controller.student;
 
+import com.synergix.controller.IBean;
 import com.synergix.model.Student;
 import com.synergix.repository.Student.StudentRepo;
 

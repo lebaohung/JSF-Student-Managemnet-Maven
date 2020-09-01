@@ -86,10 +86,11 @@
         </h:commandButton>
     </h:form>
 
-    <h:form id="addNewClass" rendered="#{sClassBean.add}" >
+    <h:form id="addNewClass" rendered="#{newSClass.id ne null}" >
         <br/>
         <h:outputLabel>Class Name: </h:outputLabel>
         <h:inputText id="name" required="true" requiredMessage="  Name required!" value="#{newSClass.name}">
+            <f:validateRequired />
         </h:inputText>
         <h:message for="name" style="color: darkred"/>
 
@@ -98,7 +99,7 @@
             <f:ajax render="@all"/>
         </h:commandButton>
         <h:commandButton action="#{sClassBean.save(newSClass)}" value="Save">
-            <f:ajax execute="@all" render="@all"/>
+            <f:ajax execute="addNewClass" render="@all"/>
         </h:commandButton>
     </h:form>
 </h:body>

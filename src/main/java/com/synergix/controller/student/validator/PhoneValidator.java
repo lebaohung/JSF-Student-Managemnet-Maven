@@ -1,4 +1,4 @@
-package com.synergix.controller.validator;
+package com.synergix.controller.student.validator;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
