@@ -81,4 +81,7 @@ public class SClassBean implements IBean<SClass> {
         this.setAdd(false);
     }
 
+    public int countClassSize(Integer classId) {
+        return sClassRepo.countClassSize(classId);
+    }
 }

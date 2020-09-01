@@ -51,7 +51,7 @@
                 <f:facet name="header">
                     Size
                 </f:facet>
-
+                <h:outputText value="#{sClassBean.countClassSize(sClass.id)}" />
             </h:column>
 
             <h:column>
@@ -75,7 +75,7 @@
                 <br/>
 
                 <h:commandButton value="Detele" action="#{sClassBean.delete(sClass.id)}"
-                                 onclick="return confirm('Permanently delete?')">
+                                 onclick="return confirm('Permanently delete? This will also delete all student in this class!')">
                     <f:ajax execute="@all" render="@form"/>
                 </h:commandButton>
             </h:column>
@@ -89,16 +89,17 @@
     <h:form id="addNewClass" rendered="#{sClassBean.add}" >
         <br/>
         <h:outputLabel>Class Name: </h:outputLabel>
-
+        <h:inputText id="name" required="true" requiredMessage="  Name required!" value="#{newSClass.name}">
+        </h:inputText>
+        <h:message for="name" style="color: darkred"/>
 
         <br/>
         <h:commandButton immediate="true" action="#{sClassBean.cancelAdd}" value="Cancel">
             <f:ajax render="@all"/>
         </h:commandButton>
         <h:commandButton action="#{sClassBean.save(newSClass)}" value="Save">
-            <f:ajax execute="addNewClass" render="@all"/>
+            <f:ajax execute="@all" render="@all"/>
         </h:commandButton>
-
     </h:form>
 </h:body>
 </html>

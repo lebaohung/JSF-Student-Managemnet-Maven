@@ -114,4 +114,22 @@ public class SClassRepo implements Serializable, ISClassRepo {
         }
     }
 
+    public int countClassSize(Integer classId) {
+        int classSize = 0;
+        try (
+                Connection connection = JdbcConnection.getConnection();
+        ) {
+            PreparedStatement preparedStatement = connection.prepareStatement(COUNT_SIZE_CLASS);
+            preparedStatement.setInt(1, classId);
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getResultSet();
+
+            while (resultSet.next()) {
+                classSize = resultSet.getInt(1);
+            }
+        } catch (SQLException throwables) {
+            System.out.println("Some Class empty");
+        }
+        return classSize;
+    }
 }
