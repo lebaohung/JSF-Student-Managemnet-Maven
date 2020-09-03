@@ -53,6 +53,7 @@ public class SClassBean implements IBean<SClass>, IPaging<SClass> {
 
     @Override
     public String moveToListPage() {
+        this.cancelAdd();
         this.cancelEdit();
         return "/views/sclass/listSClass";
     }

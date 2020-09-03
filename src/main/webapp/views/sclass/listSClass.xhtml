@@ -5,109 +5,112 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
-<h:head>
-    <title>List Class</title>
-</h:head>
-<h:body>
-    <h:form>
-        <h:commandButton value="&lt;&lt;Back to HomePage" action="/views/index">
-            <f:ajax render="@all"/>
-        </h:commandButton>
-        <h2>Class Management </h2>
-        <h:commandButton disabled="#{sClassBean.page le 1}" value="&lt; Previous" action="#{sClassBean.previous}">
-            <f:ajax render="@all"/>
-        </h:commandButton>
-        <h:outputText value="  Page #{sClassBean.page} / #{sClassBean.pageCount} " />
-        <h:commandButton disabled="#{sClassBean.page ge sClassBean.pageCount}" value="&gt; Next" action="#{sClassBean.next}">
-            <f:ajax render="@all"/>
-        </h:commandButton>
-    </h:form>
+<f:view locale="#{homeBean.locale}">
+    <h:head>
+        <title>List Class</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <h:commandButton value="&lt;&lt;#{msg.BackHomeButton}" action="/views/index">
+                <f:ajax render="@all"/>
+            </h:commandButton>
+            <h2>#{msg.ClassManagement}</h2>
+            <h:commandButton disabled="#{sClassBean.page le 1}" value="&lt; #{msg.PreviousButton}" action="#{sClassBean.previous}">
+                <f:ajax render="@all"/>
+            </h:commandButton>
+            <h:outputText value="  #{msg.Page} #{sClassBean.page} / #{sClassBean.pageCount} "/>
+            <h:commandButton disabled="#{sClassBean.page ge sClassBean.pageCount}" value="&gt; #{msg.NextButton}"
+                             action="#{sClassBean.next}">
+                <f:ajax render="@all"/>
+            </h:commandButton>
+        </h:form>
 
-    <h:form id="listForm">
+        <h:form id="listForm">
 
-        <h:dataTable binding="#{table}" value="#{sClassBean.allByPage}" var="sClass">
-            <h:column>
-                <f:facet name="header">
-                    No.
-                </f:facet>
-                #{table.rowIndex + 1}
-            </h:column>
+            <h:dataTable binding="#{table}" value="#{sClassBean.allByPage}" var="sClass">
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.No}
+                    </f:facet>
+                    #{table.rowIndex + 1}
+                </h:column>
 
-            <h:column>
-                <f:facet name="header">
-                    Class ID
-                </f:facet>
-                <h:outputText value="#{sClass.id}" />
-                <h:outputText rendered="#{sClass.id eq editSClass.id}" value="&#160;" />
-            </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.StudentID}
+                    </f:facet>
+                    <h:outputText value="#{sClass.id}"/>
+                    <h:outputText rendered="#{sClass.id eq editSClass.id}" value="&#160;"/>
+                </h:column>
 
-            <h:column>
-                <f:facet name="header">
-                    Class Name
-                </f:facet>
-                <h:outputText rendered="#{sClass.id ne editSClass.id}" value="#{sClass.name}"/>
-                <h:inputText rendered="#{sClass.id eq editSClass.id}" id="editName" required="true"
-                             requiredMessage="  Name required!" value="#{editSClass.name}">
-                    <f:validator validatorId="nameValidator"/>
-                </h:inputText><br/>
-                <h:outputText rendered="#{sClass.id eq editSClass.id}" value="&#160;" />
-                <h:message for="editName" style="color:darkred;" title=""/>
-            </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.StudentName}
+                    </f:facet>
+                    <h:outputText rendered="#{sClass.id ne editSClass.id}" value="#{sClass.name}"/>
+                    <h:inputText rendered="#{sClass.id eq editSClass.id}" id="editName" required="true"
+                                 requiredMessage="  Name required!" value="#{editSClass.name}">
+                        <f:validator validatorId="nameValidator"/>
+                    </h:inputText><br/>
+                    <h:outputText rendered="#{sClass.id eq editSClass.id}" value="&#160;"/>
+                    <h:message for="editName" style="color:darkred;" title=""/>
+                </h:column>
 
-            <h:column>
-                <f:facet name="header">
-                    Size
-                </f:facet>
-                <h:outputText value="#{sClassBean.countClassSize(sClass.id)}" />
-            </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.Size}
+                    </f:facet>
+                    <h:outputText value="#{sClassBean.countClassSize(sClass.id)}"/>
+                </h:column>
 
-            <h:column>
-                <f:facet name="header">
-                    Action
-                </f:facet>
-                <h:commandButton rendered="#{sClass.id ne editSClass.id}" value="Edit"
-                                 action="#{sClassBean.getEdit(sClass.id)}">
-                    <f:ajax execute="@form" render="@form"/>
-                </h:commandButton>
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.Action}
+                    </f:facet>
+                    <h:commandButton rendered="#{sClass.id ne editSClass.id}" value="#{msg.Edit}"
+                                     action="#{sClassBean.getEdit(sClass.id)}">
+                        <f:ajax execute="@form" render="@form"/>
+                    </h:commandButton>
 
-                <h:commandButton rendered="#{sClass.id eq editSClass.id}" immediate="true"
-                                 action="#{sClassBean.cancelEdit()}" value=" Cancel">
-                    <f:ajax execute="@form" render="@form"/>
-                </h:commandButton>
+                    <h:commandButton rendered="#{sClass.id eq editSClass.id}" immediate="true"
+                                     action="#{sClassBean.cancelEdit()}" value=" #{msg.Cancel}">
+                        <f:ajax execute="@form" render="@form"/>
+                    </h:commandButton>
 
-                <h:commandButton rendered="#{sClass.id eq editSClass.id}" action="#{sClassBean.update(editSClass)}"
-                                 value="Update">
-                    <f:ajax execute="@form" render="@form"/>
-                </h:commandButton>
-                <br/>
+                    <h:commandButton rendered="#{sClass.id eq editSClass.id}" action="#{sClassBean.update(editSClass)}"
+                                     value="#{msg.Update}">
+                        <f:ajax execute="@form" render="@form"/>
+                    </h:commandButton>
+                    <br/>
 
-                <h:commandButton value="Detele" action="#{sClassBean.delete(sClass.id)}"
-                                 onclick="return confirm('Permanently delete? This will also delete all student in this class!')">
-                    <f:ajax execute="@all" render="@form"/>
-                </h:commandButton>
-            </h:column>
-        </h:dataTable>
+                    <h:commandButton value="#{msg.Delete}" action="#{sClassBean.delete(sClass.id)}"
+                                     onclick="return confirm('#{msg.PermanentlyDeleteClass}')">
+                        <f:ajax execute="@all" render="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
 
-        <h:commandButton value="Add New Class" action="#{sClassBean.create}">
-            <f:ajax render="@all"/>
-        </h:commandButton>
-    </h:form>
+            <h:commandButton value="#{msg.AddClass}" action="#{sClassBean.create}">
+                <f:ajax render="@all"/>
+            </h:commandButton>
+        </h:form>
 
-    <h:form id="addNewClass" rendered="#{newSClass.id ne null}" >
-        <br/>
-        <h:outputLabel>Class Name: </h:outputLabel>
-        <h:inputText id="name" required="true" requiredMessage="  Name required!" value="#{newSClass.name}">
-            <f:validateRequired />
-        </h:inputText>
-        <h:message for="name" style="color: darkred"/>
+        <h:form id="addNewClass" rendered="#{newSClass.id ne null}">
+            <br/>
+            <h:outputLabel>#{msg.StudentClass}: </h:outputLabel>
+            <h:inputText id="name" required="true" requiredMessage="  Name required!" value="#{newSClass.name}">
+                <f:validateRequired/>
+            </h:inputText>
+            <h:message for="name" style="color: darkred"/>
 
-        <br/>
-        <h:commandButton immediate="true" action="#{sClassBean.cancelAdd}" value="Cancel">
-            <f:ajax render="@all"/>
-        </h:commandButton>
-        <h:commandButton action="#{sClassBean.save(newSClass)}" value="Save">
-            <f:ajax execute="addNewClass" render="@all"/>
-        </h:commandButton>
-    </h:form>
-</h:body>
+            <br/>
+            <h:commandButton immediate="true" action="#{sClassBean.cancelAdd}" value="#{msg.Cancel}">
+                <f:ajax render="@all"/>
+            </h:commandButton>
+            <h:commandButton action="#{sClassBean.save(newSClass)}" value="#{msg.Save}">
+                <f:ajax execute="addNewClass" render="@all"/>
+            </h:commandButton>
+        </h:form>
+    </h:body>
+</f:view>
 </html>

@@ -53,6 +53,7 @@ public class StudentBean implements IBean<Student>, IPaging<Student> {
 
     @Override
     public String moveToListPage() {
+        this.cancelAdd();
         this.cancelEdit();
         return "/views/student/listStudent";
     }
