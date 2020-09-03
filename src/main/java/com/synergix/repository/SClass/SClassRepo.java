@@ -2,7 +2,6 @@ package com.synergix.repository.SClass;
 
 import com.synergix.model.SClass;
 import com.synergix.repository.IPagingRepository;
-import com.synergix.repository.IRepository;
 import com.synergix.repository.JdbcConnection;
 
 import javax.enterprise.context.SessionScoped;
@@ -25,7 +24,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
     private static final String SELECT_CLASS_BY_ID = "SELECT * FROM sclass WHERE id = ?;";
     private static final String UPDATE_CLASS = "UPDATE public.sclass SET name=? WHERE id = ?;";
     private static final String DELETE_CLASS = "DELETE FROM public.sclass WHERE id=?;";
-    private static final String COUNT_SIZE_CLASS = "SELECT COUNT(id) FROM student GROUP BY sclass_id HAVING sclass_id = ?;";
+    private static final String COUNT_CLASS_SIZE = "SELECT COUNT(id) FROM student GROUP BY sclass_id HAVING sclass_id = ?;";
     private static final String COUNT_ClASSES = "SELECT COUNT(id) FROM sclass;";
 
     @Override
@@ -165,7 +164,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
         try (
                 Connection connection = JdbcConnection.getConnection();
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(COUNT_SIZE_CLASS);
+            PreparedStatement preparedStatement = connection.prepareStatement(COUNT_CLASS_SIZE);
             preparedStatement.setInt(1, classId);
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();

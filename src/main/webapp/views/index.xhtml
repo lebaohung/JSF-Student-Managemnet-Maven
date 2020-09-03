@@ -6,17 +6,27 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 <h:head>
-    <title>University Manager</title>
+    <title>#{msg['HomeTitle']}</title>
 </h:head>
 <h:body>
     <h:form>
-        <h:commandButton value="Class Management" action="#{sClassBean.moveToListPage}">
-            <f:ajax render="@all" />
+        <h:commandButton rendered="#{homeBean.locale eq 'vn'}" action="#{homeBean.changeLanguage('en')}" value="English" >
+                <f:ajax render="@all" />
+        </h:commandButton>
+        <h:commandButton rendered="#{homeBean.locale eq 'en'}" action="#{homeBean.changeLanguage('vn')}" value="Tiếng Việt" >
+                <f:ajax render="@all"/>
+        </h:commandButton>
+        <br/>
+        <h4><h:outputText value="#{msg['HomeTitle']}"/></h4>
+        <br/><br/>
+
+        <h:commandButton value="#{msg['ClassManagement']}" action="#{sClassBean.moveToListPage}">
+            <f:ajax render="@all"/>
         </h:commandButton>
         <br/><br/>
 
-        <h:commandButton value="Student Management" action="#{studentBean.moveToListPage}" >
-            <f:ajax render="@all" />
+        <h:commandButton value="#{msg['StudentManagement']}" action="#{studentBean.moveToListPage}">
+            <f:ajax render="@all"/>
         </h:commandButton>
     </h:form>
 </h:body>
