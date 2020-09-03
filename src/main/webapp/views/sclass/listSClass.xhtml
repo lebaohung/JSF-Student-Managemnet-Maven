@@ -10,15 +10,22 @@
 </h:head>
 <h:body>
     <h:form>
-        <h:commandButton value="&lt; Back to HomePage" action="/views/index">
+        <h:commandButton value="&lt; &lt;Back to HomePage" action="/views/index">
+            <f:ajax render="@all"/>
+        </h:commandButton>
+        <h2>Class Management </h2>
+        <h:commandButton disabled="#{sClassBean.page le 1}" value="&lt; Previous" action="#{sClassBean.previous}">
+            <f:ajax render="@all"/>
+        </h:commandButton>
+        <h:outputText value="  Page #{sClassBean.page} / #{sClassBean.pageCount} " />
+        <h:commandButton disabled="#{sClassBean.page ge sClassBean.pageCount}" value="&gt; Next" action="#{sClassBean.next}">
             <f:ajax render="@all"/>
         </h:commandButton>
     </h:form>
-    <h2>Class Management </h2>
 
     <h:form id="listForm">
 
-        <h:dataTable binding="#{table}" value="#{sClassBean.getAll()}" var="sClass">
+        <h:dataTable binding="#{table}" value="#{sClassBean.allByPage}" var="sClass">
             <h:column>
                 <f:facet name="header">
                     No.

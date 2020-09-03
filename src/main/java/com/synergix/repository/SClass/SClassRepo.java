@@ -1,6 +1,8 @@
 package com.synergix.repository.SClass;
 
 import com.synergix.model.SClass;
+import com.synergix.repository.IPagingRepository;
+import com.synergix.repository.IRepository;
 import com.synergix.repository.JdbcConnection;
 
 import javax.enterprise.context.SessionScoped;
@@ -15,14 +17,16 @@ import java.util.List;
 
 @Named(value = "sClassRepo")
 @SessionScoped
-public class SClassRepo implements Serializable, ISClassRepo {
+public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<SClass> {
     private static final long serialVersionUID = 1L;
     private static final String SELECT_ALL_CLASSES = "SELECT * FROM sclass ORDER BY id ASC ;";
+    private static final String SELECT_ALL_CLASSES_BY_PAGE = "SELECT * FROM sclass ORDER BY id ASC LIMIT ? OFFSET ?;";
     private static final String INSERT_CLASS = "INSERT INTO public.sclass(name) VALUES (?);";
     private static final String SELECT_CLASS_BY_ID = "SELECT * FROM sclass WHERE id = ?;";
     private static final String UPDATE_CLASS = "UPDATE public.sclass SET name=? WHERE id = ?;";
     private static final String DELETE_CLASS = "DELETE FROM public.sclass WHERE id=?;";
     private static final String COUNT_SIZE_CLASS = "SELECT COUNT(id) FROM student GROUP BY sclass_id HAVING sclass_id = ?;";
+    private static final String COUNT_ClASSES = "SELECT COUNT(id) FROM sclass;";
 
     @Override
     public List<SClass> getAll() {
@@ -45,6 +49,47 @@ public class SClassRepo implements Serializable, ISClassRepo {
         return sClasses;
     }
 
+    @Override
+    public List<SClass> getAllByPage(int page, int pageSize) {
+        int start = (page - 1) * pageSize;
+        List<SClass> sClasses = new ArrayList<>();
+        try (
+                Connection connection = JdbcConnection.getConnection();
+        ) {
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_CLASSES_BY_PAGE);
+            preparedStatement.setInt(1, pageSize);
+            preparedStatement.setInt(2, start);
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getResultSet();
+            while (resultSet.next()) {
+                SClass sClass = new SClass();
+                sClass.setId(resultSet.getInt(2));
+                sClass.setName(resultSet.getString(1));
+                sClasses.add(sClass);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return sClasses;
+    }
+
+    public int count() {
+        int classNumber = 0;
+        try (
+                Connection connection = JdbcConnection.getConnection();
+        ) {
+            PreparedStatement preparedStatement = connection.prepareStatement(COUNT_ClASSES);
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getResultSet();
+
+            while (resultSet.next()) {
+                classNumber = resultSet.getInt(1);
+            }
+        } catch (SQLException throwables) {
+            System.out.println("Class list empty");
+        }
+        return classNumber;
+    }
 
     @Override
     public void save(SClass sClass) {

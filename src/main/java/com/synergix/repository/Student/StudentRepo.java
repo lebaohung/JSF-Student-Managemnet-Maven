@@ -1,6 +1,8 @@
 package com.synergix.repository.Student;
 
 import com.synergix.model.Student;
+import com.synergix.repository.IPagingRepository;
+import com.synergix.repository.IRepository;
 import com.synergix.repository.JdbcConnection;
 
 import javax.enterprise.context.SessionScoped;
@@ -15,8 +17,9 @@ import java.util.List;
 
 @Named
 @SessionScoped
-public class StudentRepo implements Serializable {
+public class StudentRepo implements Serializable, IStudentRepo, IPagingRepository<Student> {
     private static final long serialVersionUID = 1L;
+    private static final String SELECT_ALL_STUDENTS = "SELECT * FROM student ORDER BY id ASC ;";
     private static final String SELECT_ALL_STUDENTS_BY_PAGE = "SELECT * FROM student ORDER BY id ASC LIMIT ? OFFSET ?;";
     private static final String INSERT_STUDENT = "INSERT INTO public.student(\n" +
             "\tsname, email, phone, sclass_id)\n" +
@@ -27,12 +30,33 @@ public class StudentRepo implements Serializable {
     private static final String DELETE_STUDENT = "DELETE FROM public.student WHERE id=?;";
     private static final String COUNT_STUDENTS = "SELECT COUNT(id) FROM student;";
 
-    //    @Override
-    public List<Student> getAll(int page, int pageSize) {
+    @Override
+    public List<Student> getAll() {
+        List<Student> students = new ArrayList<>();
+        try (
+                Connection connection = JdbcConnection.getConnection();
+        ) {
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_STUDENTS);
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getResultSet();
+            while (resultSet.next()) {
+                Student student = new Student();
+                student.setId(resultSet.getInt(1));
+                student.setsName(resultSet.getString(2));
+                student.setEmail(resultSet.getString(3));
+                student.setPhone(resultSet.getString(4));
+                student.setsClassId(resultSet.getInt(5));
+                students.add(student);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return students;
+    }
+    @Override
+    public List<Student> getAllByPage(int page, int pageSize) {
         int start = (page - 1) * pageSize;
         List<Student> students = new ArrayList<>();
-
-
         try (
                 Connection connection = JdbcConnection.getConnection();
         ) {
@@ -56,7 +80,7 @@ public class StudentRepo implements Serializable {
         return students;
     }
 
-    public int countStudents() {
+    public int count() {
         int studentNumber = 0;
         try (
                 Connection connection = JdbcConnection.getConnection();
@@ -74,7 +98,7 @@ public class StudentRepo implements Serializable {
         return studentNumber;
     }
 
-    //    @Override
+        @Override
     public void save(Student student) {
         try (
                 Connection connection = JdbcConnection.getConnection();
@@ -100,7 +124,7 @@ public class StudentRepo implements Serializable {
         student.setsClassId(0);
     }
 
-    //    @Override
+        @Override
     public Student getById(Integer studentId) {
         Student student = new Student();
         try (
@@ -125,7 +149,7 @@ public class StudentRepo implements Serializable {
         return student;
     }
 
-    //    @Override
+        @Override
     public void update(Student student) {
         try (
                 Connection connection = JdbcConnection.getConnection();
@@ -142,7 +166,7 @@ public class StudentRepo implements Serializable {
         }
     }
 
-    //    @Override
+        @Override
     public void delete(Integer studentId) {
         try (
                 Connection connection = JdbcConnection.getConnection();

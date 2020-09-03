@@ -1,6 +1,7 @@
 package com.synergix.controller.student;
 
 import com.synergix.controller.IBean;
+import com.synergix.controller.IPaging;
 import com.synergix.model.Student;
 import com.synergix.repository.Student.StudentRepo;
 
@@ -13,7 +14,7 @@ import java.util.Map;
 
 @Named
 @RequestScoped
-public class StudentBean implements IBean<Student> {
+public class StudentBean implements IBean<Student>, IPaging<Student> {
 
     private static final int INIT_PAGE = 1;
     private static final int PAGE_SIZE = 5;
@@ -39,24 +40,13 @@ public class StudentBean implements IBean<Student> {
     }
 
     public int getPageCount() {
-        this.pageCount = (int) Math.ceil( this.countStudents() / (double) pageSize );
+        this.pageCount = (int) Math.ceil( this.count() / (double) pageSize );
         return pageCount;
     }
 
     public void setPageCount(int pageCount) {
         this.pageCount = pageCount;
     }
-
-    public void next() {
-        if (this.getPage() >= this.getPageCount()) return;
-        else this.page++;
-    }
-
-    public void previous() {
-        if (this.getPage() <= 1) return;
-        else this.page--;
-    }
-
 
     @Inject
     private StudentRepo studentRepo;
@@ -69,7 +59,13 @@ public class StudentBean implements IBean<Student> {
 
     @Override
     public List<Student> getAll() {
-        return studentRepo.getAll(page, pageSize);
+        return studentRepo.getAll();
+    }
+
+
+    @Override
+    public List<Student> getAllByPage() {
+        return studentRepo.getAllByPage(page, pageSize);
     }
 
     @Override
@@ -113,7 +109,19 @@ public class StudentBean implements IBean<Student> {
         studentRepo.delete(studentId);
     }
 
-    public int countStudents() {
-        return studentRepo.countStudents();
+    public int count() {
+        return studentRepo.count();
+    }
+
+    @Override
+    public void next() {
+        if (this.getPage() >= this.getPageCount()) return;
+        else this.page++;
+    }
+
+    @Override
+    public void previous() {
+        if (this.getPage() <= 1) return;
+        else this.page--;
     }
 }
