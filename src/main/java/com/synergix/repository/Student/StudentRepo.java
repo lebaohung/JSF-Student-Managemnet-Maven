@@ -53,6 +53,7 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
         }
         return students;
     }
+
     @Override
     public List<Student> getAllByPage(int page, int pageSize) {
         int start = (page - 1) * pageSize;
@@ -80,6 +81,7 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
         return students;
     }
 
+    @Override
     public int count() {
         int studentNumber = 0;
         try (
@@ -98,7 +100,7 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
         return studentNumber;
     }
 
-        @Override
+    @Override
     public void save(Student student) {
         try (
                 Connection connection = JdbcConnection.getConnection();
@@ -124,7 +126,7 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
         student.setsClassId(0);
     }
 
-        @Override
+    @Override
     public Student getById(Integer studentId) {
         Student student = new Student();
         try (
@@ -149,7 +151,7 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
         return student;
     }
 
-        @Override
+    @Override
     public void update(Student student) {
         try (
                 Connection connection = JdbcConnection.getConnection();
@@ -166,7 +168,7 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
         }
     }
 
-        @Override
+    @Override
     public void delete(Integer studentId) {
         try (
                 Connection connection = JdbcConnection.getConnection();
