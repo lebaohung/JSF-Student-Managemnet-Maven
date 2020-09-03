@@ -45,6 +45,7 @@ public class SClassRepo implements Serializable, ISClassRepo {
         return sClasses;
     }
 
+
     @Override
     public void save(SClass sClass) {
         try (

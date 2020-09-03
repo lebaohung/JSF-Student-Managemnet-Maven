@@ -15,9 +15,9 @@ import java.util.List;
 
 @Named
 @SessionScoped
-public class StudentRepo implements Serializable, IStudentRepo {
+public class StudentRepo implements Serializable {
     private static final long serialVersionUID = 1L;
-    private static final String SELECT_ALL_STUDENTS = "SELECT * FROM student ORDER BY id ASC ;";
+    private static final String SELECT_ALL_STUDENTS_BY_PAGE = "SELECT * FROM student ORDER BY id ASC LIMIT ? OFFSET ?;";
     private static final String INSERT_STUDENT = "INSERT INTO public.student(\n" +
             "\tsname, email, phone, sclass_id)\n" +
             "\tVALUES (?, ?, ?, ?);";
@@ -25,14 +25,20 @@ public class StudentRepo implements Serializable, IStudentRepo {
     private static final String UPDATE_STUDENT = "UPDATE public.student\n" +
             "\tSET sname=?, email=?, phone=?, sclass_id=? WHERE id = ?";
     private static final String DELETE_STUDENT = "DELETE FROM public.student WHERE id=?;";
+    private static final String COUNT_STUDENTS = "SELECT COUNT(id) FROM student;";
 
-    @Override
-    public List<Student> getAll() {
+    //    @Override
+    public List<Student> getAll(int page, int pageSize) {
+        int start = (page - 1) * pageSize;
         List<Student> students = new ArrayList<>();
+
+
         try (
                 Connection connection = JdbcConnection.getConnection();
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_STUDENTS);
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_STUDENTS_BY_PAGE);
+            preparedStatement.setInt(1, pageSize);
+            preparedStatement.setInt(2, start);
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
             while (resultSet.next()) {
@@ -50,7 +56,25 @@ public class StudentRepo implements Serializable, IStudentRepo {
         return students;
     }
 
-    @Override
+    public int countStudents() {
+        int studentNumber = 0;
+        try (
+                Connection connection = JdbcConnection.getConnection();
+        ) {
+            PreparedStatement preparedStatement = connection.prepareStatement(COUNT_STUDENTS);
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getResultSet();
+
+            while (resultSet.next()) {
+                studentNumber = resultSet.getInt(1);
+            }
+        } catch (SQLException throwables) {
+            System.out.println("Student list empty");
+        }
+        return studentNumber;
+    }
+
+    //    @Override
     public void save(Student student) {
         try (
                 Connection connection = JdbcConnection.getConnection();
@@ -76,7 +100,7 @@ public class StudentRepo implements Serializable, IStudentRepo {
         student.setsClassId(0);
     }
 
-    @Override
+    //    @Override
     public Student getById(Integer studentId) {
         Student student = new Student();
         try (
@@ -101,7 +125,7 @@ public class StudentRepo implements Serializable, IStudentRepo {
         return student;
     }
 
-    @Override
+    //    @Override
     public void update(Student student) {
         try (
                 Connection connection = JdbcConnection.getConnection();
@@ -118,7 +142,7 @@ public class StudentRepo implements Serializable, IStudentRepo {
         }
     }
 
-    @Override
+    //    @Override
     public void delete(Integer studentId) {
         try (
                 Connection connection = JdbcConnection.getConnection();

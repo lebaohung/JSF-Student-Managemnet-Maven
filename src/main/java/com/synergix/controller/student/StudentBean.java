@@ -15,6 +15,49 @@ import java.util.Map;
 @RequestScoped
 public class StudentBean implements IBean<Student> {
 
+    private static final int INIT_PAGE = 1;
+    private static final int PAGE_SIZE = 5;
+
+    private int page = INIT_PAGE;
+    private int pageSize = PAGE_SIZE;
+    private int pageCount;
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getPageCount() {
+        this.pageCount = (int) Math.ceil( this.countStudents() / (double) pageSize );
+        return pageCount;
+    }
+
+    public void setPageCount(int pageCount) {
+        this.pageCount = pageCount;
+    }
+
+    public void next() {
+        if (this.getPage() >= this.getPageCount()) return;
+        else this.page++;
+    }
+
+    public void previous() {
+        if (this.getPage() <= 1) return;
+        else this.page--;
+    }
+
+
     @Inject
     private StudentRepo studentRepo;
 
@@ -26,7 +69,7 @@ public class StudentBean implements IBean<Student> {
 
     @Override
     public List<Student> getAll() {
-        return studentRepo.getAll();
+        return studentRepo.getAll(page, pageSize);
     }
 
     @Override
@@ -68,5 +111,9 @@ public class StudentBean implements IBean<Student> {
     @Override
     public void delete(Integer studentId) {
         studentRepo.delete(studentId);
+    }
+
+    public int countStudents() {
+        return studentRepo.countStudents();
     }
 }
