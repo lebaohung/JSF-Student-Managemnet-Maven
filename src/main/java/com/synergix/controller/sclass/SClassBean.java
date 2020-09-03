@@ -142,9 +142,6 @@ public class SClassBean implements IBean<SClass>, IPaging<SClass> {
 
     public String moveToDetailPage(Integer sClassId) {
         this.setStudentInClassList(sClassRepo.getStudentsByClassId(sClassId));
-        for (Student student : this.getStudentInClassList()) {
-            System.out.println("Student name: " + student.getsName());
-        }
         return "/views/sclass/classDetail";
     }
 }
