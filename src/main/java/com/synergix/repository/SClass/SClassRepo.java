@@ -1,6 +1,7 @@
 package com.synergix.repository.SClass;
 
 import com.synergix.model.SClass;
+import com.synergix.model.Student;
 import com.synergix.repository.IPagingRepository;
 import com.synergix.repository.JdbcConnection;
 
@@ -26,6 +27,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
     private static final String DELETE_CLASS = "DELETE FROM public.sclass WHERE id=?;";
     private static final String COUNT_CLASS_SIZE = "SELECT COUNT(id) FROM student GROUP BY sclass_id HAVING sclass_id = ?;";
     private static final String COUNT_ClASSES = "SELECT COUNT(id) FROM sclass;";
+    private static final String SELECT_STUDENTS_BY_CLASS_ID = "SELECT * FROM student WHERE sclass_id = ? ORDER BY id;";
 
     @Override
     public List<SClass> getAll() {
@@ -176,5 +178,29 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
             System.out.println("Some Class empty");
         }
         return classSize;
+    }
+
+    public List<Student> getStudentsByClassId(Integer sClassId) {
+        List<Student> studentList = new ArrayList<>();
+        try (
+                Connection connection = JdbcConnection.getConnection();
+        ) {
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_STUDENTS_BY_CLASS_ID);
+            preparedStatement.setInt(1, sClassId);
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getResultSet();
+            while (resultSet.next()) {
+                Student student = new Student();
+                student.setId(resultSet.getInt(1));
+                student.setsName(resultSet.getString(2));
+                student.setEmail(resultSet.getString(3));
+                student.setPhone(resultSet.getString(4));
+                student.setsClassId(resultSet.getInt(5));
+                studentList.add(student);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return studentList;
     }
 }

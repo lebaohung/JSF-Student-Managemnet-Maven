@@ -3,12 +3,14 @@ package com.synergix.controller.sclass;
 import com.synergix.controller.IBean;
 import com.synergix.controller.IPaging;
 import com.synergix.model.SClass;
+import com.synergix.model.Student;
 import com.synergix.repository.SClass.SClassRepo;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +24,7 @@ public class SClassBean implements IBean<SClass>, IPaging<SClass> {
     private int page = INIT_PAGE;
     private int pageSize = PAGE_SIZE;
     private int pageCount;
+    private List<Student> studentInClassList = new ArrayList<>();
 
     public int getPage() {
         return page;
@@ -46,6 +49,14 @@ public class SClassBean implements IBean<SClass>, IPaging<SClass> {
 
     public void setPageCount(int pageCount) {
         this.pageCount = pageCount;
+    }
+
+    public List<Student> getStudentInClassList() {
+        return studentInClassList;
+    }
+
+    public void setStudentInClassList(List<Student> studentInClassList) {
+        this.studentInClassList = studentInClassList;
     }
 
     @Inject
@@ -127,5 +138,13 @@ public class SClassBean implements IBean<SClass>, IPaging<SClass> {
     public void previous() {
         if (this.getPage() <= 1) return;
         else this.page--;
+    }
+
+    public String moveToDetailPage(Integer sClassId) {
+        this.setStudentInClassList(sClassRepo.getStudentsByClassId(sClassId));
+        for (Student student : this.getStudentInClassList()) {
+            System.out.println("Student name: " + student.getsName());
+        }
+        return "/views/sclass/classDetail";
     }
 }

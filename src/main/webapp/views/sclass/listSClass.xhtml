@@ -37,15 +37,15 @@
 
                 <h:column>
                     <f:facet name="header">
-                        #{msg.StudentID}
+                        #{msg.ClassID}
                     </f:facet>
-                    <h:outputText value="#{sClass.id}"/>
+                    <h:outputText id="sClassId" value="#{sClass.id}"/>
                     <h:outputText rendered="#{sClass.id eq editSClass.id}" value="&#160;"/>
                 </h:column>
 
                 <h:column>
                     <f:facet name="header">
-                        #{msg.StudentName}
+                        #{msg.ClassName}
                     </f:facet>
                     <h:outputText rendered="#{sClass.id ne editSClass.id}" value="#{sClass.name}"/>
                     <h:inputText rendered="#{sClass.id eq editSClass.id}" id="editName" required="true"
@@ -67,6 +67,10 @@
                     <f:facet name="header">
                         #{msg.Action}
                     </f:facet>
+                    <h:commandButton value="#{msg.Detail}" action="#{sClassBean.moveToDetailPage(sClass.id)}">
+                        <f:ajax execute="sClassId" render="@all" />
+                    </h:commandButton>
+
                     <h:commandButton rendered="#{sClass.id ne editSClass.id}" value="#{msg.Edit}"
                                      action="#{sClassBean.getEdit(sClass.id)}">
                         <f:ajax execute="@form" render="@form"/>
@@ -97,7 +101,7 @@
 
         <h:form id="addNewClass" rendered="#{newSClass.id ne null}">
             <br/>
-            <h:outputLabel>#{msg.StudentClass}: </h:outputLabel>
+            <h:outputLabel>#{msg.ClassName}: </h:outputLabel>
             <h:inputText id="name" required="true" requiredMessage="  Name required!" value="#{newSClass.name}">
                 <f:validateRequired/>
             </h:inputText>
