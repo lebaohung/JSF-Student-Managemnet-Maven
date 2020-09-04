@@ -9,7 +9,6 @@ public class JdbcConnection {
     public static Connection getConnection() {
         Connection con = null;
         String url = "jdbc:postgresql://localhost:5432/jsfStudent";
-//        String url = "jdbc:postgresql://localhost:5432/demo";
         String user = "postgres";
         String password = "password";
 
@@ -18,7 +17,6 @@ public class JdbcConnection {
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
         }
-
         return con;
     }
 }

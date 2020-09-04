@@ -6,6 +6,7 @@ import com.synergix.model.SClass;
 import com.synergix.model.Student;
 import com.synergix.repository.SClass.SClassRepo;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @Named(value = "sClassBean")
-@ViewScoped
+@ConversationScoped
 public class SClassBean implements Serializable, IBean<SClass>, IPaging<SClass> {
 
     private static final int INIT_PAGE = 1;
