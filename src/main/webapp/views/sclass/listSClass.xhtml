@@ -27,12 +27,12 @@
 
         <h:form id="listForm">
 
-            <h:dataTable binding="#{table}" value="#{sClassBean.allByPage}" var="sClass">
+            <h:dataTable binding="#{sclassTable}" value="#{sClassBean.allByPage}" var="sClass">
                 <h:column>
                     <f:facet name="header">
                         #{msg.No}
                     </f:facet>
-                    #{table.rowIndex + 1}
+                    #{sclassTable.rowIndex + 1}
                 </h:column>
 
                 <h:column>
@@ -68,12 +68,12 @@
                         #{msg.Action}
                     </f:facet>
                     <h:commandButton value="#{msg.Detail}" action="#{sClassBean.moveToDetailPage(sClass.id)}">
-                        <f:ajax execute="sClassId" render="@all" />
+                        <f:ajax execute="sClassId" render="listForm" />
                     </h:commandButton>
 
                     <h:commandButton rendered="#{sClass.id ne editSClass.id}" value="#{msg.Edit}"
                                      action="#{sClassBean.getEdit(sClass.id)}">
-                        <f:ajax execute="@form" render="@form"/>
+                        <f:ajax execute="sClassId" render="listForm"/>
                     </h:commandButton>
 
                     <h:commandButton rendered="#{sClass.id eq editSClass.id}" immediate="true"

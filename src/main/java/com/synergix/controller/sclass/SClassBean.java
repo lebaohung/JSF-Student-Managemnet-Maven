@@ -7,16 +7,18 @@ import com.synergix.model.Student;
 import com.synergix.repository.SClass.SClassRepo;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Named(value = "sClassBean")
-@RequestScoped
-public class SClassBean implements IBean<SClass>, IPaging<SClass> {
+@SessionScoped
+public class SClassBean implements Serializable, IBean<SClass>, IPaging<SClass> {
 
     private static final int INIT_PAGE = 1;
     private static final int PAGE_SIZE = 5;
@@ -142,9 +144,6 @@ public class SClassBean implements IBean<SClass>, IPaging<SClass> {
 
     public String moveToDetailPage(Integer sClassId) {
         this.setStudentInClassList(sClassRepo.getStudentsByClassId(sClassId));
-        for (Student student : this.getStudentInClassList()) {
-            System.out.println("Student name: " + student.getsName());
-        }
         return "/views/sclass/classDetail";
     }
 }

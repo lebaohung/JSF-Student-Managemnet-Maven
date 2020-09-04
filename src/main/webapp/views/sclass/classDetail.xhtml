@@ -17,8 +17,48 @@
         </h:form>
 
         <h:form>
-            <h:dataTable binding="#{table}" value="#{sClassBean.studentInClassList}" var="student">
+            <h:dataTable binding="#{classDetailTable}" value="#{sClassBean.studentInClassList}" var="student">
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.No}
+                    </f:facet>
+                    #{classDetailTable.rowIndex + 1}
+                </h:column>
 
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.StudentID}
+                    </f:facet>
+                    <h:outputText value="#{student.id}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.StudentName}
+                    </f:facet>
+                    <h:outputText value="#{student.sName}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.StudentEmail}
+                    </f:facet>
+                    <h:outputText value="#{student.email}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.StudentPhone}
+                    </f:facet>
+                    <h:outputText value="#{student.phone}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.StudentClass}
+                    </f:facet>
+                    <h:outputText value="#{sClassRepo.getById(student.sClassId).name}"/>
+                </h:column>
             </h:dataTable>
         </h:form>
     </h:body>
