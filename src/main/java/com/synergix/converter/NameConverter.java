@@ -20,11 +20,11 @@ public class NameConverter implements Converter {
             }
             ch = value.charAt(i);
         }
-        return value2.toString();
+        return value2.toString().trim();
     }
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return null;
+        return value.toString();
     }
 }

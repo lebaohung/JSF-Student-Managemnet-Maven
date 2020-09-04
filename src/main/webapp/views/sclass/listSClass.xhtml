@@ -51,6 +51,7 @@
                     <h:inputText rendered="#{sClass.id eq editSClass.id}" id="editName" required="true"
                                  requiredMessage="  Name required!" value="#{editSClass.name}">
                         <f:validator validatorId="nameValidator"/>
+                        <f:converter converterId="nameConverter"/>
                     </h:inputText><br/>
                     <h:outputText rendered="#{sClass.id eq editSClass.id}" value="&#160;"/>
                     <h:message for="editName" style="color:darkred;" title=""/>
@@ -103,6 +104,7 @@
             <br/>
             <h:outputLabel>#{msg.ClassName}: </h:outputLabel>
             <h:inputText id="name" required="true" requiredMessage="  Name required!" value="#{newSClass.name}">
+                <f:converter converterId="nameConverter"/>
                 <f:validateRequired/>
             </h:inputText>
             <h:message for="name" style="color: darkred"/>
