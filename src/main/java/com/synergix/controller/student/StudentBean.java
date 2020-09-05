@@ -6,15 +6,18 @@ import com.synergix.model.Student;
 import com.synergix.repository.Student.StudentRepo;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 @Named
-@RequestScoped
-public class StudentBean implements IBean<Student>, IPaging<Student> {
+@ViewScoped
+public class StudentBean implements Serializable, IBean<Student>, IPaging<Student> {
 
     private static final int INIT_PAGE = 1;
     private static final int PAGE_SIZE = 5;

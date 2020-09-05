@@ -27,12 +27,12 @@
 
         <h:form id="listForm">
 
-            <h:dataTable binding="#{table}" value="#{sClassBean.allByPage}" var="sClass">
+            <h:dataTable binding="#{sclassTable}" value="#{sClassBean.allByPage}" var="sClass">
                 <h:column>
                     <f:facet name="header">
                         #{msg.No}
                     </f:facet>
-                    #{table.rowIndex + 1}
+                    #{sclassTable.rowIndex + 1}
                 </h:column>
 
                 <h:column>
@@ -51,6 +51,7 @@
                     <h:inputText rendered="#{sClass.id eq editSClass.id}" id="editName" required="true"
                                  requiredMessage="  Name required!" value="#{editSClass.name}">
                         <f:validator validatorId="nameValidator"/>
+                        <f:converter converterId="nameConverter"/>
                     </h:inputText><br/>
                     <h:outputText rendered="#{sClass.id eq editSClass.id}" value="&#160;"/>
                     <h:message for="editName" style="color:darkred;" title=""/>
@@ -68,12 +69,12 @@
                         #{msg.Action}
                     </f:facet>
                     <h:commandButton value="#{msg.Detail}" action="#{sClassBean.moveToDetailPage(sClass.id)}">
-                        <f:ajax execute="sClassId" render="@all" />
+                        <f:ajax execute="sClassId" render="listForm" />
                     </h:commandButton>
 
                     <h:commandButton rendered="#{sClass.id ne editSClass.id}" value="#{msg.Edit}"
                                      action="#{sClassBean.getEdit(sClass.id)}">
-                        <f:ajax execute="@form" render="@form"/>
+                        <f:ajax execute="sClassId" render="listForm"/>
                     </h:commandButton>
 
                     <h:commandButton rendered="#{sClass.id eq editSClass.id}" immediate="true"
@@ -103,6 +104,7 @@
             <br/>
             <h:outputLabel>#{msg.ClassName}: </h:outputLabel>
             <h:inputText id="name" required="true" requiredMessage="  Name required!" value="#{newSClass.name}">
+                <f:converter converterId="nameConverter"/>
                 <f:validateRequired/>
             </h:inputText>
             <h:message for="name" style="color: darkred"/>
