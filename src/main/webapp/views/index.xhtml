@@ -10,24 +10,36 @@
 </h:head>
 <h:body>
     <h:form>
-        <h:commandButton rendered="#{homeBean.locale eq 'vn'}" action="#{homeBean.changeLanguage('en')}" value="English" >
-                <f:ajax render="@all" />
+        <h:commandButton rendered="#{homeBean.locale eq 'vn'}" action="#{homeBean.changeLanguage('en')}"
+                         value="English">
+            <f:ajax render="@all"/>
         </h:commandButton>
-        <h:commandButton rendered="#{homeBean.locale eq 'en'}" action="#{homeBean.changeLanguage('vn')}" value="Tiếng Việt" >
-                <f:ajax render="@all"/>
+        <h:commandButton rendered="#{homeBean.locale eq 'en'}" action="#{homeBean.changeLanguage('vn')}"
+                         value="Tiếng Việt">
+            <f:ajax render="@all"/>
         </h:commandButton>
         <br/>
-        <h4><h:outputText value="#{msg['HomeTitle']}"/></h4>
-        <br/><br/>
+        <ui:insert name="pageHeader">
+            <ui:include src="student/listStudent.xhtml" >
 
-        <h:commandButton value="#{msg['ClassManagement']}" action="#{sClassBean.moveToListPage}">
-            <f:ajax render="@all"/>
-        </h:commandButton>
-        <br/><br/>
+            </ui:include>
+            <h4><h:outputText value="#{msg['HomeTitle']}"/></h4>
+            <br/><br/>
+        </ui:insert>
 
-        <h:commandButton value="#{msg['StudentManagement']}" action="#{studentBean.moveToListPage}">
-            <f:ajax render="@all"/>
-        </h:commandButton>
+        <ui:insert name="classManagement">
+            <h:commandButton value="#{msg['ClassManagement']}" action="#{sClassBean.moveToListPage}">
+                <f:ajax render="@all"/>
+            </h:commandButton>
+            <br/><br/>
+        </ui:insert>
+
+        <ui:fragment ></ui:fragment>
+        <ui:insert name="studentManagement">
+            <h:commandButton value="#{msg['StudentManagement']}" action="#{studentBean.moveToListPage}">
+                <f:ajax render="@all"/>
+            </h:commandButton>
+        </ui:insert>
     </h:form>
 </h:body>
 </html>

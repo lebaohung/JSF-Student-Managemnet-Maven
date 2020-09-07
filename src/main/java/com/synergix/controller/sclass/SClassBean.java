@@ -91,7 +91,6 @@ public class SClassBean implements Serializable, IBean<SClass>, IPaging<SClass> 
         return sClassRepo.getAll();
     }
 
-
     @Override
     public List<SClass> getAllByPage() {
         return sClassRepo.getAllByPage(page, pageSize);
