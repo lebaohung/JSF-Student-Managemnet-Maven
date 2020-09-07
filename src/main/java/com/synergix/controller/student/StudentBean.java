@@ -151,4 +151,8 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
         if (this.getPage() <= 1) return;
         else this.page--;
     }
+
+    public void test() {
+        System.out.println("test CDI in Validator! ");;
+    }
 }

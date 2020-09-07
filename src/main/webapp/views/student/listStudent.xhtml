@@ -133,8 +133,7 @@
         <h:form id="addNewStudent" rendered="#{newStudent ne null}">
             <br/>
             <h:outputLabel>#{msg.StudentName}: </h:outputLabel>
-            <h:inputText id="sName" required="true" requiredMessage="  Name required!" value="#{newStudent.sName}">
-                <f:validator validatorId="nameValidator"/>
+            <h:inputText id="sName" required="true" requiredMessage="  Name required!" validator="nameValidator" value="#{newStudent.sName}">
                 <f:converter converterId="nameConverter"/>
             </h:inputText>
             <h:message for="sName" style="color: darkred"/>
