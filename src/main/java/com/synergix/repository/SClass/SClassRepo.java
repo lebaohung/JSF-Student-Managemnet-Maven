@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Named(value = "sClassRepo")
-@SessionScoped
 public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<SClass> {
     private static final long serialVersionUID = 1L;
     private static final String SELECT_ALL_CLASSES = "SELECT * FROM sclass ORDER BY id ASC ;";

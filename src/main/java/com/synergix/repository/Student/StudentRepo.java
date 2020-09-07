@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Named
-@SessionScoped
 public class StudentRepo implements Serializable, IStudentRepo, IPagingRepository<Student> {
     private static final long serialVersionUID = 1L;
     private static final String SELECT_ALL_STUDENTS = "SELECT * FROM student ORDER BY id ASC ;";

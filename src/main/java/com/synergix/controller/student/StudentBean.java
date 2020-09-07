@@ -5,6 +5,8 @@ import com.synergix.controller.IPaging;
 import com.synergix.model.Student;
 import com.synergix.repository.Student.StudentRepo;
 
+import javax.enterprise.context.Conversation;
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -16,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Named
-@ViewScoped
+@ConversationScoped
 public class StudentBean implements Serializable, IBean<Student>, IPaging<Student> {
 
     private static final int INIT_PAGE = 1;
@@ -52,12 +54,33 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
     }
 
     @Inject
+    private Conversation conversation;
+
+    @Inject
     private StudentRepo studentRepo;
+
+    public void initConversation() {
+        try {
+            conversation.begin();
+        } catch (Exception e) {
+            System.out.println("Warning! Long-running conversation running!");
+        }
+    }
+
+    public void endConversation() {
+        try {
+            conversation.end();
+        } catch (Exception e) {
+            System.out.println("Warning! Transient conversation cannot end!");
+        }
+    }
 
     @Override
     public String moveToListPage() {
         this.cancelAdd();
         this.cancelEdit();
+        this.endConversation();
+        this.initConversation();
         return "/views/student/listStudent";
     }
 

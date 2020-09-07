@@ -11,11 +11,12 @@
     </h:head>
     <h:body>
         <h:form>
-            <h:commandButton value="&lt;&lt;#{msg.BackHomeButton}" action="/views/index">
+            <h:commandButton value="&lt;&lt; #{msg.BackHomeButton}" action="/views/index">
                 <f:ajax render="@all"/>
             </h:commandButton>
             <h2>#{msg.ClassManagement}</h2>
-            <h:commandButton disabled="#{sClassBean.page le 1}" value="&lt; #{msg.PreviousButton}" action="#{sClassBean.previous}">
+            <h:commandButton disabled="#{sClassBean.page le 1}" value="&lt; #{msg.PreviousButton}"
+                             action="#{sClassBean.previous}">
                 <f:ajax render="@all"/>
             </h:commandButton>
             <h:outputText value="  #{msg.Page} #{sClassBean.page} / #{sClassBean.pageCount} "/>
@@ -69,7 +70,7 @@
                         #{msg.Action}
                     </f:facet>
                     <h:commandButton value="#{msg.Detail}" action="#{sClassBean.moveToDetailPage(sClass.id)}">
-                        <f:ajax execute="sClassId" render="listForm" />
+                        <f:ajax execute="sClassId" render="listForm"/>
                     </h:commandButton>
 
                     <h:commandButton rendered="#{sClass.id ne editSClass.id}" value="#{msg.Edit}"
@@ -100,23 +101,25 @@
             </h:commandButton>
         </h:form>
 
-        <h:form id="addNewClass" rendered="#{newSClass.id ne null}">
-            <br/>
-            <h:outputLabel>#{msg.ClassName}: </h:outputLabel>
-            <h:inputText id="name" required="true" requiredMessage="  Name required!" value="#{newSClass.name}">
-                <f:converter converterId="nameConverter"/>
-                <f:validateRequired/>
-            </h:inputText>
-            <h:message for="name" style="color: darkred"/>
+        <div id="addNewClass">
+            <h:form rendered="#{newSClass.id ne null}">
+                <br/>
+                <h:outputLabel>#{msg.ClassName}: </h:outputLabel>
+                <h:inputText id="name" required="true" requiredMessage="  Name required!" value="#{newSClass.name}">
+                    <f:converter converterId="nameConverter"/>
+                    <f:validateRequired/>
+                </h:inputText>
+                <h:message for="name" style="color: darkred"/>
 
-            <br/>
-            <h:commandButton immediate="true" action="#{sClassBean.cancelAdd}" value="#{msg.Cancel}">
-                <f:ajax render="@all"/>
-            </h:commandButton>
-            <h:commandButton action="#{sClassBean.save(newSClass)}" value="#{msg.Save}">
-                <f:ajax execute="addNewClass" render="@all"/>
-            </h:commandButton>
-        </h:form>
+                <br/>
+                <h:commandButton immediate="true" action="#{sClassBean.cancelAdd}" value="#{msg.Cancel}">
+                    <f:ajax render="@all"/>
+                </h:commandButton>
+                <h:commandButton value="#{msg.Save}" action="#{sClassBean.save(newSClass)}">
+                    <f:ajax execute="name" render="@all"/>
+                </h:commandButton>
+            </h:form>
+        </div>
     </h:body>
 </f:view>
 </html>
