@@ -6,6 +6,9 @@ import com.synergix.model.SClass;
 import com.synergix.model.Student;
 import com.synergix.repository.SClass.SClassRepo;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
@@ -22,9 +25,14 @@ import java.util.Map;
 @ConversationScoped
 public class SClassBean implements Serializable, IBean<SClass>, IPaging<SClass> {
 
+    @Inject
+    private Conversation conversation;
+
+    @Inject
+    private SClassRepo sClassRepo;
+
     private static final int INIT_PAGE = 1;
     private static final int PAGE_SIZE = 5;
-
     private int page = INIT_PAGE;
     private int pageSize = PAGE_SIZE;
     private int pageCount;
@@ -63,13 +71,18 @@ public class SClassBean implements Serializable, IBean<SClass>, IPaging<SClass> 
         this.studentInClassList = studentInClassList;
     }
 
-    @Inject
-    private SClassRepo sClassRepo;
+    public void initConversation() {
+        if (conversation.isTransient()) {
+            conversation.begin();
+        }
+    }
 
     @Override
     public String moveToListPage() {
         this.cancelAdd();
         this.cancelEdit();
+        this.closeConversation();
+        this.initConversation();
         return "/views/sclass/listSClass";
     }
 
@@ -77,6 +90,7 @@ public class SClassBean implements Serializable, IBean<SClass>, IPaging<SClass> 
     public List<SClass> getAll() {
         return sClassRepo.getAll();
     }
+
 
     @Override
     public List<SClass> getAllByPage() {
@@ -89,10 +103,13 @@ public class SClassBean implements Serializable, IBean<SClass>, IPaging<SClass> 
         sessionMap.put("newSClass", new SClass());
     }
 
+    private SClass sClass = null;
+
     @Override
     public void getEdit(Integer sClassId) {
+        sClass = sClassRepo.getById(sClassId);
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("editSClass", sClassRepo.getById(sClassId));
+        sessionMap.put("editSClass", sClass);
     }
 
     @Override
@@ -147,5 +164,9 @@ public class SClassBean implements Serializable, IBean<SClass>, IPaging<SClass> 
     public String moveToDetailPage(Integer sClassId) {
         this.setStudentInClassList(sClassRepo.getStudentsByClassId(sClassId));
         return "/views/sclass/classDetail";
+    }
+
+    public void closeConversation() {
+        if (!conversation.isTransient()) conversation.end();
     }
 }
