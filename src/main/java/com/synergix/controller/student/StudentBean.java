@@ -7,16 +7,16 @@ import com.synergix.repository.Student.StudentRepo;
 
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Named
 @ConversationScoped
@@ -28,7 +28,9 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
     private int page = INIT_PAGE;
     private int pageSize = PAGE_SIZE;
     private int pageCount;
-    private List<Integer> deleteStudentId = new ArrayList<>();
+    private List<Integer> selectedStudentList = new ArrayList<>();
+    private Map<Integer, Boolean> selectedStudentMap = new HashMap<>();
+    private StringBuilder deleteExceptionMessage;
 
     public int getPage() {
         return page;
@@ -46,8 +48,16 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
         this.pageSize = pageSize;
     }
 
+    public StringBuilder getDeleteExceptionMessage() {
+        return deleteExceptionMessage;
+    }
+
+    public void setDeleteExceptionMessage(String s) {
+        this.deleteExceptionMessage.append(s);
+    }
+
     public int getPageCount() {
-        this.pageCount = (int) Math.ceil( this.count() / (double) pageSize );
+        this.pageCount = (int) Math.ceil(this.count() / (double) pageSize);
         return pageCount;
     }
 
@@ -55,18 +65,43 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
         this.pageCount = pageCount;
     }
 
-    public List<Integer> getDeleteStudentId() {
-        return deleteStudentId;
+    public List<Integer> getSelectedStudentList() {
+        this.selectedStudentList = this.getSelectedStudentMap().entrySet().stream()
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+        return selectedStudentList;
     }
 
-    public void setDeleteStudentId(List<Integer> deleteStudentId) {
-        this.deleteStudentId = deleteStudentId;
+    public void setSelectedStudentList(List<Integer> selectedStudentList) {
+        this.selectedStudentList = selectedStudentList;
     }
 
-    public void test() {
-        for (Integer i : deleteStudentId) {
-            System.out.println("Delete list: " + i);
+    public Map<Integer, Boolean> getSelectedStudentMap() {
+        return selectedStudentMap;
+    }
+
+    public void setSelectedStudentMap(Map<Integer, Boolean> selectedStudentMap) {
+        this.selectedStudentMap = selectedStudentMap;
+    }
+
+    public void deleteSelectedStudent() {
+        List<Integer> cannotDeleteStudentId = new ArrayList<>();
+        for (Integer studentId : this.getSelectedStudentList()) {
+            try {
+                studentRepo.delete(studentId);
+            } catch (SQLException e) {
+                cannotDeleteStudentId.add(studentId);
+            }
         }
+        if (!cannotDeleteStudentId.isEmpty()) {
+            this.setDeleteExceptionMessage("Cannot delete Student ID: ");
+            for (int i = 0; i < cannotDeleteStudentId.size(); i++) {
+                if (i == cannotDeleteStudentId.size() - 1) this.setDeleteExceptionMessage(String.valueOf(i));
+                else this.setDeleteExceptionMessage(i + ", ");
+            }
+        }
+        this.selectedStudentMap.clear();
     }
 
     @Inject
@@ -153,7 +188,7 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
 
     @Override
     public void delete(Integer studentId) {
-        studentRepo.delete(studentId);
+        return;
     }
 
     public int count() {
@@ -171,5 +206,4 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
         if (this.getPage() <= 1) return;
         else this.page--;
     }
-
 }

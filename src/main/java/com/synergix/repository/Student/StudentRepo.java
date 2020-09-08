@@ -173,15 +173,11 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
     }
 
     @Override
-    public void delete(Integer studentId) {
-        try (
-                Connection connection = JdbcConnection.getConnection();
-        ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_STUDENT);
-            preparedStatement.setInt(1, studentId);
-            preparedStatement.executeUpdate();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+    public void delete(Integer studentId) throws SQLException {
+        Connection connection = JdbcConnection.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(DELETE_STUDENT);
+        preparedStatement.setInt(1, studentId);
+        preparedStatement.executeUpdate();
+
     }
 }
