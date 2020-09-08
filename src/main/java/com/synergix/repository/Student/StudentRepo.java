@@ -8,10 +8,7 @@ import com.synergix.repository.JdbcConnection;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,7 +105,11 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
             preparedStatement.setString(1, student.getsName());
             preparedStatement.setString(2, student.getEmail());
             preparedStatement.setString(3, student.getPhone());
-            preparedStatement.setInt(4, student.getsClassId());
+            if (student.getsClassId() != null) {
+                preparedStatement.setInt(4, student.getsClassId());
+            } else {
+                preparedStatement.setNull(4, java.sql.Types.NULL);
+            }
             preparedStatement.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -160,7 +161,11 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
             preparedStatement.setString(2, student.getEmail());
             preparedStatement.setString(3, student.getPhone());
             preparedStatement.setInt(5, student.getId());
-            preparedStatement.setInt(4, student.getsClassId());
+            if (student.getsClassId() != null) {
+                preparedStatement.setInt(4, student.getsClassId());
+            } else {
+                preparedStatement.setNull(4, Types.NULL);
+            }
             preparedStatement.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();

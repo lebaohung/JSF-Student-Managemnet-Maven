@@ -1,6 +1,7 @@
 package com.synergix.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 public class Student implements Serializable {
 
@@ -8,24 +9,27 @@ public class Student implements Serializable {
     private String sName;
     private String email;
     private String phone;
-    private int sClassId;
+    private Integer sClassId;
+    private LocalDate birthday;
 
     public Student() {
     }
 
-    public Student(String sName, String email, String phone, int sClassId) {
+    public Student(String sName, String email, String phone, int sClassId, LocalDate birthday) {
         this.sName = sName;
         this.email = email;
         this.phone = phone;
         this.sClassId = sClassId;
+        this.birthday = birthday;
     }
 
-    public Student(int id, String sName, String email, String phone, int sClassId) {
+    public Student(int id, String sName, String email, String phone, int sClassId, LocalDate birthday) {
         this.id = id;
         this.sName = sName;
         this.email = email;
         this.phone = phone;
         this.sClassId = sClassId;
+        this.birthday = birthday;
     }
 
     public int getId() {
@@ -60,11 +64,19 @@ public class Student implements Serializable {
         this.phone = phone;
     }
 
-    public int getsClassId() {
+    public Integer getsClassId() {
         return sClassId;
     }
 
-    public void setsClassId(int sClassId) {
+    public void setsClassId(Integer sClassId) {
         this.sClassId = sClassId;
+    }
+
+    public LocalDate getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
     }
 }

@@ -4,7 +4,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
 <f:view locale="#{homeBean.locale}">
     <h:head>
         <title>#{msg.StudentManagement}</title>
@@ -25,7 +26,6 @@
                 <f:ajax render="@all"/>
             </h:commandButton>
         </h:form>
-
 
         <h:form id="listForm">
             <h:dataTable binding="#{listStudentTable}" value="#{studentBean.allByPage}" var="student">
@@ -91,6 +91,7 @@
                     <h:outputText rendered="#{student.id ne editStudent.id}"
                                   value="#{sClassRepo.getById(student.sClassId).name}"/>
                     <h:selectOneMenu rendered="#{student.id eq editStudent.id}" value="#{editStudent.sClassId}">
+                        <f:selectItem itemLabel="Select Student Class" noSelectionOption="true" itemValue="#{null}" />
                         <f:selectItems value="#{sClassRepo.all}" var="sClass" itemValue="#{sClass.id}"
                                        itemLabel="#{sClass.name}"/>
                     </h:selectOneMenu>
@@ -101,7 +102,10 @@
                     <f:facet name="header">
                         #{msg.Action}
                     </f:facet>
-                    <h:commandButton rendered="#{student.id ne editStudent.id}" value="#{msg.Edit}"
+                    <h:selectBooleanCheckbox value="#{student.id}" >
+                        <f:ajax execute="@this" />
+                    </h:selectBooleanCheckbox>
+                    <h:commandButton  rendered="#{student.id ne editStudent.id}" value="#{msg.Edit}"
                                      action="#{studentBean.getEdit(student.id)}">
                         <f:ajax execute="@form" render="@form"/>
                     </h:commandButton>
@@ -128,12 +132,15 @@
             <h:commandButton value="#{msg.AddStudent}" action="#{studentBean.create()}">
                 <f:ajax render="@all"/>
             </h:commandButton>
+            <h:commandButton value="test" action="#{studentBean.test}" />
+
         </h:form>
+
 
         <h:form id="addNewStudent" rendered="#{newStudent ne null}">
             <br/>
             <h:outputLabel>#{msg.StudentName}: </h:outputLabel>
-            <h:inputText id="sName" required="true" requiredMessage="  Name required!" validator="nameValidator" value="#{newStudent.sName}">
+            <h:inputText id="sName" required="true" requiredMessage="  Name required!" validator="nameValidator" value="#{newStudent.sName}" >
                 <f:converter converterId="nameConverter"/>
             </h:inputText>
             <h:message for="sName" style="color: darkred"/>
@@ -156,6 +163,7 @@
 
             <h:outputLabel>#{msg.StudentClass}: </h:outputLabel>
             <h:selectOneMenu value="#{newStudent.sClassId}">
+                <f:selectItem noSelectionOption="false" itemLabel="Select class"/>
                 <f:selectItems value="#{sClassRepo.all}" var="sClass" itemValue="#{sClass.id}"
                                itemLabel="#{sClass.name}"/>
             </h:selectOneMenu>

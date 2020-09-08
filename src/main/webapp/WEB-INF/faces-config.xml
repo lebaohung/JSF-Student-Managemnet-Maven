@@ -5,7 +5,7 @@
     http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
     <application>
         <locale-config>
-            <default-locale>en</default-locale>
+            <default-locale>vn</default-locale>
             <supported-locale>en</supported-locale>
             <supported-locale>vn</supported-locale>
         </locale-config>

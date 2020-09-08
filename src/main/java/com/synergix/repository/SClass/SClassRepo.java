@@ -113,6 +113,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
 
     @Override
     public SClass getById(Integer classId) {
+        if (classId == null) return null;
         SClass sClass = new SClass();
         try (
                 Connection connection = JdbcConnection.getConnection();
@@ -128,7 +129,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
                 sClass.setId(resultSet.getInt(2));
             }
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            System.out.println("Exception at sClassRepo getByID()");
         }
         return sClass;
     }

@@ -14,6 +14,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
     private int page = INIT_PAGE;
     private int pageSize = PAGE_SIZE;
     private int pageCount;
+    private List<Integer> deleteStudentId = new ArrayList<>();
 
     public int getPage() {
         return page;
@@ -51,6 +53,20 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
 
     public void setPageCount(int pageCount) {
         this.pageCount = pageCount;
+    }
+
+    public List<Integer> getDeleteStudentId() {
+        return deleteStudentId;
+    }
+
+    public void setDeleteStudentId(List<Integer> deleteStudentId) {
+        this.deleteStudentId = deleteStudentId;
+    }
+
+    public void test() {
+        for (Integer i : deleteStudentId) {
+            System.out.println("Delete list: " + i);
+        }
     }
 
     @Inject
@@ -98,7 +114,7 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
     @Override
     public void create() {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("newStudent", new Student(null, null, null, 0));
+        sessionMap.put("newStudent", new Student());
     }
 
     @Override
@@ -115,7 +131,9 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
 
     @Override
     public void save(Student student) {
-        studentRepo.save(student);
+        if (student != null) {
+            studentRepo.save(student);
+        }
         this.cancelAdd();
     }
 
@@ -127,7 +145,9 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
 
     @Override
     public void update(Student student) {
-        studentRepo.update(student);
+        if (student != null) {
+            studentRepo.update(student);
+        }
         this.cancelEdit();
     }
 
@@ -151,4 +171,5 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
         if (this.getPage() <= 1) return;
         else this.page--;
     }
+
 }

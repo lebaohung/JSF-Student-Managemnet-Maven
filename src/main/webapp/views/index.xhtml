@@ -20,9 +20,6 @@
         </h:commandButton>
         <br/>
         <ui:insert name="pageHeader">
-            <ui:include src="student/listStudent.xhtml" >
-
-            </ui:include>
             <h4><h:outputText value="#{msg['HomeTitle']}"/></h4>
             <br/><br/>
         </ui:insert>
@@ -34,7 +31,6 @@
             <br/><br/>
         </ui:insert>
 
-        <ui:fragment ></ui:fragment>
         <ui:insert name="studentManagement">
             <h:commandButton value="#{msg['StudentManagement']}" action="#{studentBean.moveToListPage}">
                 <f:ajax render="@all"/>
