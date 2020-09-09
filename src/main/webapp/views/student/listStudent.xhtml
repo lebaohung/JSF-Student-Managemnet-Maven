@@ -86,23 +86,10 @@
 
                 <h:column>
                     <f:facet name="header">
-                        #{msg.StudentClass}
-                    </f:facet>
-                    <h:outputText rendered="#{student.id ne editStudent.id}"
-                                  value="#{sClassRepo.getById(student.sClassId).name}"/>
-                    <h:selectOneMenu rendered="#{student.id eq editStudent.id}" value="#{editStudent.sClassId}">
-                        <f:selectItem itemLabel="Select Student Class" noSelectionOption="true" itemValue="#{null}" />
-                        <f:selectItems value="#{sClassRepo.all}" var="sClass" itemValue="#{sClass.id}"
-                                       itemLabel="#{sClass.name}"/>
-                    </h:selectOneMenu>
-                    <h:outputText rendered="#{student.id eq editStudent.id}" value="&#160;"/>
-                </h:column>
-
-                <h:column>
-                    <f:facet name="header">
                         #{msg.Action}
                     </f:facet>
                     <h:selectBooleanCheckbox value="#{studentBean.selectStudentMap[student.id]}" >
+                        <f:ajax execute="@this" render="@form"/>
                     </h:selectBooleanCheckbox>
                     <h:commandButton  rendered="#{student.id ne editStudent.id}" value="#{msg.Edit}"
                                      action="#{studentBean.getEdit(student.id)}">
@@ -126,7 +113,8 @@
             <h:commandButton value="#{msg.AddStudent}" action="#{studentBean.create()}">
                 <f:ajax render="@all"/>
             </h:commandButton>
-            <h:commandButton value="Delete selected" action="#{studentBean.deleteSelectStudents}" >
+
+            <h:commandButton value="Delete selected" disabled="#{studentBean.selectStudentList.isEmpty()}" action="#{studentBean.deleteSelectStudents}" >
                 <f:ajax execute="@form" render="@form"/>
             </h:commandButton>
         </h:form>
@@ -154,13 +142,6 @@
             </h:inputText>
             <h:message for="phone" style="color: darkred"/>
             <br/><br/>
-
-            <h:outputLabel>#{msg.StudentClass}: </h:outputLabel>
-            <h:selectOneMenu value="#{newStudent.sClassId}">
-                <f:selectItem noSelectionOption="false" itemLabel="Select class"/>
-                <f:selectItems value="#{sClassRepo.all}" var="sClass" itemValue="#{sClass.id}"
-                               itemLabel="#{sClass.name}"/>
-            </h:selectOneMenu>
 
             <h:commandButton immediate="true" action="#{studentBean.cancelAdd}" value="#{msg.Cancel}">
                 <f:ajax render="@all"/>

@@ -88,11 +88,6 @@
                         <f:ajax execute="@form" render="@form"/>
                     </h:commandButton>
                     <br/>
-
-                    <h:commandButton value="#{msg.Delete}" action="#{sClassBean.delete(sClass.id)}"
-                                     onclick="return confirm('#{msg.PermanentlyDeleteClass}')">
-                        <f:ajax execute="@all" render="@form"/>
-                    </h:commandButton>
                 </h:column>
             </h:dataTable>
 

@@ -38,14 +38,6 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
         this.page = page;
     }
 
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
     public int getPageCount() {
         this.pageCount = (int) Math.ceil(this.count() / (double) pageSize);
         return pageCount;
@@ -62,23 +54,12 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
                 .collect(Collectors.toList());
     }
 
-    public void setSelectStudentList(List<Integer> selectStudentList) {
-        this.selectStudentList = selectStudentList;
-    }
-
     public Map<Integer, Boolean> getSelectStudentMap() {
         return selectStudentMap;
     }
 
     public void setSelectStudentMap(Map<Integer, Boolean> selectStudentMap) {
         this.selectStudentMap = selectStudentMap;
-    }
-
-    public void deleteSelectStudents() {
-        for (Integer studentId : this.getSelectStudentList()) {
-            studentRepo.delete(studentId);
-        }
-        this.selectStudentMap.clear();
     }
 
     @Inject
@@ -109,6 +90,7 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
         this.cancelEdit();
         this.endConversation();
         this.initConversation();
+        conversation.setTimeout(36000000);
         return "/views/student/listStudent";
     }
 
@@ -166,6 +148,13 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
     @Override
     public void delete(Integer studentId) {
         studentRepo.delete(studentId);
+    }
+
+    public void deleteSelectStudents() {
+        for (Integer studentId : this.getSelectStudentList()) {
+            studentRepo.delete(studentId);
+        }
+        this.selectStudentMap.clear();
     }
 
     public int count() {
