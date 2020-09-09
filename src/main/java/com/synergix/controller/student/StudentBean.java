@@ -7,16 +7,15 @@ import com.synergix.repository.Student.StudentRepo;
 
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Named
 @ConversationScoped
@@ -28,7 +27,8 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
     private int page = INIT_PAGE;
     private int pageSize = PAGE_SIZE;
     private int pageCount;
-    private List<Integer> deleteStudentId = new ArrayList<>();
+    private List<Integer> selectStudentList = new ArrayList<>();
+    private Map<Integer, Boolean> selectStudentMap = new HashMap<>();
 
     public int getPage() {
         return page;
@@ -47,7 +47,7 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
     }
 
     public int getPageCount() {
-        this.pageCount = (int) Math.ceil( this.count() / (double) pageSize );
+        this.pageCount = (int) Math.ceil(this.count() / (double) pageSize);
         return pageCount;
     }
 
@@ -55,18 +55,30 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
         this.pageCount = pageCount;
     }
 
-    public List<Integer> getDeleteStudentId() {
-        return deleteStudentId;
+    public List<Integer> getSelectStudentList() {
+        return this.selectStudentMap.entrySet().stream()
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
-    public void setDeleteStudentId(List<Integer> deleteStudentId) {
-        this.deleteStudentId = deleteStudentId;
+    public void setSelectStudentList(List<Integer> selectStudentList) {
+        this.selectStudentList = selectStudentList;
     }
 
-    public void test() {
-        for (Integer i : deleteStudentId) {
-            System.out.println("Delete list: " + i);
+    public Map<Integer, Boolean> getSelectStudentMap() {
+        return selectStudentMap;
+    }
+
+    public void setSelectStudentMap(Map<Integer, Boolean> selectStudentMap) {
+        this.selectStudentMap = selectStudentMap;
+    }
+
+    public void deleteSelectStudents() {
+        for (Integer studentId : this.getSelectStudentList()) {
+            studentRepo.delete(studentId);
         }
+        this.selectStudentMap.clear();
     }
 
     @Inject
@@ -171,5 +183,4 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
         if (this.getPage() <= 1) return;
         else this.page--;
     }
-
 }

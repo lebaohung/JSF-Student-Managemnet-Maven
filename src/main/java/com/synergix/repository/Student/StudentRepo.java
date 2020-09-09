@@ -182,6 +182,7 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
             preparedStatement.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            System.out.println("Cannot delete student have ID: " + studentId);
         }
     }
 }

@@ -102,8 +102,7 @@
                     <f:facet name="header">
                         #{msg.Action}
                     </f:facet>
-                    <h:selectBooleanCheckbox value="#{student.id}" >
-                        <f:ajax execute="@this" />
+                    <h:selectBooleanCheckbox value="#{studentBean.selectStudentMap[student.id]}" >
                     </h:selectBooleanCheckbox>
                     <h:commandButton  rendered="#{student.id ne editStudent.id}" value="#{msg.Edit}"
                                      action="#{studentBean.getEdit(student.id)}">
@@ -121,21 +120,16 @@
                         <f:ajax execute="@form" render="@form"/>
                     </h:commandButton>
                     <br/>
-
-                    <h:commandButton value="#{msg.Delete}" action="#{studentBean.delete(student.id)}"
-                                     onclick="return confirm('#{msg.PermanentlyDeleteStudent}')">
-                        <f:ajax execute="@all" render="@form"/>
-                    </h:commandButton>
                 </h:column>
             </h:dataTable>
 
             <h:commandButton value="#{msg.AddStudent}" action="#{studentBean.create()}">
                 <f:ajax render="@all"/>
             </h:commandButton>
-            <h:commandButton value="test" action="#{studentBean.test}" />
-
+            <h:commandButton value="Delete selected" action="#{studentBean.deleteSelectStudents}" >
+                <f:ajax execute="@form" render="@form"/>
+            </h:commandButton>
         </h:form>
-
 
         <h:form id="addNewStudent" rendered="#{newStudent ne null}">
             <br/>
