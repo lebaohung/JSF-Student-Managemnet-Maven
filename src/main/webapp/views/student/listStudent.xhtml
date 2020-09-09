@@ -131,7 +131,7 @@
             <h:commandButton value="#{msg.AddStudent}" action="#{studentBean.create()}">
                 <f:ajax render="@all"/>
             </h:commandButton>
-            <h:commandButton value="Delete selected" action="#{studentBean.deleteSelectedStudent}"
+            <h:commandButton value="Delete selected" disabled="#{studentBean.selectedStudentMap.isEmpty()}" action="#{studentBean.deleteSelectedStudent}"
                              onclick="return confirm('#{msg.PermanentlyDeleteStudent}')">
                 <f:ajax execute="@form" render="@all"/>
             </h:commandButton>
