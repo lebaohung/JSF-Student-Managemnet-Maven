@@ -40,14 +40,6 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
         this.page = page;
     }
 
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
     public StringBuilder getDeleteExceptionMessage() {
         return deleteExceptionMessage;
     }
@@ -73,35 +65,12 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
         return selectedStudentList;
     }
 
-    public void setSelectedStudentList(List<Integer> selectedStudentList) {
-        this.selectedStudentList = selectedStudentList;
-    }
-
     public Map<Integer, Boolean> getSelectedStudentMap() {
         return selectedStudentMap;
     }
 
     public void setSelectedStudentMap(Map<Integer, Boolean> selectedStudentMap) {
         this.selectedStudentMap = selectedStudentMap;
-    }
-
-    public void deleteSelectedStudent() {
-        List<Integer> cannotDeleteStudentId = new ArrayList<>();
-        for (Integer studentId : this.getSelectedStudentList()) {
-            try {
-                studentRepo.delete(studentId);
-            } catch (SQLException e) {
-                cannotDeleteStudentId.add(studentId);
-            }
-        }
-        if (!cannotDeleteStudentId.isEmpty()) {
-            this.setDeleteExceptionMessage("Cannot delete Student ID: ");
-            for (int i = 0; i < cannotDeleteStudentId.size(); i++) {
-                if (i == cannotDeleteStudentId.size() - 1) this.setDeleteExceptionMessage(String.valueOf(i));
-                else this.setDeleteExceptionMessage(i + ", ");
-            }
-        }
-        this.selectedStudentMap.clear();
     }
 
     @Inject
@@ -132,6 +101,7 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
         this.cancelEdit();
         this.endConversation();
         this.initConversation();
+        conversation.setTimeout(36000000);
         return "/views/student/listStudent";
     }
 
@@ -205,5 +175,24 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
     public void previous() {
         if (this.getPage() <= 1) return;
         else this.page--;
+    }
+
+    public void deleteSelectedStudent() {
+        List<Integer> cannotDeleteStudentId = new ArrayList<>();
+        for (Integer studentId : this.getSelectedStudentList()) {
+            try {
+                studentRepo.delete(studentId);
+            } catch (SQLException e) {
+                cannotDeleteStudentId.add(studentId);
+            }
+        }
+        if (!cannotDeleteStudentId.isEmpty()) {
+            this.setDeleteExceptionMessage("Cannot delete Student ID: ");
+            for (int i = 0; i < cannotDeleteStudentId.size(); i++) {
+                if (i == cannotDeleteStudentId.size() - 1) this.setDeleteExceptionMessage(String.valueOf(i));
+                else this.setDeleteExceptionMessage(i + ", ");
+            }
+        }
+        this.selectedStudentMap.clear();
     }
 }

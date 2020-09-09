@@ -55,7 +55,7 @@ public class SClassBean implements Serializable, IBean<SClass>, IPaging<SClass> 
     }
 
     public int getPageCount() {
-        this.pageCount = (int) Math.ceil( this.count() / (double) pageSize );
+        this.pageCount = (int) Math.ceil(this.count() / (double) pageSize);
         return pageCount;
     }
 
