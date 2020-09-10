@@ -88,10 +88,10 @@
                     <f:facet name="header">
                         #{msg.Action}
                     </f:facet>
-                    <h:selectBooleanCheckbox value="#{studentBean.selectStudentMap[student.id]}" >
+                    <h:selectBooleanCheckbox value="#{studentBean.selectedStudentMap[student.id]}">
                         <f:ajax execute="@this" render="@form"/>
                     </h:selectBooleanCheckbox>
-                    <h:commandButton  rendered="#{student.id ne editStudent.id}" value="#{msg.Edit}"
+                    <h:commandButton rendered="#{student.id ne editStudent.id}" value="#{msg.Edit}"
                                      action="#{studentBean.getEdit(student.id)}">
                         <f:ajax execute="@form" render="@form"/>
                     </h:commandButton>
@@ -114,15 +114,20 @@
                 <f:ajax render="@all"/>
             </h:commandButton>
 
-            <h:commandButton value="Delete selected" disabled="#{studentBean.selectStudentList.isEmpty()}" action="#{studentBean.deleteSelectStudents}" >
+            <h:commandButton value="Delete selected" disabled="#{studentBean.selectedStudentMap.isEmpty()}"
+                             action="#{studentBean.deleteSelectedStudent}"
+                             onclick="return confirm('#{msg.PermanentlyDeleteStudent}')">
                 <f:ajax execute="@form" render="@form"/>
             </h:commandButton>
+            <h:outputText rendered="#{studentBean.deleteExceptionMessage ne null}"
+                          value="#{studentBean.deleteExceptionMessage}"/>
         </h:form>
 
         <h:form id="addNewStudent" rendered="#{newStudent ne null}">
             <br/>
             <h:outputLabel>#{msg.StudentName}: </h:outputLabel>
-            <h:inputText id="sName" required="true" requiredMessage="  Name required!" validator="nameValidator" value="#{newStudent.sName}" >
+            <h:inputText id="sName" required="true" requiredMessage="  Name required!" validator="nameValidator"
+                         value="#{newStudent.sName}">
                 <f:converter converterId="nameConverter"/>
             </h:inputText>
             <h:message for="sName" style="color: darkred"/>
@@ -131,7 +136,7 @@
             <h:outputLabel>#{msg.StudentEmail}: </h:outputLabel>
             <h:inputText required="false" id="email" value="#{newStudent.email}">
                 <f:validator validatorId="emailValidator"/>
-                <f:converter converterId="emailConverter" />
+                <f:converter converterId="emailConverter"/>
             </h:inputText>
             <h:message for="email" style="color: darkred"/>
             <br/><br/>

@@ -1,5 +1,6 @@
 package com.synergix.repository;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface IRepository<T> {
@@ -11,5 +12,5 @@ public interface IRepository<T> {
 
     void update(T model);
 
-    void delete(Integer id);
+    void delete(Integer id) throws SQLException;
 }
