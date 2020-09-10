@@ -7,154 +7,151 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
 <f:view locale="#{homeBean.locale}">
-    <h:head>
-        <title>#{msg.StudentManagement}</title>
-    </h:head>
     <h:body>
-        <h:form>
-            <h:commandButton value="&lt;&lt; #{msg.BackHomeButton}" action="/views/index">
-                <f:ajax render="@all"/>
-            </h:commandButton>
-            <h2>#{msg.StudentManagement}</h2>
-            <h:commandButton disabled="#{studentBean.page le 1}" value="&lt; #{msg.PreviousButton}"
-                             action="#{studentBean.previous}">
-                <f:ajax render="@all"/>
-            </h:commandButton>
-            <h:outputText value="  #{msg.Page} #{studentBean.page} / #{studentBean.pageCount} "/>
-            <h:commandButton disabled="#{studentBean.page ge studentBean.pageCount}" value="&gt; #{msg.NextButton}"
-                             action="#{studentBean.next}">
-                <f:ajax render="@all"/>
-            </h:commandButton>
-        </h:form>
+        <ui:composition>
+            <h:form >
+                <h2>#{msg.StudentManagement}</h2>
+                <h:commandButton disabled="#{studentBean.page le 1}" value="&lt; #{msg.PreviousButton}"
+                                 action="#{studentBean.previous}">
+                    <f:ajax render="@all"/>
+                </h:commandButton>
+                <h:outputText value="  #{msg.Page} #{studentBean.page} / #{studentBean.pageCount} "/>
+                <h:commandButton disabled="#{studentBean.page ge studentBean.pageCount}" value="&gt; #{msg.NextButton}"
+                                 action="#{studentBean.next}">
+                    <f:ajax render="@all"/>
+                </h:commandButton>
 
-        <h:form id="listForm">
-            <h:dataTable binding="#{listStudentTable}" value="#{studentBean.allByPage}" var="student">
+                <h:dataTable binding="#{listStudentTable}" value="#{studentBean.allByPage}" var="student">
 
-                <h:column>
-                    <f:facet name="header">
-                        #{msg.No}
-                    </f:facet>
-                    #{listStudentTable.rowIndex + 1}
-                </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            #{msg.No}
+                        </f:facet>
+                        #{listStudentTable.rowIndex + 1}
+                    </h:column>
 
-                <h:column>
-                    <f:facet name="header">
-                        #{msg.StudentID}
-                    </f:facet>
-                    <h:outputText value="#{student.id}"/>
-                    <h:outputText rendered="#{student.id eq editStudent.id}" value="&#160;"/>
-                </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            #{msg.StudentID}
+                        </f:facet>
+                        <h:outputText value="#{student.id}"/>
+                        <h:outputText rendered="#{student.id eq editStudent.id}" value="&#160;"/>
+                    </h:column>
 
-                <h:column>
-                    <f:facet name="header">
-                        #{msg.StudentName}
-                    </f:facet>
-                    <h:outputText rendered="#{student.id ne editStudent.id}" value="#{student.sName}"/>
-                    <h:inputText rendered="#{student.id eq editStudent.id}" id="editSName" required="true"
-                                 requiredMessage="  Name required!" value="#{editStudent.sName}">
-                        <f:validator validatorId="nameValidator"/>
-                        <f:converter converterId="nameConverter"/>
-                    </h:inputText><br/>
-                    <h:outputText rendered="#{student.id eq editStudent.id}" value="&#160;"/>
-                    <h:message for="editSName" style="color:darkred;" title=""/>
-                </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            #{msg.StudentName}
+                        </f:facet>
+                        <h:outputText rendered="#{student.id ne editStudent.id}" value="#{student.sName}"/>
+                        <h:inputText rendered="#{student.id eq editStudent.id}" id="editStudentName" required="true"
+                                     requiredMessage="  Name required!" value="#{editStudent.sName}">
+                            <f:ajax event="change" execute="@this" render="@form"/>
+                            <f:validator validatorId="nameValidator"/>
+                            <f:converter converterId="nameConverter"/>
+                        </h:inputText><br/>
+                        <h:outputText rendered="#{student.id eq editStudent.id}" value="&#160;"/>
+                        <h:message for="editStudentName" style="color:darkred;" title=""/>
+                    </h:column>
 
-                <h:column>
-                    <f:facet name="header">
-                        #{msg.StudentEmail}
-                    </f:facet>
-                    <h:outputText rendered="#{student.id ne editStudent.id}" value="#{student.email}"/>
-                    <h:inputText rendered="#{student.id eq editStudent.id}" id="editEmail" value="#{editStudent.email}">
-                        <f:validator validatorId="emailValidator"/>
-                        <f:converter converterId="emailConverter"/>
-                    </h:inputText><br/>
-                    <h:outputText rendered="#{student.id eq editStudent.id}" value="&#160;"/>
-                    <h:message for="editEmail" style="color:darkred;" title=""/>
-                </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            #{msg.StudentEmail}
+                        </f:facet>
+                        <h:outputText rendered="#{student.id ne editStudent.id}" value="#{student.email}"/>
+                        <h:inputText rendered="#{student.id eq editStudent.id}" id="editEmail"
+                                     value="#{editStudent.email}">
+                            <f:validator validatorId="emailValidator"/>
+                            <f:converter converterId="emailConverter"/>
+                        </h:inputText><br/>
+                        <h:outputText rendered="#{student.id eq editStudent.id}" value="&#160;"/>
+                        <h:message for="editEmail" style="color:darkred;" title=""/>
+                    </h:column>
 
-                <h:column>
-                    <f:facet name="header">
-                        #{msg.StudentPhone}
-                    </f:facet>
-                    <h:outputText rendered="#{student.id ne editStudent.id}" value="#{student.phone}"/>
-                    <h:inputText rendered="#{student.id eq editStudent.id}" id="editPhone" value="#{editStudent.phone}">
-                        <f:validator validatorId="phoneValidator"/>
-                    </h:inputText><br/>
-                    <h:outputText rendered="#{student.id eq editStudent.id}" value="&#160;"/>
-                    <h:message for="editPhone" style="color:darkred;" title=""/>
-                </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            #{msg.StudentPhone}
+                        </f:facet>
+                        <h:outputText rendered="#{student.id ne editStudent.id}" value="#{student.phone}"/>
+                        <h:inputText rendered="#{student.id eq editStudent.id}" id="editPhone"
+                                     value="#{editStudent.phone}">
+                            <f:validator validatorId="phoneValidator"/>
+                        </h:inputText><br/>
+                        <h:outputText rendered="#{student.id eq editStudent.id}" value="&#160;"/>
+                        <h:message for="editPhone" style="color:darkred;" title=""/>
+                    </h:column>
 
-                <h:column>
-                    <f:facet name="header">
-                        #{msg.Action}
-                    </f:facet>
-                    <h:selectBooleanCheckbox value="#{studentBean.selectedStudentMap[student.id]}">
-                        <f:ajax execute="@this" render="@form"/>
-                    </h:selectBooleanCheckbox>
-                    <h:commandButton rendered="#{student.id ne editStudent.id}" value="#{msg.Edit}"
-                                     action="#{studentBean.getEdit(student.id)}">
-                        <f:ajax execute="@form" render="@form"/>
-                    </h:commandButton>
+                    <h:column>
+                        <f:facet name="header">
+                            #{msg.Action}
+                        </f:facet>
+                        <h:selectBooleanCheckbox value="#{studentBean.selectedStudentMap[student.id]}">
+                            <f:ajax execute="@this" render="@form"/>
+                        </h:selectBooleanCheckbox>
+                        <h:commandButton rendered="#{student.id ne editStudent.id}" value="#{msg.Edit}"
+                                         action="#{studentBean.getEdit(student.id)}">
+                            <f:ajax execute="@form" render="@form"/>
+                        </h:commandButton>
 
-                    <h:commandButton rendered="#{student.id eq editStudent.id}" immediate="true"
-                                     action="#{studentBean.cancelEdit()}" value=" #{msg.Cancel}">
-                        <f:ajax execute="@form" render="@form"/>
-                    </h:commandButton>
+                        <h:commandButton rendered="#{student.id eq editStudent.id}" immediate="true"
+                                         action="#{studentBean.cancelEdit()}" value=" #{msg.Cancel}">
+                            <f:ajax execute="@form" render="@form"/>
+                        </h:commandButton>
 
-                    <h:commandButton rendered="#{student.id eq editStudent.id}"
-                                     action="#{studentBean.update(editStudent)}"
-                                     value="#{msg.Update}">
-                        <f:ajax execute="@form" render="@form"/>
-                    </h:commandButton>
-                    <br/>
-                </h:column>
-            </h:dataTable>
+                        <h:commandButton rendered="#{student.id eq editStudent.id}"
+                                         action="#{studentBean.update(editStudent)}"
+                                         value="#{msg.Update}">
+                            <f:ajax execute="@form" render="@form"/>
+                        </h:commandButton>
+                        <br/>
+                    </h:column>
+                </h:dataTable>
 
-            <h:commandButton value="#{msg.AddStudent}" action="#{studentBean.create()}">
-                <f:ajax render="@all"/>
-            </h:commandButton>
+                <h:commandButton value="#{msg.AddStudent}" action="#{studentBean.create()}">
+                    <f:ajax render="@all"/>
+                </h:commandButton>
 
-            <h:commandButton value="Delete selected" disabled="#{studentBean.selectedStudentMap.isEmpty()}"
-                             action="#{studentBean.deleteSelectedStudent}"
-                             onclick="return confirm('#{msg.PermanentlyDeleteStudent}')">
-                <f:ajax execute="@form" render="@form"/>
-            </h:commandButton>
-            <h:outputText rendered="#{studentBean.deleteExceptionMessage ne null}"
-                          value="#{studentBean.deleteExceptionMessage}"/>
-        </h:form>
+                <h:commandButton value="Delete selected" disabled="#{studentBean.selectedStudentMap.isEmpty()}"
+                                 action="#{studentBean.deleteSelectedStudent}"
+                                 onclick="return confirm('#{msg.PermanentlyDeleteStudent}')">
+                    <f:ajax execute="@form" render="@form"/>
+                </h:commandButton>
+                <h:outputText rendered="#{studentBean.deleteExceptionMessage ne null}"
+                              value="#{studentBean.deleteExceptionMessage}"/>
+            </h:form>`
 
-        <h:form id="addNewStudent" rendered="#{newStudent ne null}">
-            <br/>
-            <h:outputLabel>#{msg.StudentName}: </h:outputLabel>
-            <h:inputText id="sName" required="true" requiredMessage="  Name required!" validator="nameValidator"
-                         value="#{newStudent.sName}">
-                <f:converter converterId="nameConverter"/>
-            </h:inputText>
-            <h:message for="sName" style="color: darkred"/>
-            <br/><br/>
+            <h:form id="addNewStudent" rendered="#{newStudent ne null}">
+                <br/>
+                <h:outputLabel>#{msg.StudentName}: </h:outputLabel>
+                <h:inputText id="sName" required="true" requiredMessage="  Name required!" validator="nameValidator"
+                             value="#{newStudent.sName}">
+                    <f:converter converterId="nameConverter"/>
+                </h:inputText>
+                <h:message for="sName" style="color: darkred"/>
+                <br/><br/>
 
-            <h:outputLabel>#{msg.StudentEmail}: </h:outputLabel>
-            <h:inputText required="false" id="email" value="#{newStudent.email}">
-                <f:validator validatorId="emailValidator"/>
-                <f:converter converterId="emailConverter"/>
-            </h:inputText>
-            <h:message for="email" style="color: darkred"/>
-            <br/><br/>
+                <h:outputLabel>#{msg.StudentEmail}: </h:outputLabel>
+                <h:inputText required="false" id="email" value="#{newStudent.email}">
+                    <f:validator validatorId="emailValidator"/>
+                    <f:converter converterId="emailConverter"/>
+                </h:inputText>
+                <h:message for="email" style="color: darkred"/>
+                <br/><br/>
 
-            <h:outputLabel>#{msg.StudentPhone}: </h:outputLabel>
-            <h:inputText required="false" id="phone" value="#{newStudent.phone}">
-                <f:validator validatorId="phoneValidator"/>
-            </h:inputText>
-            <h:message for="phone" style="color: darkred"/>
-            <br/><br/>
+                <h:outputLabel>#{msg.StudentPhone}: </h:outputLabel>
+                <h:inputText required="false" id="phone" value="#{newStudent.phone}">
+                    <f:validator validatorId="phoneValidator"/>
+                </h:inputText>
+                <h:message for="phone" style="color: darkred"/>
+                <br/><br/>
 
-            <h:commandButton immediate="true" action="#{studentBean.cancelAdd}" value="#{msg.Cancel}">
-                <f:ajax render="@all"/>
-            </h:commandButton>
-            <h:commandButton action="#{studentBean.save(newStudent)}" value="#{msg.Save}">
-                <f:ajax execute="addNewStudent" render="@all"/>
-            </h:commandButton>
-        </h:form>
+                <h:commandButton immediate="true" action="#{studentBean.cancelAdd}" value="#{msg.Cancel}">
+                    <f:ajax render="@all"/>
+                </h:commandButton>
+                <h:commandButton action="#{studentBean.save(newStudent)}" value="#{msg.Save}">
+                    <f:ajax execute="addNewStudent" render="@all"/>
+                </h:commandButton>
+            </h:form>
+        </ui:composition>
     </h:body>
 </f:view>
 </html>

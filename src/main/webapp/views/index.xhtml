@@ -19,23 +19,33 @@
             <f:ajax render="@all"/>
         </h:commandButton>
         <br/>
-        <ui:insert name="pageHeader">
-            <h4><h:outputText value="#{msg['HomeTitle']}"/></h4>
-            <br/><br/>
-        </ui:insert>
+        <h4><h:outputText value="#{msg['HomeTitle']}"/></h4>
+        <br/><br/>
 
-        <ui:insert name="classManagement">
-            <h:commandButton value="#{msg['ClassManagement']}" action="#{sClassBean.moveToListPage}">
-                <f:ajax render="@all"/>
-            </h:commandButton>
-            <br/><br/>
-        </ui:insert>
+        <h:commandButton value="#{msg['ClassManagement']}" action="#{homeBean.showClassesManagement()}">
+            <f:ajax render="@all"/>
+        </h:commandButton>
+        <br/><br/>
 
-        <ui:insert name="studentManagement">
-            <h:commandButton value="#{msg['StudentManagement']}" action="#{studentBean.moveToListPage}">
-                <f:ajax render="@all"/>
-            </h:commandButton>
-        </ui:insert>
+        <h:commandButton value="#{msg['StudentManagement']}" action="#{homeBean.showStudentsManagement()}">
+            <f:ajax render="@all"/>
+        </h:commandButton>
+        <br/><br/>
+
+        <h:commandButton rendered="#{homeBean.navigateToPage ne null}" value="&lt;&lt; #{msg.BackHomeButton}" action="#{homeBean.backToHomePage}">
+            <f:ajax render="@all"/>
+        </h:commandButton>
+
+        <ui:fragment rendered="#{homeBean.navigateToPage eq homeBean.showStudentsManagement}">
+            <ui:include src="/views/student/listStudent.xhtml">\
+            </ui:include>
+        </ui:fragment>
+
+        <ui:fragment rendered="#{homeBean.navigateToPage eq homeBean.showClassesManagement}">
+            <ui:include src="/views/sclass/listSClass.xhtml">\
+            </ui:include>
+        </ui:fragment>
+
     </h:form>
 </h:body>
 </html>

@@ -5,6 +5,7 @@ import com.synergix.controller.IPaging;
 import com.synergix.model.Student;
 import com.synergix.repository.Student.StudentRepo;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.context.FacesContext;
@@ -24,6 +25,9 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
 
     private static final int INIT_PAGE = 1;
     private static final int PAGE_SIZE = 5;
+    private static final String SHOW_STUDENTS_LIST = "showStudentsList";
+    private static final String SHOW_EDIT_STUDENT = "showEditStudent";
+    private static final String SHOW_ADD_STUDENT = "showAddStudent";
 
     private int page = INIT_PAGE;
     private int pageSize = PAGE_SIZE;
@@ -31,6 +35,11 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
     private List<Integer> selectedStudentList = new ArrayList<>();
     private Map<Integer, Boolean> selectedStudentMap = new HashMap<>();
     private StringBuilder deleteExceptionMessage;
+    private Map<String, Boolean> navigationMap = new HashMap<>();
+
+    public String getShowStudentsList() {
+        return SHOW_STUDENTS_LIST;
+    }
 
     public int getPage() {
         return page;
@@ -73,11 +82,26 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
         this.selectedStudentMap = selectedStudentMap;
     }
 
+    public Map<String, Boolean> getNavigationMap() {
+        return navigationMap;
+    }
+
+    public void setNavigationMap(Map<String, Boolean> navigationMap) {
+        this.navigationMap = navigationMap;
+    }
+
     @Inject
     private Conversation conversation;
 
     @Inject
     private StudentRepo studentRepo;
+
+    @PostConstruct
+    public void setNavigationRule() {
+        navigationMap.put(SHOW_STUDENTS_LIST, false);
+        navigationMap.put(SHOW_EDIT_STUDENT, false);
+        navigationMap.put(SHOW_ADD_STUDENT, false);
+    }
 
     public void initConversation() {
         try {
@@ -103,6 +127,15 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
         this.initConversation();
         conversation.setTimeout(36000000);
         return "/views/student/listStudent";
+    }
+
+    public void showManagement() {
+        this.cancelAdd();
+        this.cancelEdit();
+        this.endConversation();
+        this.initConversation();
+        conversation.setTimeout(36000000);
+        this.navigationMap.replace(SHOW_STUDENTS_LIST, !this.navigationMap.get(SHOW_STUDENTS_LIST));
     }
 
     @Override
