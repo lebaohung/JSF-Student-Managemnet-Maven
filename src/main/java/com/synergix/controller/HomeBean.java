@@ -1,7 +1,5 @@
 package com.synergix.controller;
 
-import org.omg.CORBA.PUBLIC_MEMBER;
-
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;

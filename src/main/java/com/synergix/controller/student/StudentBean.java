@@ -25,9 +25,6 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
 
     private static final int INIT_PAGE = 1;
     private static final int PAGE_SIZE = 5;
-    private static final String SHOW_STUDENTS_LIST = "showStudentsList";
-    private static final String SHOW_EDIT_STUDENT = "showEditStudent";
-    private static final String SHOW_ADD_STUDENT = "showAddStudent";
 
     private int page = INIT_PAGE;
     private int pageSize = PAGE_SIZE;
@@ -36,10 +33,6 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
     private Map<Integer, Boolean> selectedStudentMap = new HashMap<>();
     private StringBuilder deleteExceptionMessage;
     private Map<String, Boolean> navigationMap = new HashMap<>();
-
-    public String getShowStudentsList() {
-        return SHOW_STUDENTS_LIST;
-    }
 
     public int getPage() {
         return page;
@@ -96,17 +89,10 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
     @Inject
     private StudentRepo studentRepo;
 
-    @PostConstruct
-    public void setNavigationRule() {
-        navigationMap.put(SHOW_STUDENTS_LIST, false);
-        navigationMap.put(SHOW_EDIT_STUDENT, false);
-        navigationMap.put(SHOW_ADD_STUDENT, false);
-    }
-
     public void initConversation() {
         try {
             conversation.begin();
-        } catch (Exception e) {
+        } catch (IllegalStateException e) {
             System.out.println("Warning! Long-running conversation running!");
         }
     }
@@ -114,7 +100,7 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
     public void endConversation() {
         try {
             conversation.end();
-        } catch (Exception e) {
+        } catch (IllegalStateException e) {
             System.out.println("Warning! Transient conversation cannot end!");
         }
     }
@@ -129,13 +115,9 @@ public class StudentBean implements Serializable, IBean<Student>, IPaging<Studen
         return "/views/student/listStudent";
     }
 
-    public void showManagement() {
-        this.cancelAdd();
-        this.cancelEdit();
-        this.endConversation();
-        this.initConversation();
-        conversation.setTimeout(36000000);
-        this.navigationMap.replace(SHOW_STUDENTS_LIST, !this.navigationMap.get(SHOW_STUDENTS_LIST));
+    public void test() {
+        System.out.print("map: ");
+        System.out.println(this.getSelectedStudentMap());
     }
 
     @Override

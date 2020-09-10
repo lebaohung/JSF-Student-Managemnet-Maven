@@ -9,7 +9,7 @@
 <f:view locale="#{homeBean.locale}">
     <h:body>
         <ui:composition>
-            <h:form >
+            <h:form>
                 <h2>#{msg.StudentManagement}</h2>
                 <h:commandButton disabled="#{studentBean.page le 1}" value="&lt; #{msg.PreviousButton}"
                                  action="#{studentBean.previous}">
@@ -85,7 +85,7 @@
                             #{msg.Action}
                         </f:facet>
                         <h:selectBooleanCheckbox value="#{studentBean.selectedStudentMap[student.id]}">
-                            <f:ajax execute="@this" render="@form"/>
+                            <f:ajax event="change" listener="#{studentBean.test()}" execute="@form" render="test"/>
                         </h:selectBooleanCheckbox>
                         <h:commandButton rendered="#{student.id ne editStudent.id}" value="#{msg.Edit}"
                                          action="#{studentBean.getEdit(student.id)}">
@@ -106,18 +106,20 @@
                     </h:column>
                 </h:dataTable>
 
+
                 <h:commandButton value="#{msg.AddStudent}" action="#{studentBean.create()}">
                     <f:ajax render="@all"/>
                 </h:commandButton>
 
-                <h:commandButton value="Delete selected" disabled="#{studentBean.selectedStudentMap.isEmpty()}"
+                <h:commandButton actionListener="#{studentBean.getSelectedStudentList()}" id="test" value="Delete selected"
+                                 disabled="#{!studentBean.selectedStudentMap.containsValue(true)}"
                                  action="#{studentBean.deleteSelectedStudent}"
                                  onclick="return confirm('#{msg.PermanentlyDeleteStudent}')">
                     <f:ajax execute="@form" render="@form"/>
                 </h:commandButton>
                 <h:outputText rendered="#{studentBean.deleteExceptionMessage ne null}"
                               value="#{studentBean.deleteExceptionMessage}"/>
-            </h:form>`
+            </h:form>
 
             <h:form id="addNewStudent" rendered="#{newStudent ne null}">
                 <br/>
