@@ -15,7 +15,7 @@ public class PhoneValidator implements Validator {
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
         String phone = value.toString();
         if (!phone.isEmpty() && !phone.matches(PHONE_REGEX)) {
-                FacesMessage facesMessage = new FacesMessage("  Phone length is 10, starts with 0. Please enter again!");
+                FacesMessage facesMessage = new FacesMessage("Phone length is 10, starts with 0. Please enter again!");
                 facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
                 throw new ValidatorException(facesMessage);
         }

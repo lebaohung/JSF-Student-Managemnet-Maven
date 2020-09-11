@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 public class Student implements Serializable {
 
-    private int id;
+    private Integer id;
     private String sName;
     private String email;
     private String phone;
@@ -13,6 +13,12 @@ public class Student implements Serializable {
     private LocalDate birthday;
 
     public Student() {
+    }
+
+    public Student(String sName, String email, String phone) {
+        this.sName = sName;
+        this.email = email;
+        this.phone = phone;
     }
 
     public Student(String sName, String email, String phone, int sClassId, LocalDate birthday) {
@@ -32,11 +38,11 @@ public class Student implements Serializable {
         this.birthday = birthday;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
