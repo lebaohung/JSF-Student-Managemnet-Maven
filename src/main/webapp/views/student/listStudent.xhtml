@@ -111,7 +111,7 @@
                     </h:column>
                 </h:dataTable>
 
-                <h:messages errorStyle="color: darkred" layout="table"/>
+                <h:messages id="message" infoStyle="color: green" errorStyle="color: darkred" layout="table"/>
 
                 <h:commandButton value="Delete selected"
                                  disabled="#{!studentBean.selectedStudentMap.containsValue(true)}"
@@ -136,7 +136,9 @@
             </h:form>
 
             <h:form rendered="#{studentBean.navigateStudentPage eq studentBean.getDetailPage()}">
-                <h:outputText value="test"/>
+                <h:commandButton value="&lt; Student Management Page" action="#{studentBean.initNavigator}" >
+                    <f:ajax render="@all" />
+                </h:commandButton>
             </h:form>
         </ui:composition>
     </h:body>

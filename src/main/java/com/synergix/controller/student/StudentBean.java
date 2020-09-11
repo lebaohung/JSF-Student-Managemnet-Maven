@@ -6,6 +6,7 @@ import com.synergix.repository.Student.StudentRepo;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -175,6 +176,8 @@ public class StudentBean implements Serializable {
     public void save(Student student) {
         if (student != null) {
             studentRepo.save(student);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Save new student successfully", null);
+            FacesContext.getCurrentInstance().addMessage("message", facesMessage);
         }
         this.cancelAdd();
     }
