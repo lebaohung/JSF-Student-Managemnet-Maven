@@ -45,7 +45,7 @@
                         <h:outputText rendered="#{student.id ne null}" value="#{student.sName}"/>
                         <h:inputText rendered="#{student.id eq null}" id="sName" required="true"
                                      requiredMessage="Name required!" validator="nameValidator"
-                                     value="#{newStudent.sName}">
+                                     p:placeholder="Required" value="#{newStudent.sName}">
                             <f:ajax event="change" execute="@this" render="@form"/>
                             <f:converter converterId="nameConverter"/>
                         </h:inputText>
@@ -79,10 +79,12 @@
                             Birthday
                         </f:facet>
                         <h:outputText rendered="#{student.id ne null}" value="#{student.birthday}">
-                            <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                            <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
                         </h:outputText>
                         <h:inputText rendered="#{student.id eq null}" required="false" id="birthday"
-                                     value="#{newStudent.phone}" validator="phoneValidator">
+                                     value="#{newStudent.birthday}"
+                                     converterMessage="Birthday is not provide in dd/MM/yyyy format" >
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
                             <f:ajax event="change" execute="@this" render="@form"/>
                         </h:inputText>
                     </h:column>
@@ -104,7 +106,7 @@
                                                  value="#{studentBean.selectedStudentMap[student.id]}">
                             <f:ajax execute="@form" render="@form"/>
                         </h:selectBooleanCheckbox>
-                        <h:commandButton value="Detail" action="#{studentBean.moveToDetailPage()}" >
+                        <h:commandButton rendered="#{student.id ne null}" value="Detail" action="#{studentBean.moveToDetailPage()}">
                             <f:ajax render="@all"/>
                         </h:commandButton>
                         <br/>
@@ -136,8 +138,8 @@
             </h:form>
 
             <h:form rendered="#{studentBean.navigateStudentPage eq studentBean.getDetailPage()}">
-                <h:commandButton value="&lt; Student Management Page" action="#{studentBean.initNavigator}" >
-                    <f:ajax render="@all" />
+                <h:commandButton value="&lt; Student Management Page" action="#{studentBean.initNavigator}">
+                    <f:ajax render="@all"/>
                 </h:commandButton>
             </h:form>
         </ui:composition>
