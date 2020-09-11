@@ -76,12 +76,27 @@
 
                     <h:column>
                         <f:facet name="header">
-                            <h:commandButton rendered="#{studentBean.selectedStudentMap.isEmpty() or studentBean.selectedStudentMap.containsValue(false)}"
-                                             value="Select All" action="#{studentBean.selectAll}">
+                            Birthday
+                        </f:facet>
+                        <h:outputText rendered="#{student.id ne null}" value="#{student.birthday}">
+                            <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                        </h:outputText>
+                        <h:inputText rendered="#{student.id eq null}" required="false" id="birthday"
+                                     value="#{newStudent.phone}" validator="phoneValidator">
+                            <f:ajax event="change" execute="@this" render="@form"/>
+                        </h:inputText>
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">
+                            <h:commandButton
+                                    rendered="#{studentBean.selectedStudentMap.isEmpty() or studentBean.selectedStudentMap.containsValue(false)}"
+                                    value="Select All" action="#{studentBean.selectAll}">
                                 <f:ajax render="@form"/>
                             </h:commandButton>
-                            <h:commandButton rendered="#{!studentBean.selectedStudentMap.isEmpty() and !studentBean.selectedStudentMap.containsValue(false)}"
-                                             value="Unselect All" action="#{studentBean.unselectAll}">
+                            <h:commandButton
+                                    rendered="#{!studentBean.selectedStudentMap.isEmpty() and !studentBean.selectedStudentMap.containsValue(false)}"
+                                    value="Unselect All" action="#{studentBean.unselectAll}">
                                 <f:ajax render="@form"/>
                             </h:commandButton>
                         </f:facet>
@@ -89,6 +104,9 @@
                                                  value="#{studentBean.selectedStudentMap[student.id]}">
                             <f:ajax execute="@form" render="@form"/>
                         </h:selectBooleanCheckbox>
+                        <h:commandButton value="Detail" >
+                            <f:ajax />
+                        </h:commandButton>
                         <br/>
                     </h:column>
                 </h:dataTable>
