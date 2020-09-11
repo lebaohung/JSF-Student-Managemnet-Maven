@@ -3,6 +3,7 @@ package com.synergix.controller.student;
 import com.synergix.model.Student;
 import com.synergix.repository.Student.StudentRepo;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.context.FacesContext;
@@ -22,13 +23,37 @@ public class StudentBean implements Serializable {
 
     private static final int INIT_PAGE = 1;
     private static final int PAGE_SIZE = 5;
+    private final static String MANAGER_PAGE = "showManagerPage";
+    private final static String DETAIL_PAGE = "showDetailPage";
 
+    private String navigateStudentPage;
     private int page = INIT_PAGE;
     private int pageSize = PAGE_SIZE;
     private int pageCount;
     private List<Integer> selectedStudentList = new ArrayList<>();
     private Map<Integer, Boolean> selectedStudentMap = new HashMap<>();
     private StringBuilder deleteExceptionMessage;
+
+    @PostConstruct
+    public void initNavigator() {
+        this.navigateStudentPage = MANAGER_PAGE;
+    }
+
+    public String getManagerPage() {
+        return MANAGER_PAGE;
+    }
+
+    public String getDetailPage() {
+        return DETAIL_PAGE;
+    }
+
+    public String getNavigateStudentPage() {
+        return navigateStudentPage;
+    }
+
+    public void setNavigateStudentPage(String navigateStudentPage) {
+        this.navigateStudentPage = navigateStudentPage;
+    }
 
     public int getPage() {
         return page;
@@ -221,5 +246,9 @@ public class StudentBean implements Serializable {
         for (Student student : this.getStudents()) {
             selectedStudentMap.replace(student.getId(), false);
         }
+    }
+
+    public void moveToDetailPage() {
+        this.navigateStudentPage = DETAIL_PAGE;
     }
 }

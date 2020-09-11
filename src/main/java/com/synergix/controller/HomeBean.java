@@ -5,7 +5,6 @@ import com.synergix.controller.student.StudentBean;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,7 +28,7 @@ public class HomeBean implements Serializable {
 
     private final static String SHOW_STUDENTS_MANAGEMENT = "showStudentsManagement";
     private final static String SHOW_CLASSES_MANAGEMENT = "showClassesManagement";
-    private String navigateToPage;
+    private String navigateHomePage;
 
     public String getShowStudentsManagement() {
         return SHOW_STUDENTS_MANAGEMENT;
@@ -39,12 +38,12 @@ public class HomeBean implements Serializable {
         return SHOW_CLASSES_MANAGEMENT;
     }
 
-    public String getNavigateToPage() {
-        return navigateToPage;
+    public String getNavigateHomePage() {
+        return navigateHomePage;
     }
 
-    public void setNavigateToPage(String navigateToPage) {
-        this.navigateToPage = navigateToPage;
+    public void setNavigateHomePage(String navigateHomePage) {
+        this.navigateHomePage = navigateHomePage;
     }
 
     private Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -68,14 +67,14 @@ public class HomeBean implements Serializable {
         studentBean.endConversation();
         studentBean.initConversation();
         studentBean.getAllByPage();
-        this.navigateToPage = SHOW_STUDENTS_MANAGEMENT;
+        this.navigateHomePage = SHOW_STUDENTS_MANAGEMENT;
     }
 
     public void showClassesManagement() {
-        this.navigateToPage = SHOW_CLASSES_MANAGEMENT;
+        this.navigateHomePage = SHOW_CLASSES_MANAGEMENT;
     }
 
     public void backToHomePage() {
-        this.navigateToPage = null;
+        this.navigateHomePage = null;
     }
 }

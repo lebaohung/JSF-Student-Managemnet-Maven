@@ -9,7 +9,7 @@
 <f:view locale="#{homeBean.locale}">
     <h:body>
         <ui:composition>
-            <h:form>
+            <h:form rendered="#{studentBean.navigateStudentPage eq studentBean.getManagerPage()}">
                 <h2>#{msg.StudentManagement}</h2>
                 <h:commandButton disabled="#{studentBean.page le 1}" value="&lt; #{msg.PreviousButton}"
                                  action="#{studentBean.previous}">
@@ -104,8 +104,8 @@
                                                  value="#{studentBean.selectedStudentMap[student.id]}">
                             <f:ajax execute="@form" render="@form"/>
                         </h:selectBooleanCheckbox>
-                        <h:commandButton value="Detail" >
-                            <f:ajax />
+                        <h:commandButton value="Detail" action="#{studentBean.moveToDetailPage()}" >
+                            <f:ajax render="@all"/>
                         </h:commandButton>
                         <br/>
                     </h:column>
@@ -133,6 +133,10 @@
                                  value="#{msg.Save}">
                     <f:ajax execute="@form" render="@form"/>
                 </h:commandButton>
+            </h:form>
+
+            <h:form rendered="#{studentBean.navigateStudentPage eq studentBean.getDetailPage()}">
+                <h:outputText value="test"/>
             </h:form>
         </ui:composition>
     </h:body>

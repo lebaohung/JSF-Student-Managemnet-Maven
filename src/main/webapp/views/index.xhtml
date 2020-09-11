@@ -22,29 +22,29 @@
         <h4><h:outputText value="#{msg['HomeTitle']}"/></h4>
         <br/><br/>
 
-        <h:commandButton rendered="#{homeBean.navigateToPage ne homeBean.showClassesManagement}" value="#{msg['ClassManagement']}"
+        <h:commandButton rendered="#{homeBean.navigateHomePage ne homeBean.showClassesManagement}" value="#{msg['ClassManagement']}"
                          action="#{homeBean.showClassesManagement()}">
             <f:ajax render="@all"/>
         </h:commandButton>
         <br/><br/>
 
-        <h:commandButton rendered="#{homeBean.navigateToPage ne homeBean.showStudentsManagement}" value="#{msg['StudentManagement']}"
+        <h:commandButton rendered="#{homeBean.navigateHomePage ne homeBean.showStudentsManagement}" value="#{msg['StudentManagement']}"
                          action="#{homeBean.showStudentsManagement()}">
             <f:ajax render="@all"/>
         </h:commandButton>
         <br/><br/>
 
-        <h:commandButton rendered="#{homeBean.navigateToPage ne null}" value="&lt;&lt; #{msg.BackHomeButton}"
+        <h:commandButton rendered="#{homeBean.navigateHomePage ne null}" value="&lt;&lt; #{msg.BackHomeButton}"
                          action="#{homeBean.backToHomePage}">
             <f:ajax render="@all"/>
         </h:commandButton>
 
-        <ui:fragment id="studentManagement" rendered="#{homeBean.navigateToPage eq homeBean.showStudentsManagement}">
+        <ui:fragment id="studentManagement" rendered="#{homeBean.navigateHomePage eq homeBean.showStudentsManagement}">
             <ui:include src="/views/student/listStudent.xhtml">
             </ui:include>
         </ui:fragment>
 
-        <ui:fragment rendered="#{homeBean.navigateToPage eq homeBean.showClassesManagement}">
+        <ui:fragment rendered="#{homeBean.navigateHomePage eq homeBean.showClassesManagement}">
             <ui:include src="/views/sclass/listSClass.xhtml">
             </ui:include>
         </ui:fragment>
