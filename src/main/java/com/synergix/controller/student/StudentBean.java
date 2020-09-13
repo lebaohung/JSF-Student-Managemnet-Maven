@@ -251,7 +251,9 @@ public class StudentBean implements Serializable {
         }
     }
 
-    public void moveToDetailPage() {
+    public void moveToDetailPage(Student student) {
+        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        sessionMap.put("editStudent", student);
         this.navigateStudentPage = DETAIL_PAGE;
     }
 }
