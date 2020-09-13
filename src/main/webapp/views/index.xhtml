@@ -18,17 +18,18 @@
                          value="Tiếng Việt">
             <f:ajax render="@all"/>
         </h:commandButton>
-        <br/>
-        <h4><h:outputText value="#{msg['HomeTitle']}"/></h4>
-        <br/><br/>
 
-        <h:commandButton rendered="#{homeBean.navigateHomePage ne homeBean.showClassesManagement}" value="#{msg['ClassManagement']}"
+        <h4><h:outputText value="#{msg['HomeTitle']}"/></h4>
+
+        <h:commandButton rendered="#{homeBean.navigateHomePage ne homeBean.showClassesManagement}"
+                         value="#{msg['ClassManagement']}"
                          action="#{homeBean.showClassesManagement()}">
             <f:ajax render="@all"/>
         </h:commandButton>
         <br/><br/>
 
-        <h:commandButton rendered="#{homeBean.navigateHomePage ne homeBean.showStudentsManagement}" value="#{msg['StudentManagement']}"
+        <h:commandButton rendered="#{homeBean.navigateHomePage ne homeBean.showStudentsManagement}"
+                         value="#{msg['StudentManagement']}"
                          action="#{homeBean.showStudentsManagement()}">
             <f:ajax render="@all"/>
         </h:commandButton>
@@ -39,7 +40,7 @@
             <f:ajax render="@all"/>
         </h:commandButton>
 
-        <ui:fragment id="studentManagement" rendered="#{homeBean.navigateHomePage eq homeBean.showStudentsManagement}">
+        <ui:fragment rendered="#{homeBean.navigateHomePage eq homeBean.showStudentsManagement}">
             <ui:include src="/views/student/listStudent.xhtml">
             </ui:include>
         </ui:fragment>

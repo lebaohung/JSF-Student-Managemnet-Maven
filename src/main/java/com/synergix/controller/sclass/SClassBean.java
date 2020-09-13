@@ -1,29 +1,27 @@
 package com.synergix.controller.sclass;
 
-import com.synergix.controller.IBean;
-import com.synergix.controller.IPaging;
 import com.synergix.model.SClass;
 import com.synergix.model.Student;
 import com.synergix.repository.SClass.SClassRepo;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Named(value = "sClassBean")
 @ConversationScoped
-public class SClassBean implements Serializable, IBean<SClass>, IPaging<SClass> {
+public class SClassBean implements Serializable {
 
     @Inject
     private Conversation conversation;
@@ -36,7 +34,18 @@ public class SClassBean implements Serializable, IBean<SClass>, IPaging<SClass> 
     private int page = INIT_PAGE;
     private int pageSize = PAGE_SIZE;
     private int pageCount;
+    private String navigateSClassPage;
+    private final static String MANAGER_PAGE = "showManagerPage";
+    private final static String DETAIL_PAGE = "showDetailPage";
+    private List<Integer> selectedSClassList = new ArrayList<>();
+    private Map<Integer, Boolean> selectedSClassMap = new HashMap<>();
     private List<Student> studentInClassList = new ArrayList<>();
+    private StringBuilder deleteExceptionMessage;
+
+    @PostConstruct
+    public void initNavigator() {
+        this.navigateSClassPage = MANAGER_PAGE;
+    }
 
     public int getPage() {
         return page;
@@ -71,73 +80,128 @@ public class SClassBean implements Serializable, IBean<SClass>, IPaging<SClass> 
         this.studentInClassList = studentInClassList;
     }
 
+    public String getManagerPage() {
+        return MANAGER_PAGE;
+    }
+
+    public String getDetailPage() {
+        return DETAIL_PAGE;
+    }
+
+    public String getNavigateSClassPage() {
+        return navigateSClassPage;
+    }
+
+    public void setNavigateSClassPage(String navigateSClassPage) {
+        this.navigateSClassPage = navigateSClassPage;
+    }
+
     public void initConversation() {
-        if (conversation.isTransient()) {
+        try {
             conversation.begin();
+        } catch (IllegalStateException e) {
+            System.out.println("Warning! Long-running conversation running!");
         }
     }
 
-    @Override
+    public void endConversation() {
+        try {
+            conversation.end();
+        } catch (IllegalStateException e) {
+            System.out.println("Warning! Transient conversation cannot end!");
+        }
+    }
+
+    private List<SClass> classes = new ArrayList<>();
+
+    public List<SClass> getClasses() {
+        return classes;
+    }
+
+    public void setClasses(List<SClass> classes) {
+        this.classes = classes;
+    }
+
+    public StringBuilder getDeleteExceptionMessage() {
+        return deleteExceptionMessage;
+    }
+
+    public void setDeleteExceptionMessage(String s) {
+        this.deleteExceptionMessage.append(s);
+    }
+
+    public List<Integer> getSelectedSClassList() {
+        this.selectedSClassList = this.getSelectedSClassMap().entrySet().stream()
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+        return selectedSClassList;
+    }
+
+    public Map<Integer, Boolean> getSelectedSClassMap() {
+        return selectedSClassMap;
+    }
+
+    public void setSelectedSClassMap(Map<Integer, Boolean> selectedSClassMap) {
+        this.selectedSClassMap = selectedSClassMap;
+    }
+
     public String moveToListPage() {
         this.cancelAdd();
         this.cancelEdit();
-        this.closeConversation();
+        this.endConversation();
         this.initConversation();
         return "/views/sclass/listSClass";
     }
 
-    @Override
     public List<SClass> getAll() {
         return sClassRepo.getAll();
     }
 
-    @Override
-    public List<SClass> getAllByPage() {
-        return sClassRepo.getAllByPage(page, pageSize);
+    public void getAllByPage() {
+        this.classes = sClassRepo.getAllByPage(page, pageSize);
     }
 
-    @Override
     public void create() {
+        SClass newSClass = new SClass();
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("newSClass", new SClass());
+        sessionMap.put("newSClass", newSClass);
+        this.getAllByPage();
+        classes.add(newSClass);
     }
 
     private SClass sClass = null;
 
-    @Override
     public void getEdit(Integer sClassId) {
-        sClass = sClassRepo.getById(sClassId);
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("editSClass", sClass);
+        sessionMap.put("editSClass", sClassRepo.getById(sClassId));
     }
 
-    @Override
     public void save(SClass sClass) {
-        sClassRepo.save(sClass);
+        if (sClass != null) {
+            sClassRepo.save(sClass);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Save new class successfully", null);
+            FacesContext.getCurrentInstance().addMessage("message", facesMessage);
+        }
         this.cancelAdd();
     }
 
-    @Override
     public void update(SClass sClass) {
-        sClassRepo.update(sClass);
+        if (sClass != null) {
+            sClassRepo.update(sClass);
+        }
         this.cancelEdit();
     }
 
-    @Override
-    public void delete(Integer sclassId) {
-        sClassRepo.delete(sclassId);
-    }
-
-    @Override
     public void cancelEdit() {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         sessionMap.put("editSClass", null);
     }
 
-    @Override
     public void cancelAdd() {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         sessionMap.put("newSClass", null);
+        this.getAllByPage();
     }
 
     public int countClassSize(Integer classId) {
@@ -148,24 +212,58 @@ public class SClassBean implements Serializable, IBean<SClass>, IPaging<SClass> 
         return sClassRepo.count();
     }
 
-    @Override
     public void next() {
         if (this.getPage() >= this.getPageCount()) return;
         else this.page++;
+        this.cancelAdd();
+        this.getAllByPage();
+        this.selectedSClassMap.clear();
     }
 
-    @Override
     public void previous() {
         if (this.getPage() <= 1) return;
         else this.page--;
+        this.cancelAdd();
+        this.getAllByPage();
+        this.selectedSClassMap.clear();
     }
 
-    public String moveToDetailPage(Integer sClassId) {
-        this.setStudentInClassList(sClassRepo.getStudentsByClassId(sClassId));
-        return "/views/sclass/classDetail";
+    public void moveToDetailPage(SClass sClass, Integer id) {
+        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        sessionMap.put("editSClass", sClass);
+        sessionMap.put("id", id);
+        this.navigateSClassPage = DETAIL_PAGE;
     }
 
-    public void closeConversation() {
-        if (!conversation.isTransient()) conversation.end();
+    public void deleteSelectedSClass() {
+        List<Integer> cannotDeleteSClassId = new ArrayList<>();
+        for (Integer sClassId : this.getSelectedSClassList()) {
+            try {
+                sClassRepo.delete(sClassId);
+            } catch (SQLException e) {
+                cannotDeleteSClassId.add(sClassId);
+            }
+        }
+        if (!cannotDeleteSClassId.isEmpty()) {
+            this.setDeleteExceptionMessage("Cannot delete Class ID: ");
+            for (int i = 0; i < cannotDeleteSClassId.size(); i++) {
+                if (i == cannotDeleteSClassId.size() -1) this.setDeleteExceptionMessage(String.valueOf(i));
+                else this.setDeleteExceptionMessage(i + ", ");
+            }
+        }
+        this.getAllByPage();
+        this.selectedSClassMap.clear();
+    }
+
+    public void selectAll() {
+        for (SClass sClass : this.getClasses()) {
+            selectedSClassMap.put(sClass.getId(), true);
+        }
+    }
+
+    public void unselectAll() {
+        for (SClass sClass : this.getClasses()) {
+            selectedSClassMap.put(sClass.getId(), false);
+        }
     }
 }

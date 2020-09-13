@@ -132,11 +132,6 @@ public class StudentBean implements Serializable {
         return "/views/student/listStudent";
     }
 
-    public void test() {
-        System.out.print("map: ");
-        System.out.println(this.getSelectedStudentMap());
-    }
-
     public List<Student> getAll() {
         return studentRepo.getAll();
     }
@@ -193,10 +188,6 @@ public class StudentBean implements Serializable {
             studentRepo.update(student);
         }
         this.cancelEdit();
-    }
-
-    public void delete(Integer studentId) {
-        return;
     }
 
     public int count() {

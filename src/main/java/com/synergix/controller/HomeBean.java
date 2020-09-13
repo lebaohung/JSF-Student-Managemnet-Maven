@@ -1,5 +1,6 @@
 package com.synergix.controller;
 
+import com.synergix.controller.sclass.SClassBean;
 import com.synergix.controller.student.StudentBean;
 
 import javax.annotation.PostConstruct;
@@ -20,6 +21,9 @@ public class HomeBean implements Serializable {
 
     @Inject
     private StudentBean studentBean;
+
+    @Inject
+    private SClassBean sClassBean;
 
     @PostConstruct
     public void initConversation() {
@@ -71,6 +75,11 @@ public class HomeBean implements Serializable {
     }
 
     public void showClassesManagement() {
+        sClassBean.cancelEdit();
+        sClassBean.cancelAdd();
+        sClassBean.endConversation();
+        sClassBean.initConversation();
+        sClassBean.getAllByPage();
         this.navigateHomePage = SHOW_CLASSES_MANAGEMENT;
     }
 

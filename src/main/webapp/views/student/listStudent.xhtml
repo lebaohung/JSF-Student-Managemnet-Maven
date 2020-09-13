@@ -6,7 +6,6 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
-<f:view locale="#{homeBean.locale}">
     <h:body>
         <ui:composition>
             <h:form rendered="#{studentBean.navigateStudentPage eq studentBean.getManagerPage()}">
@@ -83,8 +82,8 @@
                         </h:outputText>
                         <h:inputText rendered="#{student.id eq null}" required="false" id="birthday"
                                      value="#{newStudent.birthday}"
-                                     converterMessage="Birthday is not provide in dd/MM/yyyy format" >
-                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                     converterMessage="Birthday is not provide in dd/MM/yyyy format">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
                             <f:ajax event="change" execute="@this" render="@form"/>
                         </h:inputText>
                     </h:column>
@@ -106,7 +105,8 @@
                                                  value="#{studentBean.selectedStudentMap[student.id]}">
                             <f:ajax execute="@form" render="@form"/>
                         </h:selectBooleanCheckbox>
-                        <h:commandButton rendered="#{student.id ne null}" value="Detail" action="#{studentBean.moveToDetailPage(student)}">
+                        <h:commandButton rendered="#{student.id ne null}" value="Detail"
+                                         action="#{studentBean.moveToDetailPage(student)}">
                             <f:ajax render="@all"/>
                         </h:commandButton>
                         <br/>
@@ -172,8 +172,8 @@
                 <h:outputText value="Birthday: "/>
                 <h:inputText rendered="#{student.id eq null}" required="false"
                              value="#{editStudent.birthday}"
-                             converterMessage="Birthday is not provide in dd/MM/yyyy format" >
-                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                             converterMessage="Birthday is not provide in dd/MM/yyyy format">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
                     <f:ajax event="change" execute="@this" render="@form"/>
                 </h:inputText>
                 <br/>
@@ -182,5 +182,4 @@
             </h:form>
         </ui:composition>
     </h:body>
-</f:view>
 </html>

@@ -149,16 +149,11 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
     }
 
     @Override
-    public void delete(Integer classId) {
-        try (
-                Connection connection = JdbcConnection.getConnection();
-        ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_CLASS);
-            preparedStatement.setInt(1, classId);
-            preparedStatement.executeUpdate();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+    public void delete(Integer classId) throws SQLException {
+        Connection connection = JdbcConnection.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(DELETE_CLASS);
+        preparedStatement.setInt(1, classId);
+        preparedStatement.executeUpdate();
     }
 
     public int countClassSize(Integer classId) {

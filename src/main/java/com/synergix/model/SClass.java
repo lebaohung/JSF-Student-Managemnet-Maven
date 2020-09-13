@@ -4,22 +4,22 @@ import java.io.Serializable;
 
 public class SClass implements Serializable {
 
-    private int id;
+    private Integer id;
     private String name;
 
     public SClass() {
     }
 
-    public SClass(int id, String name) {
+    public SClass(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
