@@ -75,7 +75,7 @@
                             <f:ajax execute="@form" render="@form"/>
                         </h:selectBooleanCheckbox>
                         <h:commandButton rendered="#{sClass.id ne null}" value="Detail"
-                                         action="#{sClassBean.moveToDetailPage(sClass, 26)}">
+                                         action="#{sClassBean.moveToDetailPage(sClass)}">
                             <f:ajax render="@all"/>
                         </h:commandButton>
                         <br/>
@@ -106,7 +106,7 @@
                 </h:commandButton>
             </h:form>
 
-            <h:form rendered="#{sClassBean.navigateSClassPage eq sClassBean.getDetailPage()}">
+            <h:form id="sClassDetail" rendered="#{sClassBean.navigateSClassPage eq sClassBean.getDetailPage()}">
 
                 <h:commandButton value="&lt; Class Management Page" action="#{sClassBean.initNavigator}">
                     <f:ajax render="@all"/>
@@ -128,13 +128,46 @@
                 <br/>
 
                 <h:outputText value="Mentor: "/>
-                <h:inputText value="#{id}" >
-                    <f:ajax execute="@this" render="@all"/>
+                <h:inputText value="#{mentorId}" >
+                    <f:ajax listener="#{sClassBean.getSClassMentor(mentorId)}" execute="@this" render="@form"/>
                 </h:inputText>
-                <h:outputText value="  #{studentRepo.getById(id).sName}" >
+                <h:outputText value="  #{mentorName}" >
                 </h:outputText>
 
                 <h:messages infoStyle="color: green" errorStyle="color: darkred" layout="table"/>
+
+                <h:dataTable>
+                    <h:column>
+                        <f:facet name="header">
+                            #{msg.No}
+                        </f:facet>
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">
+                            #{msg.StudentID}
+                        </f:facet>
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">
+                            #{msg.StudentName}
+                        </f:facet>
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">
+                            Birthday
+                        </f:facet>
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">
+                            Action
+                        </f:facet>
+                    </h:column>
+
+                </h:dataTable>
             </h:form>
         </ui:composition>
     </h:body>

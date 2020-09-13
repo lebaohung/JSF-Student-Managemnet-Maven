@@ -8,7 +8,7 @@ public interface IRepository<T> {
 
     void save(T model);
 
-    T getById(Integer id);
+    T getById(Integer id) throws SQLException;
 
     void update(T model);
 

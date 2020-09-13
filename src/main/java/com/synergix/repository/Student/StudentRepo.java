@@ -128,26 +128,21 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
     }
 
     @Override
-    public Student getById(Integer studentId) {
+    public Student getById(Integer studentId) throws SQLException {
         Student student = new Student();
-        try (
-                Connection connection = JdbcConnection.getConnection();
-        ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_STUDENT_BY_ID);
-            preparedStatement.setInt(1, studentId);
-            preparedStatement.execute();
-            ResultSet resultSet = preparedStatement.getResultSet();
+        Connection connection = JdbcConnection.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_STUDENT_BY_ID);
+        preparedStatement.setInt(1, studentId);
+        preparedStatement.execute();
+        ResultSet resultSet = preparedStatement.getResultSet();
 
-            if (resultSet != null) {
-                resultSet.next();
-                student.setId(resultSet.getInt(1));
-                student.setsName(resultSet.getString(2));
-                student.setEmail(resultSet.getString(3));
-                student.setPhone(resultSet.getString(4));
-                student.setsClassId(resultSet.getInt(5));
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        if (resultSet != null) {
+            resultSet.next();
+            student.setId(resultSet.getInt(1));
+            student.setsName(resultSet.getString(2));
+            student.setEmail(resultSet.getString(3));
+            student.setPhone(resultSet.getString(4));
+            student.setsClassId(resultSet.getInt(5));
         }
         return student;
     }

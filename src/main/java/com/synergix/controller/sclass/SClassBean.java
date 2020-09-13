@@ -3,6 +3,7 @@ package com.synergix.controller.sclass;
 import com.synergix.model.SClass;
 import com.synergix.model.Student;
 import com.synergix.repository.SClass.SClassRepo;
+import com.synergix.repository.Student.StudentRepo;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
@@ -28,6 +29,9 @@ public class SClassBean implements Serializable {
 
     @Inject
     private SClassRepo sClassRepo;
+
+    @Inject
+    private StudentRepo studentRepo;
 
     private static final int INIT_PAGE = 1;
     private static final int PAGE_SIZE = 5;
@@ -177,6 +181,15 @@ public class SClassBean implements Serializable {
         sessionMap.put("editSClass", sClassRepo.getById(sClassId));
     }
 
+    public void getSClassMentor(Integer menttorId) {
+        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        try {
+            sessionMap.put("mentorName", studentRepo.getById(menttorId).getsName());
+        } catch (SQLException throwables) {
+            FacesContext.getCurrentInstance().addMessage("sClassDetail", new FacesMessage("Cannot find student ID: " + menttorId));
+        }
+    }
+
     public void save(SClass sClass) {
         if (sClass != null) {
             sClassRepo.save(sClass);
@@ -228,10 +241,11 @@ public class SClassBean implements Serializable {
         this.selectedSClassMap.clear();
     }
 
-    public void moveToDetailPage(SClass sClass, Integer id) {
+    public void moveToDetailPage(SClass sClass) {
+        Integer mentorId = 0;
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         sessionMap.put("editSClass", sClass);
-        sessionMap.put("id", id);
+        sessionMap.put("mentorId", mentorId);
         this.navigateSClassPage = DETAIL_PAGE;
     }
 
