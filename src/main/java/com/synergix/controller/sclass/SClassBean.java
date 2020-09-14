@@ -145,7 +145,6 @@ public class SClassBean implements Serializable {
         this.studentInClassList = studentInClassList;
     }
 
-
     public Map<Integer, Boolean> getSelectedSClassMap() {
         return selectedSClassMap;
     }
@@ -160,14 +159,6 @@ public class SClassBean implements Serializable {
 
     public void setSelectedStudentMap(Map<Integer, Boolean> selectedStudentMap) {
         this.selectedStudentMap = selectedStudentMap;
-    }
-
-    public String moveToListPage() {
-        this.cancelAdd();
-        this.cancelEdit();
-        this.endConversation();
-        this.initConversation();
-        return "/views/sclass/listSClass";
     }
 
     public List<SClass> getAll() {
@@ -281,7 +272,7 @@ public class SClassBean implements Serializable {
             }
         } else {
             FacesContext.getCurrentInstance().addMessage("sClassDetail",
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Not found studen ID " + studentId  + " in class" , null));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Not found studen ID " + studentId + " in class", null));
         }
     }
 
@@ -333,7 +324,7 @@ public class SClassBean implements Serializable {
         List<Integer> studentsIdList = new ArrayList<>();
         List<Student> studentList = new ArrayList<>();
         studentsIdList = sClassRepo.getStudentsByClassId(sClassId);
-        for (Integer studentId: studentsIdList) {
+        for (Integer studentId : studentsIdList) {
             try {
                 studentList.add(studentRepo.getById(studentId));
             } catch (SQLException e) {

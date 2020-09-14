@@ -156,11 +156,6 @@ public class StudentBean implements Serializable {
         students.add(newStudent);
     }
 
-    public void getEdit(Integer studentId) throws SQLException {
-        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("editStudent", studentRepo.getById(studentId));
-    }
-
     public void cancelEdit() {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         sessionMap.put("editStudent", null);
