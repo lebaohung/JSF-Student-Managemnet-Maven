@@ -87,7 +87,7 @@
                 <h:commandButton value="Delete selected"
                                  disabled="#{!sClassBean.selectedSClassMap.containsValue(true)}"
                                  action="#{sClassBean.deleteSelectedSClass}"
-                                 onblur="return confirm('#{msg.PermanentlyDeleteClass}')">
+                                 onclick="return confirm('#{msg.PermanentlyDeleteClass}')">
                     <f:ajax execute="@form" render="@form"/>
                 </h:commandButton>
 
@@ -118,7 +118,7 @@
                 <h:outputText value="#{msg.ClassName}: "/>
                 <h:inputText required="true" requiredMessage="Name required!" validator="nameValidator"
                              p:placeholder="Required" value="#{editSClass.name}">
-                    <f:ajax event="change" execute="@this" render="@form"/>
+                    <f:ajax listener="#{sClassBean.update(editSClass)}" event="change" execute="@this" render="@form"/>
                     <f:converter converterId="nameConverter"/>
                 </h:inputText>
                 <br/>

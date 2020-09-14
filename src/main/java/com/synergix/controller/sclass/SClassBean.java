@@ -195,8 +195,8 @@ public class SClassBean implements Serializable {
     public void update(SClass sClass) {
         if (sClass != null) {
             sClassRepo.update(sClass);
+            FacesContext.getCurrentInstance().addMessage("sClassDetail", new FacesMessage(FacesMessage.SEVERITY_INFO, "Saved at " + new Date(), null));
         }
-        this.cancelEdit();
     }
 
     public void cancelEdit() {
