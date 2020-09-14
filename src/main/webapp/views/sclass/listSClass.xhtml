@@ -136,7 +136,7 @@
 
                 <h:messages infoStyle="color: green" errorStyle="color: darkred" layout="table"/>
 
-                <h:dataTable binding="#{studentSClass}" value="#{sClassBean.getSClassStudentsList(editSClass.id)}" var="student">
+                <h:dataTable id="test" binding="#{studentSClass}" value="#{sClassBean.getSClassStudentsList(editSClass.id)}" var="student">
                     <h:column>
                         <f:facet name="header">
                             #{msg.No}
@@ -169,8 +169,17 @@
 
                     <h:column>
                         <f:facet name="header">
-                            Action
+                            <h:commandButton value="Select All" action="#{sClassBean.selectAllStudents}">
+                                <f:ajax render="@form"/>
+                            </h:commandButton>
+                            <h:commandButton value="Unselect All" action="#{sClassBean.unselectAllStudents}">
+                                <f:ajax render="@form"/>
+                            </h:commandButton>
                         </f:facet>
+                        <h:selectBooleanCheckbox value="#{sClassBean.selectedStudentMap[student.id]}">
+                            <f:ajax execute="@this" render="@all"/>
+                        </h:selectBooleanCheckbox>
+                        <br/>
                     </h:column>
 
                 </h:dataTable>

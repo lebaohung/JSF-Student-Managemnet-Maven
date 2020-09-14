@@ -40,7 +40,8 @@ public class SClassBean implements Serializable {
     private final static String DETAIL_PAGE = "showDetailPage";
     private List<Integer> selectedSClassList = new ArrayList<>();
     private Map<Integer, Boolean> selectedSClassMap = new HashMap<>();
-    private List<Student> studentInClassList = new ArrayList<>();
+    private Map<Integer, Boolean> selectedStudentMap = new HashMap<>();
+    private List<Integer> studentInClassList = new ArrayList<>();
     private StringBuilder deleteExceptionMessage;
 
     @PostConstruct
@@ -71,14 +72,6 @@ public class SClassBean implements Serializable {
 
     public void setPageCount(int pageCount) {
         this.pageCount = pageCount;
-    }
-
-    public List<Student> getStudentInClassList() {
-        return studentInClassList;
-    }
-
-    public void setStudentInClassList(List<Student> studentInClassList) {
-        this.studentInClassList = studentInClassList;
     }
 
     public String getManagerPage() {
@@ -139,12 +132,34 @@ public class SClassBean implements Serializable {
         return selectedSClassList;
     }
 
+    public List<Integer> getStudentInClassList() {
+        this.studentInClassList = this.getSelectedStudentMap().entrySet()
+                .stream()
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+        return studentInClassList;
+    }
+
+    public void setStudentInClassList(List<Integer> studentInClassList) {
+        this.studentInClassList = studentInClassList;
+    }
+
+
     public Map<Integer, Boolean> getSelectedSClassMap() {
         return selectedSClassMap;
     }
 
     public void setSelectedSClassMap(Map<Integer, Boolean> selectedSClassMap) {
         this.selectedSClassMap = selectedSClassMap;
+    }
+
+    public Map<Integer, Boolean> getSelectedStudentMap() {
+        return selectedStudentMap;
+    }
+
+    public void setSelectedStudentMap(Map<Integer, Boolean> selectedStudentMap) {
+        this.selectedStudentMap = selectedStudentMap;
     }
 
     public String moveToListPage() {
@@ -255,7 +270,7 @@ public class SClassBean implements Serializable {
 
     public void updateSClassMentor(Integer sClassId, Integer studentId) {
         List<Integer> studentIdList = new ArrayList<>();
-        studentIdList = sClassRepo.getStudentsByClassId(sClassId).entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList());
+        studentIdList = sClassRepo.getStudentsByClassId(sClassId);
         if (studentIdList.contains(studentId)) {
             sClassRepo.setSClassMentor(sClassId, studentId);
             FacesContext.getCurrentInstance().addMessage("sClassDetail", new FacesMessage(FacesMessage.SEVERITY_INFO, "Update mentor at " + new Date(), null));
@@ -302,13 +317,22 @@ public class SClassBean implements Serializable {
         }
     }
 
+    public void selectAllStudents() {
+        for (Integer studentId : this.getStudentInClassList()) {
+            selectedStudentMap.put(studentId, true);
+        }
+    }
+
+    public void unselectAllStudents() {
+        for (Integer studentId : this.getStudentInClassList()) {
+            selectedStudentMap.put(studentId, false);
+        }
+    }
+
     public List<Student> getSClassStudentsList(Integer sClassId) {
         List<Integer> studentsIdList = new ArrayList<>();
         List<Student> studentList = new ArrayList<>();
-        studentsIdList = sClassRepo.getStudentsByClassId(sClassId).entrySet()
-                .stream()
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+        studentsIdList = sClassRepo.getStudentsByClassId(sClassId);
         for (Integer studentId: studentsIdList) {
             try {
                 studentList.add(studentRepo.getById(studentId));

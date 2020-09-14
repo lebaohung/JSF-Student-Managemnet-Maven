@@ -178,8 +178,8 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
         return classSize;
     }
 
-    public Map<Integer, Boolean> getStudentsByClassId(Integer sClassId) {
-        Map<Integer, Boolean> studentIdMap = new HashMap<>();
+    public List<Integer> getStudentsByClassId(Integer sClassId) {
+        List<Integer> studentList = new ArrayList<>();
         try (
                 Connection connection = JdbcConnection.getConnection();
         ) {
@@ -188,12 +188,12 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
             while (resultSet.next()) {
-                studentIdMap.put(resultSet.getInt(1), resultSet.getBoolean(4));
+                studentList.add(resultSet.getInt(1));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return studentIdMap;
+        return studentList;
     }
 
     public Integer getSClassMentorId(Integer sClassId) {
