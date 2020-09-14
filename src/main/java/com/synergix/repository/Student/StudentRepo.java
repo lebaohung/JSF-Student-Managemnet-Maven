@@ -22,7 +22,7 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
             "\tVALUES (?, ?, ?, ?);";
     private static final String SELECT_STUDENT_BY_ID = "SELECT * FROM student WHERE id = ?;";
     private static final String UPDATE_STUDENT = "UPDATE public.student\n" +
-            "\tSET sname=?, email=?, phone=?, sclass_id=? WHERE id = ?";
+            "\tSET sname=?, email=?, phone=?, birthday=? WHERE id = ?";
     private static final String DELETE_STUDENT = "DELETE FROM public.student WHERE id=?;";
     private static final String COUNT_STUDENTS = "SELECT COUNT(id) FROM student;";
 
@@ -68,8 +68,7 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
                 student.setsName(resultSet.getString(2));
                 student.setEmail(resultSet.getString(3));
                 student.setPhone(resultSet.getString(4));
-                student.setsClassId(resultSet.getInt(5));
-                student.setBirthday(resultSet.getDate(6));
+                student.setBirthday(resultSet.getDate(5));
                 students.add(student);
             }
         } catch (Exception e) {
@@ -142,7 +141,7 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
             student.setsName(resultSet.getString(2));
             student.setEmail(resultSet.getString(3));
             student.setPhone(resultSet.getString(4));
-            student.setsClassId(resultSet.getInt(5));
+            student.setBirthday(resultSet.getDate(5));
         }
         return student;
     }
@@ -157,10 +156,10 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
             preparedStatement.setString(2, student.getEmail());
             preparedStatement.setString(3, student.getPhone());
             preparedStatement.setInt(5, student.getId());
-            if (student.getsClassId() != null) {
-                preparedStatement.setInt(4, student.getsClassId());
+            if (student.getBirthday() == null) {
+                preparedStatement.setDate(4, null);
             } else {
-                preparedStatement.setNull(4, Types.NULL);
+                preparedStatement.setDate(4, new Date(student.getBirthday().getTime()));
             }
             preparedStatement.executeUpdate();
         } catch (SQLException throwables) {

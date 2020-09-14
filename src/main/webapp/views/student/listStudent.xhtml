@@ -6,180 +6,180 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
-    <h:body>
-        <ui:composition>
-            <h:form rendered="#{studentBean.navigateStudentPage eq studentBean.getManagerPage()}">
-                <h2>#{msg.StudentManagement}</h2>
-                <h:commandButton disabled="#{studentBean.page le 1}" value="&lt; #{msg.PreviousButton}"
-                                 action="#{studentBean.previous}">
-                    <f:ajax render="@form"/>
-                </h:commandButton>
-                <h:outputText value="  #{msg.Page} #{studentBean.page} / #{studentBean.pageCount} "/>
-                <h:commandButton disabled="#{studentBean.page ge studentBean.pageCount}" value="&gt; #{msg.NextButton}"
-                                 action="#{studentBean.next}">
-                    <f:ajax render="@form"/>
-                </h:commandButton>
+<h:body>
+    <ui:composition>
+        <h:form rendered="#{studentBean.navigateStudentPage eq studentBean.getManagerPage()}">
+            <h2>#{msg.StudentManagement}</h2>
+            <h:commandButton disabled="#{studentBean.page le 1}" value="&lt; #{msg.PreviousButton}"
+                             action="#{studentBean.previous}">
+                <f:ajax render="@form"/>
+            </h:commandButton>
+            <h:outputText value="  #{msg.Page} #{studentBean.page} / #{studentBean.pageCount} "/>
+            <h:commandButton disabled="#{studentBean.page ge studentBean.pageCount}" value="&gt; #{msg.NextButton}"
+                             action="#{studentBean.next}">
+                <f:ajax render="@form"/>
+            </h:commandButton>
 
-                <h:dataTable id="studentTable" binding="#{listStudentTable}" value="#{studentBean.students}"
-                             var="student">
+            <h:dataTable id="studentTable" binding="#{listStudentTable}" value="#{studentBean.students}"
+                         var="student">
 
-                    <h:column>
-                        <f:facet name="header">
-                            #{msg.No}
-                        </f:facet>
-                        <h:outputText rendered="#{student.id ne null}" value="#{listStudentTable.rowIndex + 1}"/>
-                    </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.No}
+                    </f:facet>
+                    <h:outputText rendered="#{student.id ne null}" value="#{listStudentTable.rowIndex + 1}"/>
+                </h:column>
 
-                    <h:column>
-                        <f:facet name="header">
-                            #{msg.StudentID}
-                        </f:facet>
-                        <h:outputText rendered="#{student.id ne null}" value="#{student.id}"/>
-                    </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.StudentID}
+                    </f:facet>
+                    <h:outputText rendered="#{student.id ne null}" value="#{student.id}"/>
+                </h:column>
 
-                    <h:column>
-                        <f:facet name="header">
-                            #{msg.StudentName}
-                        </f:facet>
-                        <h:outputText rendered="#{student.id ne null}" value="#{student.sName}"/>
-                        <h:inputText rendered="#{student.id eq null}" id="sName" required="true"
-                                     requiredMessage="Name required!" validator="nameValidator"
-                                     p:placeholder="Required" value="#{newStudent.sName}">
-                            <f:ajax event="change" execute="@this" render="@form"/>
-                            <f:converter converterId="nameConverter"/>
-                        </h:inputText>
-                    </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.StudentName}
+                    </f:facet>
+                    <h:outputText rendered="#{student.id ne null}" value="#{student.sName}"/>
+                    <h:inputText rendered="#{student.id eq null}" id="sName" required="true"
+                                 requiredMessage="Name required!" validator="nameValidator"
+                                 p:placeholder="Required" value="#{newStudent.sName}">
+                        <f:ajax event="change" execute="@this" render="@form"/>
+                        <f:converter converterId="nameConverter"/>
+                    </h:inputText>
+                </h:column>
 
-                    <h:column>
-                        <f:facet name="header">
-                            #{msg.StudentEmail}
-                        </f:facet>
-                        <h:outputText rendered="#{student.id ne null}" value="#{student.email}"/>
-                        <h:inputText rendered="#{student.id eq null}" required="false" id="email"
-                                     value="#{newStudent.email}" validator="emailValidator">
-                            <f:ajax event="change" execute="@this" render="@form"/>
-                            <f:converter converterId="emailConverter"/>
-                        </h:inputText>
-                    </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.StudentEmail}
+                    </f:facet>
+                    <h:outputText rendered="#{student.id ne null}" value="#{student.email}"/>
+                    <h:inputText rendered="#{student.id eq null}" required="false" id="email"
+                                 value="#{newStudent.email}" validator="emailValidator">
+                        <f:ajax event="change" execute="@this" render="@form"/>
+                        <f:converter converterId="emailConverter"/>
+                    </h:inputText>
+                </h:column>
 
-                    <h:column>
-                        <f:facet name="header">
-                            #{msg.StudentPhone}
-                        </f:facet>
-                        <h:outputText rendered="#{student.id ne null}" value="#{student.phone}"/>
-                        <h:inputText rendered="#{student.id eq null}" required="false" id="phone"
-                                     value="#{newStudent.phone}" validator="phoneValidator">
-                            <f:ajax event="change" execute="@this" render="@form"/>
-                        </h:inputText>
-                    </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        #{msg.StudentPhone}
+                    </f:facet>
+                    <h:outputText rendered="#{student.id ne null}" value="#{student.phone}"/>
+                    <h:inputText rendered="#{student.id eq null}" required="false" id="phone"
+                                 value="#{newStudent.phone}" validator="phoneValidator">
+                        <f:ajax event="change" execute="@this" render="@form"/>
+                    </h:inputText>
+                </h:column>
 
-                    <h:column>
-                        <f:facet name="header">
-                            Birthday
-                        </f:facet>
-                        <h:outputText rendered="#{student.id ne null}" value="#{student.birthday}">
-                            <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
-                        </h:outputText>
-                        <h:inputText rendered="#{student.id eq null}" required="false" id="birthday"
-                                     value="#{newStudent.birthday}"
-                                     converterMessage="Birthday is not provide in dd/MM/yyyy format">
-                            <f:convertDateTime pattern="dd/MM/yyyy"/>
-                            <f:ajax event="change" execute="@this" render="@form"/>
-                        </h:inputText>
-                    </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        Birthday
+                    </f:facet>
+                    <h:outputText rendered="#{student.id ne null}" value="#{student.birthday}">
+                        <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                    <h:inputText rendered="#{student.id eq null}" required="false" id="birthday"
+                                 value="#{newStudent.birthday}"
+                                 converterMessage="Birthday is not provide in dd/MM/yyyy format">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        <f:ajax event="change" execute="@this" render="@form"/>
+                    </h:inputText>
+                </h:column>
 
-                    <h:column>
-                        <f:facet name="header">
-                            <h:commandButton
-                                    rendered="#{studentBean.selectedStudentMap.isEmpty() or studentBean.selectedStudentMap.containsValue(false)}"
-                                    value="Select All" action="#{studentBean.selectAll}">
-                                <f:ajax render="@form"/>
-                            </h:commandButton>
-                            <h:commandButton
-                                    rendered="#{!studentBean.selectedStudentMap.isEmpty() and !studentBean.selectedStudentMap.containsValue(false)}"
-                                    value="Unselect All" action="#{studentBean.unselectAll}">
-                                <f:ajax render="@form"/>
-                            </h:commandButton>
-                        </f:facet>
-                        <h:selectBooleanCheckbox rendered="#{student.id ne null}"
-                                                 value="#{studentBean.selectedStudentMap[student.id]}">
-                            <f:ajax execute="@form" render="@form"/>
-                        </h:selectBooleanCheckbox>
-                        <h:commandButton rendered="#{student.id ne null}" value="Detail"
-                                         action="#{studentBean.moveToDetailPage(student)}">
-                            <f:ajax render="@all"/>
+                <h:column>
+                    <f:facet name="header">
+                        <h:commandButton
+                                rendered="#{studentBean.selectedStudentMap.isEmpty() or studentBean.selectedStudentMap.containsValue(false)}"
+                                value="Select All" action="#{studentBean.selectAll}">
+                            <f:ajax render="@form"/>
                         </h:commandButton>
-                        <br/>
-                    </h:column>
-                </h:dataTable>
+                        <h:commandButton
+                                rendered="#{!studentBean.selectedStudentMap.isEmpty() and !studentBean.selectedStudentMap.containsValue(false)}"
+                                value="Unselect All" action="#{studentBean.unselectAll}">
+                            <f:ajax render="@form"/>
+                        </h:commandButton>
+                    </f:facet>
+                    <h:selectBooleanCheckbox rendered="#{student.id ne null}"
+                                             value="#{studentBean.selectedStudentMap[student.id]}">
+                        <f:ajax execute="@form" render="@form"/>
+                    </h:selectBooleanCheckbox>
+                    <h:commandButton rendered="#{student.id ne null}" value="Detail"
+                                     action="#{studentBean.moveToDetailPage(student)}">
+                        <f:ajax render="@all"/>
+                    </h:commandButton>
+                    <br/>
+                </h:column>
+            </h:dataTable>
 
-                <h:messages id="message" infoStyle="color: green" errorStyle="color: darkred" layout="table"/>
+            <h:messages id="message" infoStyle="color: green" errorStyle="color: darkred" layout="table"/>
 
-                <h:commandButton value="Delete selected"
-                                 disabled="#{!studentBean.selectedStudentMap.containsValue(true)}"
-                                 action="#{studentBean.deleteSelectedStudent}"
-                                 onclick="return confirm('#{msg.PermanentlyDeleteStudent}')">
-                    <f:ajax execute="@form" render="@form"/>
-                </h:commandButton>
+            <h:commandButton value="Delete selected"
+                             disabled="#{!studentBean.selectedStudentMap.containsValue(true)}"
+                             action="#{studentBean.deleteSelectedStudent}"
+                             onclick="return confirm('#{msg.PermanentlyDeleteStudent}')">
+                <f:ajax execute="@form" render="@form"/>
+            </h:commandButton>
 
-                <h:commandButton rendered="#{newStudent eq null}" value="#{msg.AddStudent}"
-                                 action="#{studentBean.create()}">
-                    <f:ajax execute="@form" render="@form"/>
-                </h:commandButton>
+            <h:commandButton rendered="#{newStudent eq null}" value="#{msg.AddStudent}"
+                             action="#{studentBean.create()}">
+                <f:ajax execute="@form" render="@form"/>
+            </h:commandButton>
 
-                <h:commandButton rendered="#{newStudent ne null}" immediate="true" action="#{studentBean.cancelAdd}"
-                                 value="#{msg.Cancel}">
-                    <f:ajax render="@form"/>
-                </h:commandButton>
-                <h:commandButton rendered="#{newStudent ne null}" action="#{studentBean.save(newStudent)}"
-                                 value="#{msg.Save}">
-                    <f:ajax execute="@form" render="@form"/>
-                </h:commandButton>
-            </h:form>
+            <h:commandButton rendered="#{newStudent ne null}" immediate="true" action="#{studentBean.cancelAdd}"
+                             value="#{msg.Cancel}">
+                <f:ajax render="@form"/>
+            </h:commandButton>
+            <h:commandButton rendered="#{newStudent ne null}" action="#{studentBean.save(newStudent)}"
+                             value="#{msg.Save}">
+                <f:ajax execute="@form" render="@form"/>
+            </h:commandButton>
+        </h:form>
 
-            <h:form rendered="#{studentBean.navigateStudentPage eq studentBean.getDetailPage()}">
-                <h:commandButton value="&lt; Student Management Page" action="#{studentBean.initNavigator}">
-                    <f:ajax render="@all"/>
-                </h:commandButton>
-                <br/><br/>
+        <h:form id="studentDetail" rendered="#{studentBean.navigateStudentPage eq studentBean.getDetailPage()}"  >
+            <h:commandButton value="&lt; Student Management Page" action="#{studentBean.initNavigator}">
+                <f:ajax render="@all"/>
+            </h:commandButton>
+            <br/><br/>
 
-                <h5><h:outputText value="Student ID: #{editStudent.id}"/></h5>
+            <h5><h:outputText value="Student ID: #{editStudent.id}"/></h5>
 
-                <h:outputText value="Student Name: "/>
-                <h:inputText required="true" label="Student Name"
-                             requiredMessage="Name required!" validator="nameValidator"
-                             p:placeholder="Required" value="#{editStudent.sName}">
-                    <f:ajax event="change" execute="@this" render="@form"/>
-                    <f:converter converterId="nameConverter"/>
-                </h:inputText>
-                <br/><br/>
+            <h:outputText value="Student Name: "/>
+            <h:inputText required="true" label="Student Name"
+                         requiredMessage="Name required!" validator="nameValidator"
+                         p:placeholder="Required" value="#{editStudent.sName}">
+                <f:ajax listener="#{studentBean.update(editStudent)}" event="change" execute="@this" render="@all"/>
+                <f:converter converterId="nameConverter"/>
+            </h:inputText>
+            <br/><br/>
 
-                <h:outputText value="Email: "/>
-                <h:inputText rendered="#{student.id eq null}" required="false"
-                             value="#{editStudent.email}" validator="emailValidator">
-                    <f:ajax event="change" execute="@this" render="@form"/>
-                    <f:converter converterId="emailConverter"/>
-                </h:inputText>
-                <br/><br/>
+            <h:outputText value="Email: "/>
+            <h:inputText rendered="#{student.id eq null}" required="false"
+                         value="#{editStudent.email}" validator="emailValidator">
+                <f:ajax listener="#{studentBean.update(editStudent)}" event="change" execute="@this" render="@all"/>
+                <f:converter converterId="emailConverter"/>
+            </h:inputText>
+            <br/><br/>
 
-                <h:outputText value="Phone: "/>
-                <h:inputText rendered="#{student.id eq null}" required="false"
-                             value="#{editStudent.phone}" validator="phoneValidator">
-                    <f:ajax event="change" execute="@this" render="@form"/>
-                </h:inputText>
-                <br/><br/>
+            <h:outputText value="Phone: "/>
+            <h:inputText rendered="#{student.id eq null}" required="false"
+                         value="#{editStudent.phone}" validator="phoneValidator">
+                <f:ajax listener="#{studentBean.update(editStudent)}" event="change" execute="@this" render="@all"/>
+            </h:inputText>
+            <br/><br/>
 
-                <h:outputText value="Birthday: "/>
-                <h:inputText rendered="#{student.id eq null}" required="false"
-                             value="#{editStudent.birthday}"
-                             converterMessage="Birthday is not provide in dd/MM/yyyy format">
-                    <f:convertDateTime pattern="dd/MM/yyyy"/>
-                    <f:ajax event="change" execute="@this" render="@form"/>
-                </h:inputText>
-                <br/>
+            <h:outputText value="Birthday: "/>
+            <h:inputText rendered="#{student.id eq null}" required="false"
+                         value="#{editStudent.birthday}"
+                         converterMessage="Birthday is not provide in dd/MM/yyyy format">
+                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                <f:ajax listener="#{studentBean.update(editStudent)}" event="change" execute="@this" render="@all"/>
+            </h:inputText>
+            <br/>
 
-                <h:messages infoStyle="color: green" errorStyle="color: darkred" layout="table"/>
-            </h:form>
-        </ui:composition>
-    </h:body>
+            <h:messages infoStyle="color: green" errorStyle="color: darkred" layout="table"/>
+        </h:form>
+    </ui:composition>
+</h:body>
 </html>

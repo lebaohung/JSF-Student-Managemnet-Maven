@@ -12,10 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Named
@@ -38,6 +35,7 @@ public class StudentBean implements Serializable {
     @PostConstruct
     public void initNavigator() {
         this.navigateStudentPage = MANAGER_PAGE;
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("editStudent", editStudent);
     }
 
     public String getManagerPage() {
@@ -186,8 +184,8 @@ public class StudentBean implements Serializable {
     public void update(Student student) {
         if (student != null) {
             studentRepo.update(student);
+            FacesContext.getCurrentInstance().addMessage("studentDetail", new FacesMessage(FacesMessage.SEVERITY_INFO, "Saved at " + new Date(), null));
         }
-        this.cancelEdit();
     }
 
     public int count() {
@@ -242,9 +240,16 @@ public class StudentBean implements Serializable {
         }
     }
 
+    Student editStudent = null;
+
     public void moveToDetailPage(Student student) {
+        editStudent = student;
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("editStudent", student);
+        sessionMap.put("editStudent", editStudent);
         this.navigateStudentPage = DETAIL_PAGE;
+    }
+
+    public void test() {
+        System.out.println(FacesContext.getCurrentInstance().getExternalContext().getSessionMap());
     }
 }

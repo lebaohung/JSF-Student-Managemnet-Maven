@@ -14,10 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Named(value = "sClassBean")
@@ -176,17 +173,13 @@ public class SClassBean implements Serializable {
 
     private SClass sClass = null;
 
-    public void getEdit(Integer sClassId) {
-        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("editSClass", sClassRepo.getById(sClassId));
-    }
-
-    public void getSClassMentor(Integer menttorId) {
+    public void getSClassMentor(Integer mentorId) {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         try {
-            sessionMap.put("mentorName", studentRepo.getById(menttorId).getsName());
+            sessionMap.put("mentorName", studentRepo.getById(mentorId).getsName());
         } catch (SQLException throwables) {
-            FacesContext.getCurrentInstance().addMessage("sClassDetail", new FacesMessage("Cannot find student ID: " + menttorId));
+            FacesContext.getCurrentInstance().addMessage("sClassDetail",
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cannot find student ID:" + mentorId, null));
         }
     }
 
@@ -242,11 +235,39 @@ public class SClassBean implements Serializable {
     }
 
     public void moveToDetailPage(SClass sClass) {
-        Integer mentorId = 0;
+        Integer mentorId = sClassRepo.getSClassMentorId(sClass.getId());
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        if (mentorId == null) {
+            FacesContext.getCurrentInstance().addMessage("sClassDetail", new FacesMessage(FacesMessage.SEVERITY_INFO, "Class does not have mentor yet", null));
+            sessionMap.put("mentorName", null);
+        } else {
+            try {
+                sessionMap.put("mentorName", studentRepo.getById(mentorId).getsName());
+            } catch (SQLException e) {
+                FacesContext.getCurrentInstance().addMessage("sClassDetail",
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cannot find student ID:" + mentorId, null));
+            }
+        }
         sessionMap.put("editSClass", sClass);
         sessionMap.put("mentorId", mentorId);
         this.navigateSClassPage = DETAIL_PAGE;
+    }
+
+    public void updateSClassMentor(Integer sClassId, Integer studentId) {
+        List<Integer> studentIdList = new ArrayList<>();
+        studentIdList = sClassRepo.getStudentsByClassId(sClassId).entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList());
+        if (studentIdList.contains(studentId)) {
+            sClassRepo.setSClassMentor(sClassId, studentId);
+            FacesContext.getCurrentInstance().addMessage("sClassDetail", new FacesMessage(FacesMessage.SEVERITY_INFO, "Update mentor at " + new Date(), null));
+            try {
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("mentorName", studentRepo.getById(studentId).getsName());
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        } else {
+            FacesContext.getCurrentInstance().addMessage("sClassDetail",
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Not found studen ID " + studentId  + " in class" , null));
+        }
     }
 
     public void deleteSelectedSClass() {
@@ -261,7 +282,7 @@ public class SClassBean implements Serializable {
         if (!cannotDeleteSClassId.isEmpty()) {
             this.setDeleteExceptionMessage("Cannot delete Class ID: ");
             for (int i = 0; i < cannotDeleteSClassId.size(); i++) {
-                if (i == cannotDeleteSClassId.size() -1) this.setDeleteExceptionMessage(String.valueOf(i));
+                if (i == cannotDeleteSClassId.size() - 1) this.setDeleteExceptionMessage(String.valueOf(i));
                 else this.setDeleteExceptionMessage(i + ", ");
             }
         }
@@ -279,5 +300,22 @@ public class SClassBean implements Serializable {
         for (SClass sClass : this.getClasses()) {
             selectedSClassMap.put(sClass.getId(), false);
         }
+    }
+
+    public List<Student> getSClassStudentsList(Integer sClassId) {
+        List<Integer> studentsIdList = new ArrayList<>();
+        List<Student> studentList = new ArrayList<>();
+        studentsIdList = sClassRepo.getStudentsByClassId(sClassId).entrySet()
+                .stream()
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+        for (Integer studentId: studentsIdList) {
+            try {
+                studentList.add(studentRepo.getById(studentId));
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return studentList;
     }
 }

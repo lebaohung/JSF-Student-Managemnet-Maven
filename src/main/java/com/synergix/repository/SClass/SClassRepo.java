@@ -1,11 +1,9 @@
 package com.synergix.repository.SClass;
 
 import com.synergix.model.SClass;
-import com.synergix.model.Student;
 import com.synergix.repository.IPagingRepository;
 import com.synergix.repository.JdbcConnection;
 
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.sql.Connection;
@@ -13,7 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Named(value = "sClassRepo")
 public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<SClass> {
@@ -24,9 +24,12 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
     private static final String SELECT_CLASS_BY_ID = "SELECT * FROM sclass WHERE id = ?;";
     private static final String UPDATE_CLASS = "UPDATE public.sclass SET name=? WHERE id = ?;";
     private static final String DELETE_CLASS = "DELETE FROM public.sclass WHERE id=?;";
-    private static final String COUNT_CLASS_SIZE = "SELECT COUNT(id) FROM student GROUP BY sclass_id HAVING sclass_id = ?;";
+    private static final String COUNT_CLASS_SIZE = "SELECT COUNT(id) FROM student_and_sclass GROUP BY sclass_id HAVING sclass_id = ?;";
     private static final String COUNT_ClASSES = "SELECT COUNT(id) FROM sclass;";
-    private static final String SELECT_STUDENTS_BY_CLASS_ID = "SELECT * FROM student WHERE sclass_id = ? ORDER BY id;";
+    private static final String SELECT_STUDENTS_BY_CLASS_ID = "SELECT * FROM student_and_sclass WHERE sclass_id = ? ORDER BY id;";
+    private static final String SELECT_MENTOR_BY_CLASS_ID = "SELECT student_id FROM student_and_sclass WHERE MENTOR = TRUE AND SCLASS_ID = ?;";
+    private static final String UPDATE_MENTOR_BY_CLASS_ID = "UPDATE student_and_sclass SET mentor = false WHERE sclass_id = ? AND mentor = true;";
+    private static final String SET_MENTOR_BY_CLASS_ID = "UPDATE student_and_sclass SET mentor = TRUE WHERE sclass_id = ? and student_id = ?;";
 
     @Override
     public List<SClass> getAll() {
@@ -175,8 +178,8 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
         return classSize;
     }
 
-    public List<Student> getStudentsByClassId(Integer sClassId) {
-        List<Student> studentList = new ArrayList<>();
+    public Map<Integer, Boolean> getStudentsByClassId(Integer sClassId) {
+        Map<Integer, Boolean> studentIdMap = new HashMap<>();
         try (
                 Connection connection = JdbcConnection.getConnection();
         ) {
@@ -185,17 +188,46 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
             while (resultSet.next()) {
-                Student student = new Student();
-                student.setId(resultSet.getInt(1));
-                student.setsName(resultSet.getString(2));
-                student.setEmail(resultSet.getString(3));
-                student.setPhone(resultSet.getString(4));
-                student.setsClassId(resultSet.getInt(5));
-                studentList.add(student);
+                studentIdMap.put(resultSet.getInt(1), resultSet.getBoolean(4));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return studentList;
+        return studentIdMap;
+    }
+
+    public Integer getSClassMentorId(Integer sClassId) {
+        Integer studentId = null;
+        Connection connection = JdbcConnection.getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = connection.prepareStatement(SELECT_MENTOR_BY_CLASS_ID);
+            preparedStatement.setInt(1, sClassId);
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getResultSet();
+            while (resultSet.next()) {
+                studentId = resultSet.getInt(1);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return studentId;
+    }
+
+    public void setSClassMentor(Integer sClassId, Integer studentId) {
+        try (
+                Connection connection = JdbcConnection.getConnection();
+        ) {
+            PreparedStatement updateMentor = connection.prepareStatement(UPDATE_MENTOR_BY_CLASS_ID);
+            updateMentor.setInt(1, sClassId);
+            updateMentor.execute();
+
+            PreparedStatement setMentor = connection.prepareStatement(SET_MENTOR_BY_CLASS_ID);
+            setMentor.setInt(1, sClassId);
+            setMentor.setInt(2, studentId);
+            setMentor.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }

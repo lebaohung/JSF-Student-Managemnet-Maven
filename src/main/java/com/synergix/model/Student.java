@@ -21,22 +21,30 @@ public class Student implements Serializable {
         this.phone = phone;
     }
 
-    public Student(String sName, String email, String phone, int sClassId, Date birthday) {
-        this.sName = sName;
-        this.email = email;
-        this.phone = phone;
-        this.sClassId = sClassId;
-        this.birthday = birthday;
-    }
-
-    public Student(int id, String sName, String email, String phone, int sClassId, Date birthday) {
+    public Student(Integer id, String sName, String email, String phone, Date birthday) {
         this.id = id;
         this.sName = sName;
         this.email = email;
         this.phone = phone;
-        this.sClassId = sClassId;
         this.birthday = birthday;
     }
+
+//    public Student(String sName, String email, String phone, int sClassId, Date birthday) {
+//        this.sName = sName;
+//        this.email = email;
+//        this.phone = phone;
+//        this.sClassId = sClassId;
+//        this.birthday = birthday;
+//    }
+//
+//    public Student(int id, String sName, String email, String phone, int sClassId, Date birthday) {
+//        this.id = id;
+//        this.sName = sName;
+//        this.email = email;
+//        this.phone = phone;
+//        this.sClassId = sClassId;
+//        this.birthday = birthday;
+//    }
 
     public Integer getId() {
         return id;
