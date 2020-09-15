@@ -11,7 +11,6 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -181,15 +180,9 @@ public class StudentBean implements Serializable {
         }
     }
 
-
     public void deleteSelectedStudent() {
         for (Integer studentId : this.getSelectedStudentList()) {
-            try {
-                studentRepo.delete(studentId);
-            } catch (SQLException e) {
-                FacesMessage deleteErrorMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cannot delete student ID " + studentId, null);
-                FacesContext.getCurrentInstance().addMessage("studentsList", deleteErrorMsg);
-            }
+            studentRepo.delete(studentId);
         }
         this.getAllByPage();
         this.selectedStudentMap.clear();

@@ -6,6 +6,8 @@ import com.synergix.repository.IRepository;
 import com.synergix.repository.JdbcConnection;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.sql.*;
@@ -18,11 +20,12 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
     private static final String SELECT_ALL_STUDENTS = "SELECT * FROM student ORDER BY id ASC ;";
     private static final String SELECT_ALL_STUDENTS_BY_PAGE = "SELECT * FROM student ORDER BY id ASC LIMIT ? OFFSET ?;";
     private static final String INSERT_STUDENT = "INSERT INTO public.student(\n" +
-            "\tsname, email, phone, sclass_id)\n" +
+            "\tsname, email, phone, birthday)\n" +
             "\tVALUES (?, ?, ?, ?);";
     private static final String SELECT_STUDENT_BY_ID = "SELECT * FROM student WHERE id = ?;";
     private static final String UPDATE_STUDENT = "UPDATE public.student\n" +
             "\tSET sname=?, email=?, phone=?, birthday=? WHERE id = ?";
+    private static final String DELETE_STUDENT_ID_IN_CLASS = "DELETE FROM student_and_sclass WHERE student_id = ?;";
     private static final String DELETE_STUDENT = "DELETE FROM public.student WHERE id=?;";
     private static final String COUNT_STUDENTS = "SELECT COUNT(id) FROM student;";
     private static final String GET_ALL_STUDENTS_ID = "SELECT id FROM student";
@@ -106,10 +109,10 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
             preparedStatement.setString(1, student.getsName());
             preparedStatement.setString(2, student.getEmail());
             preparedStatement.setString(3, student.getPhone());
-            if (student.getsClassId() != null) {
-                preparedStatement.setInt(4, student.getsClassId());
+            if (student.getBirthday() == null) {
+                preparedStatement.setDate(4, null);
             } else {
-                preparedStatement.setNull(4, java.sql.Types.NULL);
+                preparedStatement.setDate(4, new Date(student.getBirthday().getTime()));
             }
             preparedStatement.executeUpdate();
         } catch (SQLException throwables) {
@@ -172,13 +175,32 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
     }
 
     @Override
-    public void delete(Integer studentId) throws SQLException {
+    public void delete(Integer studentId) {
         try (
                 Connection connection = JdbcConnection.getConnection();
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_STUDENT);
-            preparedStatement.setInt(1, studentId);
-            preparedStatement.executeUpdate();
+            connection.setAutoCommit(false);
+            try (
+                    PreparedStatement deleteStudentIdInClass = connection.prepareStatement(DELETE_STUDENT_ID_IN_CLASS);
+                    PreparedStatement deleteStudent = connection.prepareStatement(DELETE_STUDENT);
+            ) {
+                deleteStudentIdInClass.setInt(1, studentId);
+                deleteStudent.setInt(1, studentId);
+                deleteStudentIdInClass.executeUpdate();
+                deleteStudent.executeUpdate();
+                connection.commit();
+            } catch (SQLException e) {
+                FacesMessage deleteErrorMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cannot delete student ID " + studentId, null);
+                FacesContext.getCurrentInstance().addMessage("studentsList", deleteErrorMsg);
+                try {
+                    connection.rollback();
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        } catch (SQLException e) {
+            FacesMessage deleteErrorMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cannot delete student ID " + studentId, null);
+            FacesContext.getCurrentInstance().addMessage("studentsList", deleteErrorMsg);
         }
     }
 
