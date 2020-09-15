@@ -41,11 +41,14 @@ public class SClassBean implements Serializable {
     private List<Integer> selectedSClassList = new ArrayList<>();
     private Map<Integer, Boolean> selectedSClassMap = new HashMap<>();
     private Map<Integer, Boolean> selectedStudentMap = new HashMap<>();
-    private List<Integer> studentInClassList = new ArrayList<>();
+    private List<Integer> selectedStudentIdList = new ArrayList<>();
+    private List<Integer> studentsIdInClassList = new ArrayList<>();
+    private List<Student> studentsInClassList = new ArrayList<>();
     private StringBuilder deleteExceptionMessage;
 
     @PostConstruct
     public void initNavigator() {
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("newStudent", null);
         this.navigateSClassPage = MANAGER_PAGE;
     }
 
@@ -132,17 +135,33 @@ public class SClassBean implements Serializable {
         return selectedSClassList;
     }
 
-    public List<Integer> getStudentInClassList() {
-        this.studentInClassList = this.getSelectedStudentMap().entrySet()
+    public List<Integer> getSelectedStudentIdList() {
+        this.selectedStudentIdList = this.getSelectedStudentMap().entrySet()
                 .stream()
                 .filter(Map.Entry::getValue)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
-        return studentInClassList;
+        return selectedStudentIdList;
     }
 
-    public void setStudentInClassList(List<Integer> studentInClassList) {
-        this.studentInClassList = studentInClassList;
+    public List<Integer> getStudentsIdInClassList() {
+        return studentsIdInClassList;
+    }
+
+    public void setStudentsIdInClassList(List<Integer> studentsIdInClassList) {
+        this.studentsIdInClassList = studentsIdInClassList;
+    }
+
+    public void setSelectedStudentIdList(List<Integer> selectedStudentIdList) {
+        this.selectedStudentIdList = selectedStudentIdList;
+    }
+
+    public List<Student> getStudentsInClassList() {
+        return studentsInClassList;
+    }
+
+    public void setStudentsInClassList(List<Student> studentsInClassList) {
+        this.studentsInClassList = studentsInClassList;
     }
 
     public Map<Integer, Boolean> getSelectedSClassMap() {
@@ -177,7 +196,11 @@ public class SClassBean implements Serializable {
         classes.add(newSClass);
     }
 
-    private SClass sClass = null;
+    public void createStudent() {
+        Student student = new Student();
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("newStudent", student);
+        this.studentsInClassList.add(student);
+    }
 
     public void getSClassMentor(Integer mentorId) {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
@@ -198,6 +221,18 @@ public class SClassBean implements Serializable {
         this.cancelAdd();
     }
 
+    public void saveStudent(Integer sclassId, Integer studentId) {
+        if (true) {
+            sClassRepo.saveStudentIntoClass(sclassId, studentId);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Save new student into class successfully", null);
+            FacesContext.getCurrentInstance().addMessage("studentInClass", facesMessage);
+        } else {
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Student ID " + studentId + "not in this class", null);
+            FacesContext.getCurrentInstance().addMessage("studentInClass", facesMessage);
+        }
+        this.cancelAddStudent(sclassId);
+    }
+
     public void update(SClass sClass) {
         if (sClass != null) {
             sClassRepo.update(sClass);
@@ -214,6 +249,12 @@ public class SClassBean implements Serializable {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         sessionMap.put("newSClass", null);
         this.getAllByPage();
+    }
+
+    public void cancelAddStudent(Integer sclassId) {
+        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        sessionMap.put("newStudent", null);
+        this.getSClassStudentsList(sclassId);
     }
 
     public int countClassSize(Integer classId) {
@@ -256,12 +297,15 @@ public class SClassBean implements Serializable {
         }
         sessionMap.put("editSClass", sClass);
         sessionMap.put("mentorId", mentorId);
+        this.studentsInClassList.clear();
+        selectedStudentMap.clear();
+        this.getSClassStudentsList(sClass.getId());
         this.navigateSClassPage = DETAIL_PAGE;
     }
 
     public void updateSClassMentor(Integer sClassId, Integer studentId) {
         List<Integer> studentIdList = new ArrayList<>();
-        studentIdList = sClassRepo.getStudentsByClassId(sClassId);
+        studentIdList = sClassRepo.getStudentsIdByClassId(sClassId);
         if (studentIdList.contains(studentId)) {
             sClassRepo.setSClassMentor(sClassId, studentId);
             FacesContext.getCurrentInstance().addMessage("sClassDetail", new FacesMessage(FacesMessage.SEVERITY_INFO, "Update mentor at " + new Date(), null));
@@ -272,8 +316,24 @@ public class SClassBean implements Serializable {
             }
         } else {
             FacesContext.getCurrentInstance().addMessage("sClassDetail",
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Not found studen ID " + studentId + " in class", null));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Not found student ID " + studentId + " in class", null));
         }
+    }
+
+    public void updateStudent(Integer sClassId, Integer studentId) {
+        List<Integer> studentIdList = new ArrayList<>();
+        List<Integer> studentIdInClassList = new ArrayList<>();
+        studentIdList = studentRepo.getAllStudentsId();
+        studentIdInClassList = sClassRepo.getStudentsIdByClassId(sClassId);
+        if (studentIdInClassList.contains(studentId)) {
+            FacesContext.getCurrentInstance().addMessage("studentInClass", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Student " + studentId + " existed in class", null));
+        } else if (studentIdList.contains(studentId)){
+            sClassRepo.saveStudentIntoClass(sClassId, studentId);
+            FacesContext.getCurrentInstance().addMessage("studentInClass", new FacesMessage(FacesMessage.SEVERITY_INFO, "Update student at " + new Date(), null));
+        } else {
+            FacesContext.getCurrentInstance().addMessage("studentInClass", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Not found student ID " + studentId + " in class", null));
+        }
+        this.cancelAddStudent(sClassId);
     }
 
     public void deleteSelectedSClass() {
@@ -296,6 +356,14 @@ public class SClassBean implements Serializable {
         this.selectedSClassMap.clear();
     }
 
+    public void deleteSelectedStudent(SClass sClass) {
+        for (Integer studentId : this.getSelectedStudentIdList()) {
+            sClassRepo.deleteStudentInClass(sClass.getId(), studentId);
+        }
+        this.moveToDetailPage(sClass);
+        this.selectedStudentMap.clear();
+    }
+
     public void selectAll() {
         for (SClass sClass : this.getClasses()) {
             selectedSClassMap.put(sClass.getId(), true);
@@ -309,28 +377,26 @@ public class SClassBean implements Serializable {
     }
 
     public void selectAllStudents() {
-        for (Integer studentId : this.getStudentInClassList()) {
+        for (Integer studentId : studentsIdInClassList) {
             selectedStudentMap.put(studentId, true);
         }
     }
 
     public void unselectAllStudents() {
-        for (Integer studentId : this.getStudentInClassList()) {
+        for (Integer studentId : studentsIdInClassList) {
             selectedStudentMap.put(studentId, false);
         }
     }
 
-    public List<Student> getSClassStudentsList(Integer sClassId) {
-        List<Integer> studentsIdList = new ArrayList<>();
-        List<Student> studentList = new ArrayList<>();
-        studentsIdList = sClassRepo.getStudentsByClassId(sClassId);
-        for (Integer studentId : studentsIdList) {
+    public void getSClassStudentsList(Integer sClassId) {
+        studentsInClassList.clear();
+        studentsIdInClassList = sClassRepo.getStudentsIdByClassId(sClassId);
+        for (Integer studentId : studentsIdInClassList) {
             try {
-                studentList.add(studentRepo.getById(studentId));
+                studentsInClassList.add(studentRepo.getById(studentId));
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
         }
-        return studentList;
     }
 }

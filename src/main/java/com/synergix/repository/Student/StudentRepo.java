@@ -25,6 +25,7 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
             "\tSET sname=?, email=?, phone=?, birthday=? WHERE id = ?";
     private static final String DELETE_STUDENT = "DELETE FROM public.student WHERE id=?;";
     private static final String COUNT_STUDENTS = "SELECT COUNT(id) FROM student;";
+    private static final String GET_ALL_STUDENTS_ID = "SELECT id FROM student";
 
     @Override
     public List<Student> getAll() {
@@ -129,21 +130,24 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
     @Override
     public Student getById(Integer studentId) throws SQLException {
         Student student = new Student();
-        Connection connection = JdbcConnection.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_STUDENT_BY_ID);
-        preparedStatement.setInt(1, studentId);
-        preparedStatement.execute();
-        ResultSet resultSet = preparedStatement.getResultSet();
+        try (
+                Connection connection = JdbcConnection.getConnection();
+        ) {
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_STUDENT_BY_ID);
+            preparedStatement.setInt(1, studentId);
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getResultSet();
 
-        if (resultSet != null) {
-            resultSet.next();
-            student.setId(resultSet.getInt(1));
-            student.setsName(resultSet.getString(2));
-            student.setEmail(resultSet.getString(3));
-            student.setPhone(resultSet.getString(4));
-            student.setBirthday(resultSet.getDate(5));
+            if (resultSet != null) {
+                resultSet.next();
+                student.setId(resultSet.getInt(1));
+                student.setsName(resultSet.getString(2));
+                student.setEmail(resultSet.getString(3));
+                student.setPhone(resultSet.getString(4));
+                student.setBirthday(resultSet.getDate(5));
+            }
+            return student;
         }
-        return student;
     }
 
     @Override
@@ -169,9 +173,30 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
 
     @Override
     public void delete(Integer studentId) throws SQLException {
-        Connection connection = JdbcConnection.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(DELETE_STUDENT);
-        preparedStatement.setInt(1, studentId);
-        preparedStatement.executeUpdate();
+        try (
+                Connection connection = JdbcConnection.getConnection();
+        ) {
+            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_STUDENT);
+            preparedStatement.setInt(1, studentId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public List<Integer> getAllStudentsId() {
+        List<Integer> studentsIdList = new ArrayList<>();
+        try (
+                Connection connection = JdbcConnection.getConnection();
+        ) {
+            PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_STUDENTS_ID);
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getResultSet();
+
+            while (resultSet.next()) {
+                studentsIdList.add(resultSet.getInt(1));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return studentsIdList;
     }
 }

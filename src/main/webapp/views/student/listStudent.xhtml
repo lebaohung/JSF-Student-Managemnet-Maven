@@ -42,7 +42,7 @@
                         #{msg.StudentName}
                     </f:facet>
                     <h:outputText rendered="#{student.id ne null}" value="#{student.sName}"/>
-                    <h:inputText rendered="#{student.id eq null}" id="sName" required="true"
+                    <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{student.id eq null}" id="sName" required="true"
                                  requiredMessage="Name required!" validator="nameValidator"
                                  p:placeholder="Required" value="#{newStudent.sName}">
                         <f:ajax event="change" execute="@this" render="@form"/>
@@ -55,7 +55,7 @@
                         #{msg.StudentEmail}
                     </f:facet>
                     <h:outputText rendered="#{student.id ne null}" value="#{student.email}"/>
-                    <h:inputText rendered="#{student.id eq null}" required="false" id="email"
+                    <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{student.id eq null}" required="false" id="email"
                                  value="#{newStudent.email}" validator="emailValidator">
                         <f:ajax event="change" execute="@this" render="@form"/>
                         <f:converter converterId="emailConverter"/>
@@ -67,7 +67,7 @@
                         #{msg.StudentPhone}
                     </f:facet>
                     <h:outputText rendered="#{student.id ne null}" value="#{student.phone}"/>
-                    <h:inputText rendered="#{student.id eq null}" required="false" id="phone"
+                    <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{student.id eq null}" required="false" id="phone"
                                  value="#{newStudent.phone}" validator="phoneValidator">
                         <f:ajax event="change" execute="@this" render="@form"/>
                     </h:inputText>
@@ -80,7 +80,7 @@
                     <h:outputText rendered="#{student.id ne null}" value="#{student.birthday}">
                         <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
                     </h:outputText>
-                    <h:inputText rendered="#{student.id eq null}" required="false" id="birthday"
+                    <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{student.id eq null}" required="false" id="birthday"
                                  value="#{newStudent.birthday}"
                                  converterMessage="Birthday is not provide in dd/MM/yyyy format">
                         <f:convertDateTime pattern="dd/MM/yyyy"/>
@@ -146,7 +146,7 @@
             <h5><h:outputText value="Student ID: #{editStudent.id}"/></h5>
 
             <h:outputText value="Student Name: "/>
-            <h:inputText required="true" label="Student Name"
+            <h:inputText onkeypress="return event.keyCode !== 13" required="true" label="Student Name"
                          requiredMessage="Name required!" validator="nameValidator"
                          p:placeholder="Required" value="#{editStudent.sName}">
                 <f:ajax listener="#{studentBean.update(editStudent)}" event="change" execute="@this" render="@all"/>
@@ -155,7 +155,7 @@
             <br/><br/>
 
             <h:outputText value="Email: "/>
-            <h:inputText rendered="#{student.id eq null}" required="false"
+            <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{student.id eq null}" required="false"
                          value="#{editStudent.email}" validator="emailValidator">
                 <f:ajax listener="#{studentBean.update(editStudent)}" event="change" execute="@this" render="@all"/>
                 <f:converter converterId="emailConverter"/>
@@ -163,14 +163,14 @@
             <br/><br/>
 
             <h:outputText value="Phone: "/>
-            <h:inputText rendered="#{student.id eq null}" required="false"
+            <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{student.id eq null}" required="false"
                          value="#{editStudent.phone}" validator="phoneValidator">
                 <f:ajax listener="#{studentBean.update(editStudent)}" event="change" execute="@this" render="@all"/>
             </h:inputText>
             <br/><br/>
 
             <h:outputText value="Birthday: "/>
-            <h:inputText rendered="#{student.id eq null}" required="false"
+            <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{student.id eq null}" required="false"
                          value="#{editStudent.birthday}"
                          converterMessage="Birthday is not provide in dd/MM/yyyy format">
                 <f:convertDateTime pattern="dd/MM/yyyy"/>

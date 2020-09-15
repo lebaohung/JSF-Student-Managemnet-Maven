@@ -42,7 +42,8 @@
                             #{msg.ClassName}
                         </f:facet>
                         <h:outputText rendered="#{sClass.id ne null}" value="#{sClass.name}"/>
-                        <h:inputText rendered="#{sClass.id eq null}" id="editName" required="true"
+                        <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{sClass.id eq null}"
+                                     id="editName" required="true"
                                      requiredMessage="Name required!" validator="nameValidator"
                                      p:placeholder="Required" value="#{newSClass.name}">
                             <f:ajax event="change" execute="@this" render="@form"/>
@@ -116,7 +117,8 @@
                 <h5><h:outputText value="Class ID: #{editSClass.id}"/></h5>
 
                 <h:outputText value="#{msg.ClassName}: "/>
-                <h:inputText required="true" requiredMessage="Name required!" validator="nameValidator"
+                <h:inputText onkeypress="return event.keyCode !== 13" required="true" requiredMessage="Name required!"
+                             validator="nameValidator"
                              p:placeholder="Required" value="#{editSClass.name}">
                     <f:ajax listener="#{sClassBean.update(editSClass)}" event="change" execute="@this" render="@form"/>
                     <f:converter converterId="nameConverter"/>
@@ -128,15 +130,18 @@
                 <br/>
 
                 <h:outputText value="Mentor: "/>
-                <h:inputText value="#{mentorId}" p:placeholder="Mentor ID" >
-                    <f:ajax listener="#{sClassBean.updateSClassMentor(editSClass.id, mentorId)}" event="change" execute="@this" render="@form"/>
+                <h:inputText onkeypress="return event.keyCode !== 13" value="#{mentorId}" p:placeholder="Mentor ID">
+                    <f:ajax listener="#{sClassBean.updateSClassMentor(editSClass.id, mentorId)}" event="change"
+                            execute="@this" render="@form"/>
                 </h:inputText>
-                <h:outputText value="  #{mentorName}" >
+
+                <h:outputText value="  #{mentorName}">
                 </h:outputText>
 
-                <h:messages infoStyle="color: green" errorStyle="color: darkred" layout="table"/>
+                <h:messages infoStyle="color: green" errorStyle="color: #c21b1b" layout="table"/>
 
-                <h:dataTable id="test" binding="#{studentSClass}" value="#{sClassBean.getSClassStudentsList(editSClass.id)}" var="student">
+                <h:dataTable id="test" binding="#{studentSClass}" value="#{sClassBean.studentsInClassList}"
+                             var="student">
                     <h:column>
                         <f:facet name="header">
                             #{msg.No}
@@ -148,7 +153,11 @@
                         <f:facet name="header">
                             #{msg.StudentID}
                         </f:facet>
-                        <h:outputText value="#{student.id}"/>
+                        <h:outputText rendered="#{student.id ne null}" value="#{student.id}"/>
+                        <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{student.id eq null}"
+                                     p:placeholder="Student ID" value="#{newStudent.id}">
+                            <f:ajax listener="#{sClassBean.updateStudent(editSClass.id, student.id)}" event="change" execute="@this" render="@form"/>
+                        </h:inputText>
                     </h:column>
 
                     <h:column>
@@ -156,6 +165,7 @@
                             #{msg.StudentName}
                         </f:facet>
                         <h:outputText value="#{student.sName}"/>
+                        <h:outputText value="#{newStudent.sName}"/>
                     </h:column>
 
                     <h:column>
@@ -165,24 +175,44 @@
                         <h:outputText value="#{student.birthday}">
                             <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
                         </h:outputText>
+                        <h:outputText value="#{newStudent.birthday}">
+                            <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+                        </h:outputText>
                     </h:column>
 
                     <h:column>
                         <f:facet name="header">
-                            <h:commandButton value="Select All" action="#{sClassBean.selectAllStudents}">
-                                <f:ajax render="@form"/>
+                            <h:commandButton
+                                    rendered="#{sClassBean.selectedStudentMap.isEmpty() or sClassBean.selectedStudentMap.containsValue(false)}"
+                                    value="Select All" action="#{sClassBean.selectAllStudents()}">
+                                <f:ajax event="click" render="@form"/>
                             </h:commandButton>
-                            <h:commandButton value="Unselect All" action="#{sClassBean.unselectAllStudents}">
-                                <f:ajax render="@form"/>
+                            <h:commandButton
+                                    rendered="#{!sClassBean.selectedStudentMap.isEmpty() and !sClassBean.selectedStudentMap.containsValue(false)}"
+                                    value="Unselect All" action="#{sClassBean.unselectAllStudents()}">
+                                <f:ajax event="click" render="@form"/>
                             </h:commandButton>
                         </f:facet>
-                        <h:selectBooleanCheckbox value="#{sClassBean.selectedStudentMap[student.id]}">
-                            <f:ajax execute="@this" render="@all"/>
+                        <h:selectBooleanCheckbox rendered="#{student.id ne null}"
+                                                 value="#{sClassBean.selectedStudentMap[student.id]}">
+                            <f:ajax execute="@this" render="@form"/>
                         </h:selectBooleanCheckbox>
                         <br/>
                     </h:column>
-
                 </h:dataTable>
+
+                <h:commandButton value="Delete selected"
+                                 disabled="#{!sClassBean.selectedStudentMap.containsValue(true)}"
+                                 action="#{sClassBean.deleteSelectedStudent(editSClass)}"
+                                 onclick="return confirm('#{msg.PermanentlyDeleteStudent}')">
+                    <f:ajax execute="@form" render="@form"/>
+                </h:commandButton>
+
+                <h:commandButton rendered="#{newStudent eq null}" value="#{msg.AddStudent}"
+                                 action="#{sClassBean.createStudent}">
+                    <f:ajax execute="@form" render="@form"/>
+                </h:commandButton>
+
             </h:form>
         </ui:composition>
     </h:body>

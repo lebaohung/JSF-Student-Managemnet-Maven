@@ -30,6 +30,8 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
     private static final String SELECT_MENTOR_BY_CLASS_ID = "SELECT student_id FROM student_and_sclass WHERE MENTOR = TRUE AND SCLASS_ID = ?;";
     private static final String UPDATE_MENTOR_BY_CLASS_ID = "UPDATE student_and_sclass SET mentor = false WHERE sclass_id = ? AND mentor = true;";
     private static final String SET_MENTOR_BY_CLASS_ID = "UPDATE student_and_sclass SET mentor = TRUE WHERE sclass_id = ? and student_id = ?;";
+    private static final String DELETE_STUDENT_IN_CLASS = "DELETE FROM student_and_sclass WHERE sclass_id = ? and student_id = ?";
+    private static final String SAVE_STUDENT_INTO_CLASS = "INSERT INTO student_and_sclass (sclass_id, student_id, mentor) VALUES (?, ?, false);";
 
     @Override
     public List<SClass> getAll() {
@@ -84,7 +86,6 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
             PreparedStatement preparedStatement = connection.prepareStatement(COUNT_ClASSES);
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
-
             while (resultSet.next()) {
                 classNumber = resultSet.getInt(1);
             }
@@ -106,6 +107,19 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
             throwables.printStackTrace();
         } finally {
             clear(sClass);
+        }
+    }
+
+    public void saveStudentIntoClass(Integer sclassId, Integer studentId) {
+        try (
+                Connection connection = JdbcConnection.getConnection();
+        ) {
+            PreparedStatement preparedStatement = connection.prepareStatement(SAVE_STUDENT_INTO_CLASS);
+            preparedStatement.setInt(1, sclassId);
+            preparedStatement.setInt(2, studentId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 
@@ -153,10 +167,12 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
 
     @Override
     public void delete(Integer classId) throws SQLException {
-        Connection connection = JdbcConnection.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(DELETE_CLASS);
-        preparedStatement.setInt(1, classId);
-        preparedStatement.executeUpdate();
+        try (Connection connection = JdbcConnection.getConnection();) {
+            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_CLASS);
+            preparedStatement.setInt(1, classId);
+            preparedStatement.executeUpdate();
+        }
+
     }
 
     public int countClassSize(Integer classId) {
@@ -178,8 +194,8 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
         return classSize;
     }
 
-    public List<Integer> getStudentsByClassId(Integer sClassId) {
-        List<Integer> studentList = new ArrayList<>();
+    public List<Integer> getStudentsIdByClassId(Integer sClassId) {
+        List<Integer> studentIdList = new ArrayList<>();
         try (
                 Connection connection = JdbcConnection.getConnection();
         ) {
@@ -188,19 +204,21 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
             while (resultSet.next()) {
-                studentList.add(resultSet.getInt(1));
+                studentIdList.add(resultSet.getInt(1));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return studentList;
+        return studentIdList;
     }
 
     public Integer getSClassMentorId(Integer sClassId) {
         Integer studentId = null;
-        Connection connection = JdbcConnection.getConnection();
         PreparedStatement preparedStatement = null;
-        try {
+        try (
+                Connection connection = JdbcConnection.getConnection();
+
+        ) {
             preparedStatement = connection.prepareStatement(SELECT_MENTOR_BY_CLASS_ID);
             preparedStatement.setInt(1, sClassId);
             preparedStatement.execute();
@@ -226,6 +244,19 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
             setMentor.setInt(1, sClassId);
             setMentor.setInt(2, studentId);
             setMentor.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void deleteStudentInClass(Integer sClassId, Integer studentId) {
+        try (
+                Connection connection = JdbcConnection.getConnection();
+        ) {
+            PreparedStatement deleteStudentInClass = connection.prepareStatement(DELETE_STUDENT_IN_CLASS);
+            deleteStudentInClass.setInt(1, sClassId);
+            deleteStudentInClass.setInt(2, studentId);
+            deleteStudentInClass.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
