@@ -5,7 +5,6 @@ import com.synergix.repository.IPagingRepository;
 import com.synergix.repository.IRepository;
 import com.synergix.repository.JdbcConnection;
 
-import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
@@ -49,6 +48,8 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
                 students.add(student);
             }
         } catch (Exception e) {
+            FacesMessage getAllError = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cannot get student list " , null);
+            FacesContext.getCurrentInstance().addMessage("studentsList", getAllError);
             System.out.println(e.getMessage());
         }
         return students;
@@ -76,6 +77,8 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
                 students.add(student);
             }
         } catch (Exception e) {
+            FacesMessage getAllError = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cannot get student list " , null);
+            FacesContext.getCurrentInstance().addMessage("studentsList", getAllError);
             System.out.println(e.getMessage());
         }
         return students;
@@ -95,7 +98,9 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
                 studentNumber = resultSet.getInt(1);
             }
         } catch (SQLException throwables) {
-            System.out.println("Student list empty");
+            FacesMessage countPageError = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Student list empty " , null);
+            FacesContext.getCurrentInstance().addMessage("studentsList", countPageError);
+            System.out.println(throwables.getMessage());
         }
         return studentNumber;
     }
@@ -116,6 +121,8 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
             }
             preparedStatement.executeUpdate();
         } catch (SQLException throwables) {
+            FacesMessage saveStudentError = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cannot save student ID " + student.getId() , null);
+            FacesContext.getCurrentInstance().addMessage("studentsList", saveStudentError);
             throwables.printStackTrace();
         } finally {
             clear(student);
@@ -170,6 +177,8 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
             }
             preparedStatement.executeUpdate();
         } catch (SQLException throwables) {
+            FacesMessage updateStudentError = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cannot update student ID " + student.getId() , null);
+            FacesContext.getCurrentInstance().addMessage("studentsList", updateStudentError);
             throwables.printStackTrace();
         }
     }
