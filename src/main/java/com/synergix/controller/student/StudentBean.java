@@ -30,6 +30,13 @@ public class StudentBean implements Serializable {
     private int pageCount;
     private List<Integer> selectedStudentList = new ArrayList<>();
     private Map<Integer, Boolean> selectedStudentMap = new HashMap<>();
+    private List<Student> students = new ArrayList<>();
+
+    @Inject
+    private Conversation conversation;
+
+    @Inject
+    private StudentRepo studentRepo;
 
     @PostConstruct
     public void initNavigator() {
@@ -74,14 +81,6 @@ public class StudentBean implements Serializable {
         this.pageCount = pageCount;
     }
 
-    public List<Integer> getSelectedStudentList() {
-        this.selectedStudentList = this.getSelectedStudentMap().entrySet().stream()
-                .filter(Map.Entry::getValue)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
-        return selectedStudentList;
-    }
-
     public Map<Integer, Boolean> getSelectedStudentMap() {
         return selectedStudentMap;
     }
@@ -90,11 +89,21 @@ public class StudentBean implements Serializable {
         this.selectedStudentMap = selectedStudentMap;
     }
 
-    @Inject
-    private Conversation conversation;
+    public List<Student> getStudents() {
+        return students;
+    }
 
-    @Inject
-    private StudentRepo studentRepo;
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
+
+    public List<Integer> getSelectedStudentList() {
+        this.selectedStudentList = this.getSelectedStudentMap().entrySet().stream()
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+        return selectedStudentList;
+    }
 
     public void initConversation() {
         try {
@@ -112,66 +121,8 @@ public class StudentBean implements Serializable {
         }
     }
 
-    public String moveToListPage() {
-        this.cancelAdd();
-        this.cancelEdit();
-        this.endConversation();
-        this.initConversation();
-        conversation.setTimeout(36000000);
-        return "/views/student/listStudent";
-    }
-
-    public List<Student> getAll() {
-        return studentRepo.getAll();
-    }
-
-    private List<Student> students = new ArrayList<>();
-
-    public List<Student> getStudents() {
-        return students;
-    }
-
-    public void setStudents(List<Student> students) {
-        this.students = students;
-    }
-
     public void getAllByPage() {
         this.students = studentRepo.getAllByPage(page, pageSize);
-    }
-
-    public void create() {
-        Student newStudent = new Student();
-        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("newStudent", newStudent);
-        this.getAllByPage();
-        students.add(newStudent);
-    }
-
-    public void cancelEdit() {
-        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("editStudent", null);
-    }
-
-    public void save(Student student) {
-        if (student != null) {
-            studentRepo.save(student);
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Save new student successfully", null);
-            FacesContext.getCurrentInstance().addMessage("message", facesMessage);
-        }
-        this.cancelAdd();
-    }
-
-    public void cancelAdd() {
-        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("newStudent", null);
-        this.getAllByPage();
-    }
-
-    public void update(Student student) {
-        if (student != null) {
-            studentRepo.update(student);
-            FacesContext.getCurrentInstance().addMessage("studentDetail", new FacesMessage(FacesMessage.SEVERITY_INFO, "Saved at " + new Date(), null));
-        }
     }
 
     public int count() {
@@ -194,14 +145,50 @@ public class StudentBean implements Serializable {
         this.selectedStudentMap.clear();
     }
 
+    public void create() {
+        Student newStudent = new Student();
+        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        sessionMap.put("newStudent", newStudent);
+        this.getAllByPage();
+        students.add(newStudent);
+    }
+
+    public void cancelEdit() {
+        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        sessionMap.put("editStudent", null);
+    }
+
+    public void save(Student student) {
+        if (student != null) {
+            studentRepo.save(student);
+            FacesMessage savedNotificationMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Save new student successfully", null);
+            FacesContext.getCurrentInstance().addMessage("studentsList", savedNotificationMsg);
+        }
+        this.cancelAdd();
+    }
+
+    public void cancelAdd() {
+        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        sessionMap.put("newStudent", null);
+        this.getAllByPage();
+    }
+
+    public void update(Student student) {
+        if (student != null) {
+            studentRepo.update(student);
+            FacesMessage updatedNotificationMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Saved at " + new Date(), null);
+            FacesContext.getCurrentInstance().addMessage("studentDetail", updatedNotificationMsg);
+        }
+    }
+
+
     public void deleteSelectedStudent() {
-        List<Integer> cannotDeleteStudentId = new ArrayList<>();
         for (Integer studentId : this.getSelectedStudentList()) {
             try {
                 studentRepo.delete(studentId);
             } catch (SQLException e) {
-                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cannot delete student ID " + studentId, null);
-                FacesContext.getCurrentInstance().addMessage("message", facesMessage);
+                FacesMessage deleteErrorMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cannot delete student ID " + studentId, null);
+                FacesContext.getCurrentInstance().addMessage("studentsList", deleteErrorMsg);
             }
         }
         this.getAllByPage();
