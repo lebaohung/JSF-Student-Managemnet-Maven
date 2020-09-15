@@ -30,12 +30,11 @@ public class StudentBean implements Serializable {
     private int pageCount;
     private List<Integer> selectedStudentList = new ArrayList<>();
     private Map<Integer, Boolean> selectedStudentMap = new HashMap<>();
-    private StringBuilder deleteExceptionMessage;
 
     @PostConstruct
     public void initNavigator() {
         this.navigateStudentPage = MANAGER_PAGE;
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("editStudent", editStudent);
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("editStudent", null);
     }
 
     public String getManagerPage() {
@@ -64,14 +63,6 @@ public class StudentBean implements Serializable {
 
     public int getPageSize() {
         return pageSize;
-    }
-
-    public StringBuilder getDeleteExceptionMessage() {
-        return deleteExceptionMessage;
-    }
-
-    public void setDeleteExceptionMessage(String s) {
-        this.deleteExceptionMessage.append(s);
     }
 
     public int getPageCount() {
@@ -209,14 +200,8 @@ public class StudentBean implements Serializable {
             try {
                 studentRepo.delete(studentId);
             } catch (SQLException e) {
-                cannotDeleteStudentId.add(studentId);
-            }
-        }
-        if (!cannotDeleteStudentId.isEmpty()) {
-            this.setDeleteExceptionMessage("Cannot delete Student ID: ");
-            for (int i = 0; i < cannotDeleteStudentId.size(); i++) {
-                if (i == cannotDeleteStudentId.size() - 1) this.setDeleteExceptionMessage(String.valueOf(i));
-                else this.setDeleteExceptionMessage(i + ", ");
+                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cannot delete student ID " + studentId, null);
+                FacesContext.getCurrentInstance().addMessage("message", facesMessage);
             }
         }
         this.getAllByPage();
@@ -235,16 +220,9 @@ public class StudentBean implements Serializable {
         }
     }
 
-    Student editStudent = null;
-
     public void moveToDetailPage(Student student) {
-        editStudent = student;
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("editStudent", editStudent);
+        sessionMap.put("editStudent", student);
         this.navigateStudentPage = DETAIL_PAGE;
-    }
-
-    public void test() {
-        System.out.println(FacesContext.getCurrentInstance().getExternalContext().getSessionMap());
     }
 }
