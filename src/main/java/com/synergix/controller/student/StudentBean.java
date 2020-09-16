@@ -152,9 +152,10 @@ public class StudentBean implements Serializable {
         students.add(newStudent);
     }
 
-    public void cancelEdit() {
+    public void cancelAdd() {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("editStudent", null);
+        sessionMap.put("newStudent", null);
+        this.getAllByPage();
     }
 
     public void save(Student student) {
@@ -164,20 +165,6 @@ public class StudentBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage("studentsList", savedNotificationMsg);
         }
         this.cancelAdd();
-    }
-
-    public void cancelAdd() {
-        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("newStudent", null);
-        this.getAllByPage();
-    }
-
-    public void update(Student student) {
-        if (student != null) {
-            studentRepo.update(student);
-            FacesMessage updatedNotificationMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Saved at " + new Date(), null);
-            FacesContext.getCurrentInstance().addMessage("studentDetail", updatedNotificationMsg);
-        }
     }
 
     public void deleteSelectedStudent() {
@@ -204,5 +191,18 @@ public class StudentBean implements Serializable {
         Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         sessionMap.put("editStudent", student);
         this.navigateStudentPage = DETAIL_PAGE;
+    }
+
+    public void cancelEdit() {
+        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        sessionMap.put("editStudent", null);
+    }
+
+    public void update(Student student) {
+        if (student != null) {
+            studentRepo.update(student);
+            FacesMessage updatedNotificationMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Saved at " + new Date(), null);
+            FacesContext.getCurrentInstance().addMessage("studentDetail", updatedNotificationMsg);
+        }
     }
 }

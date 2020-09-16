@@ -44,7 +44,7 @@ public class SClassBean implements Serializable {
     private List<Integer> selectedStudentIdList = new ArrayList<>();
     private List<Integer> studentsIdInClassList = new ArrayList<>();
     private List<Student> studentsInClassList = new ArrayList<>();
-    private StringBuilder deleteExceptionMessage;
+    private List<SClass> classes = new ArrayList<>();
 
     @PostConstruct
     public void initNavigator() {
@@ -93,24 +93,6 @@ public class SClassBean implements Serializable {
         this.navigateSClassPage = navigateSClassPage;
     }
 
-    public void initConversation() {
-        try {
-            conversation.begin();
-        } catch (IllegalStateException e) {
-            System.out.println("Warning! Long-running conversation running!");
-        }
-    }
-
-    public void endConversation() {
-        try {
-            conversation.end();
-        } catch (IllegalStateException e) {
-            System.out.println("Warning! Transient conversation cannot end!");
-        }
-    }
-
-    private List<SClass> classes = new ArrayList<>();
-
     public List<SClass> getClasses() {
         return classes;
     }
@@ -119,16 +101,9 @@ public class SClassBean implements Serializable {
         this.classes = classes;
     }
 
-    public StringBuilder getDeleteExceptionMessage() {
-        return deleteExceptionMessage;
-    }
-
-    public void setDeleteExceptionMessage(String s) {
-        this.deleteExceptionMessage.append(s);
-    }
-
     public List<Integer> getSelectedSClassList() {
-        this.selectedSClassList = this.getSelectedSClassMap().entrySet().stream()
+        this.selectedSClassList = this.getSelectedSClassMap().entrySet()
+                .stream()
                 .filter(Map.Entry::getValue)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
@@ -184,6 +159,22 @@ public class SClassBean implements Serializable {
         return sClassRepo.getAll();
     }
 
+    public void initConversation() {
+        try {
+            conversation.begin();
+        } catch (IllegalStateException e) {
+            System.out.println("Warning! Long-running conversation running!");
+        }
+    }
+
+    public void endConversation() {
+        try {
+            conversation.end();
+        } catch (IllegalStateException e) {
+            System.out.println("Warning! Transient conversation cannot end!");
+        }
+    }
+
     public void getAllByPage() {
         this.classes = sClassRepo.getAllByPage(page, pageSize);
     }
@@ -216,7 +207,7 @@ public class SClassBean implements Serializable {
         if (sClass != null) {
             sClassRepo.save(sClass);
             FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Save new class successfully", null);
-            FacesContext.getCurrentInstance().addMessage("message", facesMessage);
+            FacesContext.getCurrentInstance().addMessage("sclassList", facesMessage);
         }
         this.cancelAdd();
     }
@@ -327,7 +318,7 @@ public class SClassBean implements Serializable {
         studentIdInClassList = sClassRepo.getStudentsIdByClassId(sClassId);
         if (studentIdInClassList.contains(studentId)) {
             FacesContext.getCurrentInstance().addMessage("studentInClass", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Student " + studentId + " existed in class", null));
-        } else if (studentIdList.contains(studentId)){
+        } else if (studentIdList.contains(studentId)) {
             sClassRepo.saveStudentIntoClass(sClassId, studentId);
             FacesContext.getCurrentInstance().addMessage("studentInClass", new FacesMessage(FacesMessage.SEVERITY_INFO, "Update student at " + new Date(), null));
         } else {
@@ -337,20 +328,8 @@ public class SClassBean implements Serializable {
     }
 
     public void deleteSelectedSClass() {
-        List<Integer> cannotDeleteSClassId = new ArrayList<>();
         for (Integer sClassId : this.getSelectedSClassList()) {
-            try {
-                sClassRepo.delete(sClassId);
-            } catch (SQLException e) {
-                cannotDeleteSClassId.add(sClassId);
-            }
-        }
-        if (!cannotDeleteSClassId.isEmpty()) {
-            this.setDeleteExceptionMessage("Cannot delete Class ID: ");
-            for (int i = 0; i < cannotDeleteSClassId.size(); i++) {
-                if (i == cannotDeleteSClassId.size() - 1) this.setDeleteExceptionMessage(String.valueOf(i));
-                else this.setDeleteExceptionMessage(i + ", ");
-            }
+            sClassRepo.delete(sClassId);
         }
         this.getAllByPage();
         this.selectedSClassMap.clear();
