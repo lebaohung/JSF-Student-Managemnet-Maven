@@ -32,14 +32,15 @@ public class SClassBean implements Serializable {
 
     private static final int INIT_PAGE = 1;
     private static final int PAGE_SIZE = 5;
+    private final static String MANAGER_PAGE = "showManagerPage";
+    private final static String DETAIL_PAGE = "showDetailPage";
+
     private int page = INIT_PAGE;
     private int pageSize = PAGE_SIZE;
     private int pageCount;
     private String navigateSClassPage;
-    private final static String MANAGER_PAGE = "showManagerPage";
-    private final static String DETAIL_PAGE = "showDetailPage";
-    private List<Integer> selectedSClassList = new ArrayList<>();
     private Map<Integer, Boolean> selectedSClassMap = new HashMap<>();
+    private List<Integer> selectedSClassList = new ArrayList<>();
     private Map<Integer, Boolean> selectedStudentMap = new HashMap<>();
     private List<Integer> selectedStudentIdList = new ArrayList<>();
     private List<Integer> studentsIdInClassList = new ArrayList<>();
@@ -322,7 +323,7 @@ public class SClassBean implements Serializable {
             sClassRepo.saveStudentIntoClass(sClassId, studentId);
             FacesContext.getCurrentInstance().addMessage("studentInClass", new FacesMessage(FacesMessage.SEVERITY_INFO, "Update student at " + new Date(), null));
         } else {
-            FacesContext.getCurrentInstance().addMessage("studentInClass", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Not found student ID " + studentId + " in class", null));
+            FacesContext.getCurrentInstance().addMessage("studentInClass", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Not found student ID " + studentId + " in student list", null));
         }
         this.cancelAddStudent(sClassId);
     }

@@ -66,6 +66,7 @@ public class HomeBean implements Serializable {
     }
 
     public void showStudentsManagement() {
+        System.out.println("show student manager");
         studentBean.cancelAdd();
         studentBean.cancelEdit();
         studentBean.endConversation();
@@ -75,6 +76,7 @@ public class HomeBean implements Serializable {
     }
 
     public void showClassesManagement() {
+        System.out.println("show class manager");
         sClassBean.cancelEdit();
         sClassBean.cancelAdd();
         sClassBean.endConversation();

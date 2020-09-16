@@ -131,8 +131,8 @@
 
                 <h:outputText value="Mentor: "/>
                 <h:inputText onkeypress="return event.keyCode !== 13" value="#{mentorId}" p:placeholder="Mentor ID">
-                    <f:ajax listener="#{sClassBean.updateSClassMentor(editSClass.id, mentorId)}" event="change"
-                            execute="@this" render="@form"/>
+                    <f:ajax listener="#{sClassBean.updateSClassMentor(editSClass.id, mentorId)}"
+                            event="change" execute="@this" render="@form"/>
                 </h:inputText>
 
                 <h:outputText value="  #{mentorName}">

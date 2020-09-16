@@ -19,6 +19,5 @@ public class EmailValidator implements Validator {
             facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
             throw new ValidatorException(facesMessage);
         }
-
     }
 }
