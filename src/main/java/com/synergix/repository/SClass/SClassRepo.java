@@ -13,24 +13,22 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Named(value = "sClassRepo")
 public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<SClass> {
     private static final long serialVersionUID = 1L;
-    private static final String SELECT_ALL_CLASSES = "SELECT * FROM sclass ORDER BY id ASC ;";
-    private static final String SELECT_ALL_CLASSES_BY_PAGE = "SELECT * FROM sclass ORDER BY id ASC LIMIT ? OFFSET ?;";
+    private static final String GET_ALL_CLASSES = "SELECT * FROM sclass ORDER BY id ASC ;";
+    private static final String GET_ALL_CLASSES_BY_PAGE = "SELECT * FROM sclass ORDER BY id ASC LIMIT ? OFFSET ?;";
     private static final String INSERT_CLASS = "INSERT INTO public.sclass(name) VALUES (?);";
-    private static final String SELECT_CLASS_BY_ID = "SELECT * FROM sclass WHERE id = ?;";
+    private static final String GET_CLASS_BY_ID = "SELECT * FROM sclass WHERE id = ?;";
     private static final String UPDATE_CLASS = "UPDATE public.sclass SET name=? WHERE id = ?;";
     private static final String DELETE_CLASS_ID_WITH_STUDENT = "DELETE FROM student_and_sclass WHERE sclass_id = ?;";
     private static final String DELETE_CLASS = "DELETE FROM public.sclass WHERE id=?;";
     private static final String COUNT_CLASS_SIZE = "SELECT COUNT(id) FROM student_and_sclass GROUP BY sclass_id HAVING sclass_id = ?;";
     private static final String COUNT_ClASSES = "SELECT COUNT(id) FROM sclass;";
-    private static final String SELECT_STUDENTS_BY_CLASS_ID = "SELECT * FROM student_and_sclass WHERE sclass_id = ? ORDER BY id;";
-    private static final String SELECT_MENTOR_BY_CLASS_ID = "SELECT student_id FROM student_and_sclass WHERE MENTOR = TRUE AND SCLASS_ID = ?;";
+    private static final String GET_STUDENTS_BY_CLASS_ID = "SELECT * FROM student_and_sclass WHERE sclass_id = ? ORDER BY id;";
+    private static final String GET_MENTOR_BY_CLASS_ID = "SELECT student_id FROM student_and_sclass WHERE MENTOR = TRUE AND SCLASS_ID = ?;";
     private static final String UPDATE_MENTOR_BY_CLASS_ID = "UPDATE student_and_sclass SET mentor = false WHERE sclass_id = ? AND mentor = true;";
     private static final String SET_MENTOR_BY_CLASS_ID = "UPDATE student_and_sclass SET mentor = TRUE WHERE sclass_id = ? and student_id = ?;";
     private static final String DELETE_STUDENT_IN_CLASS = "DELETE FROM student_and_sclass WHERE sclass_id = ? and student_id = ?";
@@ -42,7 +40,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
         try (
                 Connection connection = JdbcConnection.getConnection();
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_CLASSES);
+            PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_CLASSES);
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
             while (resultSet.next()) {
@@ -64,7 +62,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
         try (
                 Connection connection = JdbcConnection.getConnection();
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_CLASSES_BY_PAGE);
+            PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_CLASSES_BY_PAGE);
             preparedStatement.setInt(1, pageSize);
             preparedStatement.setInt(2, start);
             preparedStatement.execute();
@@ -93,7 +91,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
                 classNumber = resultSet.getInt(1);
             }
         } catch (SQLException throwables) {
-            System.out.println("Class list empty");
+            throwables.printStackTrace();
         }
         return classNumber;
     }
@@ -138,7 +136,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
         try (
                 Connection connection = JdbcConnection.getConnection();
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_CLASS_BY_ID);
+            PreparedStatement preparedStatement = connection.prepareStatement(GET_CLASS_BY_ID);
             preparedStatement.setInt(1, classId);
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
@@ -222,7 +220,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
         try (
                 Connection connection = JdbcConnection.getConnection();
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_STUDENTS_BY_CLASS_ID);
+            PreparedStatement preparedStatement = connection.prepareStatement(GET_STUDENTS_BY_CLASS_ID);
             preparedStatement.setInt(1, sClassId);
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
@@ -242,7 +240,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
                 Connection connection = JdbcConnection.getConnection();
 
         ) {
-            preparedStatement = connection.prepareStatement(SELECT_MENTOR_BY_CLASS_ID);
+            preparedStatement = connection.prepareStatement(GET_MENTOR_BY_CLASS_ID);
             preparedStatement.setInt(1, sClassId);
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();

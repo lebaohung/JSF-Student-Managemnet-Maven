@@ -44,7 +44,7 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
                 student.setsName(resultSet.getString(2));
                 student.setEmail(resultSet.getString(3));
                 student.setPhone(resultSet.getString(4));
-                student.setsClassId(resultSet.getInt(5));
+//                student.setsClassId(resultSet.getInt(5));
                 students.add(student);
             }
         } catch (Exception e) {
@@ -134,7 +134,7 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
         student.setEmail(null);
         student.setId(0);
         student.setPhone(null);
-        student.setsClassId(0);
+//        student.setsClassId(0);
     }
 
     @Override

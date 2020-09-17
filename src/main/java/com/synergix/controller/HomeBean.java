@@ -3,9 +3,7 @@ package com.synergix.controller;
 import com.synergix.controller.sclass.SClassBean;
 import com.synergix.controller.student.StudentBean;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.Conversation;
-import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -13,22 +11,14 @@ import java.io.Serializable;
 import java.util.Locale;
 
 @Named
-@ConversationScoped
+@SessionScoped
 public class HomeBean implements Serializable {
-
-    @Inject
-    private Conversation conversation;
 
     @Inject
     private StudentBean studentBean;
 
     @Inject
     private SClassBean sClassBean;
-
-    @PostConstruct
-    public void initConversation() {
-        conversation.begin();
-    }
 
     private final static String SHOW_STUDENTS_MANAGEMENT = "showStudentsManagement";
     private final static String SHOW_CLASSES_MANAGEMENT = "showClassesManagement";
@@ -66,21 +56,15 @@ public class HomeBean implements Serializable {
     }
 
     public void showStudentsManagement() {
-        System.out.println("show student manager");
         studentBean.cancelAdd();
         studentBean.cancelEdit();
-        studentBean.endConversation();
-        studentBean.initConversation();
         studentBean.getAllByPage();
         this.navigateHomePage = SHOW_STUDENTS_MANAGEMENT;
     }
 
     public void showClassesManagement() {
-        System.out.println("show class manager");
         sClassBean.cancelEdit();
         sClassBean.cancelAdd();
-        sClassBean.endConversation();
-        sClassBean.initConversation();
         sClassBean.getAllByPage();
         this.navigateHomePage = SHOW_CLASSES_MANAGEMENT;
     }

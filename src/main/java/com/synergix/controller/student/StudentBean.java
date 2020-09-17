@@ -7,7 +7,10 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
+import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
@@ -22,6 +25,9 @@ public class StudentBean implements Serializable {
     private static final int PAGE_SIZE = 5;
     private final static String MANAGER_PAGE = "showManagerPage";
     private final static String DETAIL_PAGE = "showDetailPage";
+    public final static int MINIMUM_LENGTH_NAME = 2;
+    public final static String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    public static final String PHONE_REGEX = "^0\\d{9}$";
 
     private String navigateStudentPage;
     private int page = INIT_PAGE;
@@ -121,6 +127,8 @@ public class StudentBean implements Serializable {
     }
 
     public void getAllByPage() {
+        this.endConversation();
+        this.initConversation();
         this.students = studentRepo.getAllByPage(page, pageSize);
     }
 
@@ -142,6 +150,44 @@ public class StudentBean implements Serializable {
         this.cancelAdd();
         this.getAllByPage();
         this.selectedStudentMap.clear();
+    }
+
+    public void validateName(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+        String sName = value.toString();
+        if (sName.length() < MINIMUM_LENGTH_NAME) {
+            FacesMessage facesMessage = new FacesMessage("Minimum name length is x. Please enter again!");
+            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
+            List<UIComponent> components = component.getChildren();
+            for (UIComponent uiComponent : components) {
+                if (uiComponent instanceof UIInput) {
+                    UIInput uiInput = (UIInput) uiComponent;
+                    uiInput.setSubmittedValue(null);
+                    uiInput.setValue(null);
+                    uiInput.setLocalValueSet(false);
+                }
+                System.out.println("test validator");
+            }
+
+            throw new ValidatorException(facesMessage);
+        }
+    }
+
+    public void validateEmail(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+        String email = value.toString();
+        if (!email.isEmpty() && !email.matches(EMAIL_REGEX)) {
+            FacesMessage facesMessage = new FacesMessage("  Invalid email! Please enter email again!");
+            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
+            throw new ValidatorException(facesMessage);
+        }
+    }
+
+    public void validatePhone(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+        String phone = value.toString();
+        if (!phone.isEmpty() && !phone.matches(PHONE_REGEX)) {
+            FacesMessage facesMessage = new FacesMessage("Phone length is 10, starts with 0. Please enter again!");
+            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
+            throw new ValidatorException(facesMessage);
+        }
     }
 
     public void create() {

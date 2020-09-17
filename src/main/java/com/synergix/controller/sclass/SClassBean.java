@@ -9,7 +9,9 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
@@ -21,19 +23,13 @@ import java.util.stream.Collectors;
 @ConversationScoped
 public class SClassBean implements Serializable {
 
-    @Inject
-    private Conversation conversation;
-
-    @Inject
-    private SClassRepo sClassRepo;
-
-    @Inject
-    private StudentRepo studentRepo;
-
     private static final int INIT_PAGE = 1;
     private static final int PAGE_SIZE = 5;
     private final static String MANAGER_PAGE = "showManagerPage";
     private final static String DETAIL_PAGE = "showDetailPage";
+    public final static int MINIMUM_LENGTH_NAME = 2;
+    public final static String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    public static final String PHONE_REGEX = "^0\\d{9}$";
 
     private int page = INIT_PAGE;
     private int pageSize = PAGE_SIZE;
@@ -46,6 +42,15 @@ public class SClassBean implements Serializable {
     private List<Integer> studentsIdInClassList = new ArrayList<>();
     private List<Student> studentsInClassList = new ArrayList<>();
     private List<SClass> classes = new ArrayList<>();
+
+    @Inject
+    private Conversation conversation;
+
+    @Inject
+    private SClassRepo sClassRepo;
+
+    @Inject
+    private StudentRepo studentRepo;
 
     @PostConstruct
     public void initNavigator() {
@@ -177,7 +182,18 @@ public class SClassBean implements Serializable {
     }
 
     public void getAllByPage() {
+        this.endConversation();
+        this.initConversation();
         this.classes = sClassRepo.getAllByPage(page, pageSize);
+    }
+
+    public void validateName(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+        String sName = value.toString();
+        if (sName.length() < MINIMUM_LENGTH_NAME) {
+            FacesMessage facesMessage = new FacesMessage("Minimum name length is 2. Please enter again!");
+            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
+            throw new ValidatorException(facesMessage);
+        }
     }
 
     public void create() {
@@ -290,7 +306,7 @@ public class SClassBean implements Serializable {
         sessionMap.put("editSClass", sClass);
         sessionMap.put("mentorId", mentorId);
         this.studentsInClassList.clear();
-        selectedStudentMap.clear();
+        this.selectedStudentMap.clear();
         this.getSClassStudentsList(sClass.getId());
         this.navigateSClassPage = DETAIL_PAGE;
     }

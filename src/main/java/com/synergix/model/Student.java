@@ -9,7 +9,6 @@ public class Student implements Serializable {
     private String sName;
     private String email;
     private String phone;
-    private Integer sClassId;
     private Date birthday;
 
     public Student() {
@@ -28,23 +27,6 @@ public class Student implements Serializable {
         this.phone = phone;
         this.birthday = birthday;
     }
-
-//    public Student(String sName, String email, String phone, int sClassId, Date birthday) {
-//        this.sName = sName;
-//        this.email = email;
-//        this.phone = phone;
-//        this.sClassId = sClassId;
-//        this.birthday = birthday;
-//    }
-//
-//    public Student(int id, String sName, String email, String phone, int sClassId, Date birthday) {
-//        this.id = id;
-//        this.sName = sName;
-//        this.email = email;
-//        this.phone = phone;
-//        this.sClassId = sClassId;
-//        this.birthday = birthday;
-//    }
 
     public Integer getId() {
         return id;
@@ -76,14 +58,6 @@ public class Student implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public Integer getsClassId() {
-        return sClassId;
-    }
-
-    public void setsClassId(Integer sClassId) {
-        this.sClassId = sClassId;
     }
 
     public Date getBirthday() {
