@@ -56,9 +56,6 @@ public class HomeBean implements Serializable {
     }
 
     public void showStudentsManagement() {
-        studentBean.cancelAdd();
-        studentBean.cancelEdit();
-        studentBean.getAllByPage();
         this.navigateHomePage = SHOW_STUDENTS_MANAGEMENT;
     }
 

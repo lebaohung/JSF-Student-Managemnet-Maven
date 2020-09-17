@@ -8,7 +8,6 @@ import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
@@ -46,8 +45,9 @@ public class StudentBean implements Serializable {
 
     @PostConstruct
     public void initNavigator() {
+        tempStudent = null;
+        this.getAllByPage();
         this.navigateStudentPage = MANAGER_PAGE;
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("editStudent", null);
     }
 
     public String getManagerPage() {
@@ -166,8 +166,13 @@ public class StudentBean implements Serializable {
         if (sName.length() < MINIMUM_LENGTH_NAME) {
             FacesMessage facesMessage = new FacesMessage("Minimum name length is x. Please enter again!");
             facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("newStudent", null);
+            tempStudent = new Student();
+            if (component == null) {
+                System.out.println("ddddd");
+            }
+            tempStudent.setsName(null);
             throw new ValidatorException(facesMessage);
+
         }
     }
 
@@ -196,6 +201,7 @@ public class StudentBean implements Serializable {
     }
 
     public void cancelAdd() {
+        tempStudent = null;
         this.getAllByPage();
     }
 
@@ -229,14 +235,8 @@ public class StudentBean implements Serializable {
     }
 
     public void moveToDetailPage(Student student) {
-        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("editStudent", student);
+        tempStudent = student;
         this.navigateStudentPage = DETAIL_PAGE;
-    }
-
-    public void cancelEdit() {
-        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("editStudent", null);
     }
 
     public void update(Student student) {
