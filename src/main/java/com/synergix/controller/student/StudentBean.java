@@ -36,6 +36,7 @@ public class StudentBean implements Serializable {
     private List<Integer> selectedStudentList = new ArrayList<>();
     private Map<Integer, Boolean> selectedStudentMap = new HashMap<>();
     private List<Student> students = new ArrayList<>();
+    private Student tempStudent;
 
     @Inject
     private Conversation conversation;
@@ -71,6 +72,14 @@ public class StudentBean implements Serializable {
 
     public void setPage(int page) {
         this.page = page;
+    }
+
+    public Student getTempStudent() {
+        return tempStudent;
+    }
+
+    public void setTempStudent(Student tempStudent) {
+        this.tempStudent = tempStudent;
     }
 
     public int getPageSize() {
@@ -152,22 +161,12 @@ public class StudentBean implements Serializable {
         this.selectedStudentMap.clear();
     }
 
-    public void validateName(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+    public void validateName(FacesContext facesContext, UIComponent component, Object value) throws ValidatorException {
         String sName = value.toString();
         if (sName.length() < MINIMUM_LENGTH_NAME) {
             FacesMessage facesMessage = new FacesMessage("Minimum name length is x. Please enter again!");
             facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
-            List<UIComponent> components = component.getChildren();
-            for (UIComponent uiComponent : components) {
-                if (uiComponent instanceof UIInput) {
-                    UIInput uiInput = (UIInput) uiComponent;
-                    uiInput.setSubmittedValue(null);
-                    uiInput.setValue(null);
-                    uiInput.setLocalValueSet(false);
-                }
-                System.out.println("test validator");
-            }
-
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("newStudent", null);
             throw new ValidatorException(facesMessage);
         }
     }
@@ -191,16 +190,12 @@ public class StudentBean implements Serializable {
     }
 
     public void create() {
-        Student newStudent = new Student();
-        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("newStudent", newStudent);
+        tempStudent = new Student();
         this.getAllByPage();
-        students.add(newStudent);
+        students.add(tempStudent);
     }
 
     public void cancelAdd() {
-        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("newStudent", null);
         this.getAllByPage();
     }
 
