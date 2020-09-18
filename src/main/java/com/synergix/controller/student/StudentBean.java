@@ -22,17 +22,15 @@ public class StudentBean implements Serializable {
 
     private static final int INIT_PAGE = 1;
     private static final int PAGE_SIZE = 5;
-    private final static String MANAGER_PAGE = "showManagerPage";
-    private final static String DETAIL_PAGE = "showDetailPage";
-    public final static int MINIMUM_LENGTH_NAME = 2;
-    public final static String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-    public static final String PHONE_REGEX = "^0\\d{9}$";
+    private static final String MANAGER_PAGE = "showManagerPage";
+    private static final String DETAIL_PAGE = "showDetailPage";
+    private static final int MINIMUM_LENGTH_NAME = 2;
+    private static final String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    private static final String PHONE_REGEX = "^0\\d{9}$";
 
     private String navigateStudentPage;
     private int page = INIT_PAGE;
-    private int pageSize = PAGE_SIZE;
     private int pageCount;
-    private List<Integer> selectedStudentList = new ArrayList<>();
     private Map<Integer, Boolean> selectedStudentMap = new HashMap<>();
     private List<Student> students = new ArrayList<>();
     private Student tempStudent;
@@ -45,7 +43,7 @@ public class StudentBean implements Serializable {
 
     @PostConstruct
     public void initNavigator() {
-        tempStudent = null;
+        this.clearTempStudent();
         this.getAllByPage();
         this.navigateStudentPage = MANAGER_PAGE;
     }
@@ -82,12 +80,8 @@ public class StudentBean implements Serializable {
         this.tempStudent = tempStudent;
     }
 
-    public int getPageSize() {
-        return pageSize;
-    }
-
     public int getPageCount() {
-        this.pageCount = (int) Math.ceil(this.count() / (double) pageSize);
+        this.pageCount = (int) Math.ceil(this.count() / (double) PAGE_SIZE);
         return pageCount;
     }
 
@@ -112,33 +106,29 @@ public class StudentBean implements Serializable {
     }
 
     public List<Integer> getSelectedStudentList() {
-        this.selectedStudentList = this.getSelectedStudentMap().entrySet().stream()
+        return this.getSelectedStudentMap().entrySet()
+                .stream()
                 .filter(Map.Entry::getValue)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
-        return selectedStudentList;
     }
 
     public void initConversation() {
-        try {
-            conversation.begin();
-        } catch (IllegalStateException e) {
-            System.out.println("Warning! Long-running conversation running!");
-        }
+        if (conversation.isTransient()) conversation.begin();
     }
 
     public void endConversation() {
-        try {
-            conversation.end();
-        } catch (IllegalStateException e) {
-            System.out.println("Warning! Transient conversation cannot end!");
-        }
+        if (!conversation.isTransient()) conversation.end();
+    }
+
+    public void clearTempStudent() {
+        tempStudent = null;
     }
 
     public void getAllByPage() {
         this.endConversation();
         this.initConversation();
-        this.students = studentRepo.getAllByPage(page, pageSize);
+        this.students = studentRepo.getAllByPage(page, PAGE_SIZE);
     }
 
     public int count() {
@@ -164,15 +154,10 @@ public class StudentBean implements Serializable {
     public void validateName(FacesContext facesContext, UIComponent component, Object value) throws ValidatorException {
         String sName = value.toString();
         if (sName.length() < MINIMUM_LENGTH_NAME) {
-            FacesMessage facesMessage = new FacesMessage("Minimum name length is x. Please enter again!");
+            FacesMessage facesMessage = new FacesMessage("Minimum name length is 2. Please enter again!");
             facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
             tempStudent = new Student();
-            if (component == null) {
-                System.out.println("ddddd");
-            }
-            tempStudent.setsName(null);
             throw new ValidatorException(facesMessage);
-
         }
     }
 
@@ -201,15 +186,13 @@ public class StudentBean implements Serializable {
     }
 
     public void cancelAdd() {
-        tempStudent = null;
+        this.clearTempStudent();
         this.getAllByPage();
     }
 
     public void save(Student student) {
         if (student != null) {
             studentRepo.save(student);
-            FacesMessage savedNotificationMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Save new student successfully", null);
-            FacesContext.getCurrentInstance().addMessage("studentsList", savedNotificationMsg);
         }
         this.cancelAdd();
     }
@@ -242,8 +225,6 @@ public class StudentBean implements Serializable {
     public void update(Student student) {
         if (student != null) {
             studentRepo.update(student);
-            FacesMessage updatedNotificationMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Saved at " + new Date(), null);
-            FacesContext.getCurrentInstance().addMessage("studentDetail", updatedNotificationMsg);
         }
     }
 }

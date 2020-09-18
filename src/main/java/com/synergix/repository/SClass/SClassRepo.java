@@ -3,9 +3,11 @@ package com.synergix.repository.SClass;
 import com.synergix.model.SClass;
 import com.synergix.repository.IPagingRepository;
 import com.synergix.repository.JdbcConnection;
+import com.synergix.repository.Student.StudentRepo;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.sql.Connection;
@@ -26,21 +28,24 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
     private static final String DELETE_CLASS_ID_WITH_STUDENT = "DELETE FROM student_and_sclass WHERE sclass_id = ?;";
     private static final String DELETE_CLASS = "DELETE FROM public.sclass WHERE id=?;";
     private static final String COUNT_CLASS_SIZE = "SELECT COUNT(id) FROM student_and_sclass GROUP BY sclass_id HAVING sclass_id = ?;";
-    private static final String COUNT_ClASSES = "SELECT COUNT(id) FROM sclass;";
-    private static final String GET_STUDENTS_BY_CLASS_ID = "SELECT * FROM student_and_sclass WHERE sclass_id = ? ORDER BY id;";
+    private static final String COUNT_CLASSES = "SELECT COUNT(id) FROM sclass;";
+    private static final String GET_STUDENTS_BY_CLASS_ID = "SELECT student_id FROM student_and_sclass WHERE sclass_id = ? ORDER BY student_id;";
     private static final String GET_MENTOR_BY_CLASS_ID = "SELECT student_id FROM student_and_sclass WHERE MENTOR = TRUE AND SCLASS_ID = ?;";
     private static final String UPDATE_MENTOR_BY_CLASS_ID = "UPDATE student_and_sclass SET mentor = false WHERE sclass_id = ? AND mentor = true;";
     private static final String SET_MENTOR_BY_CLASS_ID = "UPDATE student_and_sclass SET mentor = TRUE WHERE sclass_id = ? and student_id = ?;";
     private static final String DELETE_STUDENT_IN_CLASS = "DELETE FROM student_and_sclass WHERE sclass_id = ? and student_id = ?";
     private static final String SAVE_STUDENT_INTO_CLASS = "INSERT INTO student_and_sclass (sclass_id, student_id, mentor) VALUES (?, ?, false);";
 
+    @Inject
+    private StudentRepo studentRepo;
+
     @Override
     public List<SClass> getAll() {
         List<SClass> sClasses = new ArrayList<>();
         try (
                 Connection connection = JdbcConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_CLASSES);
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_CLASSES);
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
             while (resultSet.next()) {
@@ -71,6 +76,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
                 SClass sClass = new SClass();
                 sClass.setId(resultSet.getInt(2));
                 sClass.setName(resultSet.getString(1));
+                sClass.setMentor(studentRepo.getById(resultSet.getInt(3)));
                 sClasses.add(sClass);
             }
         } catch (Exception e) {
@@ -84,7 +90,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
         try (
                 Connection connection = JdbcConnection.getConnection();
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(COUNT_ClASSES);
+            PreparedStatement preparedStatement = connection.prepareStatement(COUNT_CLASSES);
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
             while (resultSet.next()) {
@@ -216,7 +222,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
     }
 
     public List<Integer> getStudentsIdByClassId(Integer sClassId) {
-        List<Integer> studentIdList = new ArrayList<>();
+        List<Integer> studentsIdList = new ArrayList<>();
         try (
                 Connection connection = JdbcConnection.getConnection();
         ) {
@@ -225,12 +231,12 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
             while (resultSet.next()) {
-                studentIdList.add(resultSet.getInt(1));
+                studentsIdList.add(resultSet.getInt(1));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return studentIdList;
+        return studentsIdList;
     }
 
     public Integer getSClassMentorId(Integer sClassId) {

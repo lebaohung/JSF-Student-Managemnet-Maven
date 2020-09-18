@@ -138,12 +138,12 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
     }
 
     @Override
-    public Student getById(Integer studentId) throws SQLException {
+    public Student getById(Integer studentId) {
         Student student = new Student();
         try (
                 Connection connection = JdbcConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(SELECT_STUDENT_BY_ID);
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_STUDENT_BY_ID);
             preparedStatement.setInt(1, studentId);
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
@@ -156,8 +156,10 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
                 student.setPhone(resultSet.getString(4));
                 student.setBirthday(resultSet.getDate(5));
             }
-            return student;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return student;
     }
 
     @Override

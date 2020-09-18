@@ -20,8 +20,8 @@ public class HomeBean implements Serializable {
     @Inject
     private SClassBean sClassBean;
 
-    private final static String SHOW_STUDENTS_MANAGEMENT = "showStudentsManagement";
-    private final static String SHOW_CLASSES_MANAGEMENT = "showClassesManagement";
+    private static final String SHOW_STUDENTS_MANAGEMENT = "showStudentsManagement";
+    private static final String SHOW_CLASSES_MANAGEMENT = "showClassesManagement";
     private String navigateHomePage;
 
     public String getShowStudentsManagement() {
@@ -60,7 +60,6 @@ public class HomeBean implements Serializable {
     }
 
     public void showClassesManagement() {
-        sClassBean.cancelEdit();
         sClassBean.cancelAdd();
         sClassBean.getAllByPage();
         this.navigateHomePage = SHOW_CLASSES_MANAGEMENT;

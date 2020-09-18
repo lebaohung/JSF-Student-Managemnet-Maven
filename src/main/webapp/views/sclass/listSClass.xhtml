@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
@@ -114,33 +114,33 @@
                 </h:commandButton>
                 <br/><br/>
 
-                <h5><h:outputText value="Class ID: #{editSClass.id}"/></h5>
+                <h5><h:outputText value="Class ID: #{sClassBean.middleSClass.id}"/></h5>
 
                 <h:outputText value="#{msg.ClassName}: "/>
                 <h:inputText onkeypress="return event.keyCode !== 13" required="true" requiredMessage="Name required!"
                              validator="#{sClassBean.validateName}"
-                             p:placeholder="Required" value="#{editSClass.name}">
-                    <f:ajax listener="#{sClassBean.update(editSClass)}" event="change" execute="@this" render="@form"/>
+                             p:placeholder="Required" value="#{sClassBean.middleSClass.name}">
+                    <f:ajax listener="#{sClassBean.update(sClassBean.middleSClass)}" event="change" execute="@this" render="@form"/>
                     <f:converter converterId="nameConverter"/>
                 </h:inputText>
                 <br/>
 
                 <h:outputText value="#{msg.Size}: "/>
-                <h:outputText value="#{sClassBean.countClassSize(editSClass.id)}"/>
+                <h:outputText value="#{sClassBean.countClassSize(sClassBean.middleSClass.id)}"/>
                 <br/>
 
                 <h:outputText value="Mentor: "/>
-                <h:inputText onkeypress="return event.keyCode !== 13" value="#{mentorId}" p:placeholder="Mentor ID">
-                    <f:ajax listener="#{sClassBean.updateSClassMentor(editSClass.id, mentorId)}"
+                <h:inputText onkeypress="return event.keyCode !== 13" value="#{sClassBean.middleMentor.id}" p:placeholder="Mentor ID">
+                    <f:ajax listener="#{sClassBean.updateSClassMentor(sClassBean.middleSClass.id, sClassBean.middleMentor.id)}"
                             event="change" execute="@this" render="@form"/>
                 </h:inputText>
 
-                <h:outputText value="  #{mentorName}">
+                <h:outputText value="  #{sClassBean.middleMentor.sName}">
                 </h:outputText>
 
                 <h:messages infoStyle="color: green" errorStyle="color: #c21b1b" layout="table"/>
 
-                <h:dataTable id="test" binding="#{studentSClass}" value="#{sClassBean.studentsInClassList}"
+                <h:dataTable id="test" binding="#{studentSClass}" value="#{sClassBean.studentListOfClass}"
                              var="student">
                     <h:column>
                         <f:facet name="header">

@@ -25,22 +25,20 @@ public class SClassBean implements Serializable {
 
     private static final int INIT_PAGE = 1;
     private static final int PAGE_SIZE = 5;
-    private final static String MANAGER_PAGE = "showManagerPage";
-    private final static String DETAIL_PAGE = "showDetailPage";
-    public final static int MINIMUM_LENGTH_NAME = 2;
-    public final static String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-    public static final String PHONE_REGEX = "^0\\d{9}$";
+    private static final String MANAGER_PAGE = "showManagerPage";
+    private static final String DETAIL_PAGE = "showDetailPage";
+    private static final int MINIMUM_LENGTH_NAME = 2;
 
     private int page = INIT_PAGE;
-    private int pageSize = PAGE_SIZE;
     private int pageCount;
     private String navigateSClassPage;
+    private Student middleStudent;
+    private SClass middleSClass;
+    private Student middleMentor;
     private Map<Integer, Boolean> selectedSClassMap = new HashMap<>();
-    private List<Integer> selectedSClassList = new ArrayList<>();
     private Map<Integer, Boolean> selectedStudentMap = new HashMap<>();
-    private List<Integer> selectedStudentIdList = new ArrayList<>();
-    private List<Integer> studentsIdInClassList = new ArrayList<>();
-    private List<Student> studentsInClassList = new ArrayList<>();
+    private List<Integer> studentsIdListOfClass = new ArrayList<>();
+    private List<Student> studentListOfClass = new ArrayList<>();
     private List<SClass> classes = new ArrayList<>();
 
     @Inject
@@ -54,7 +52,6 @@ public class SClassBean implements Serializable {
 
     @PostConstruct
     public void initNavigator() {
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("newStudent", null);
         this.navigateSClassPage = MANAGER_PAGE;
     }
 
@@ -66,16 +63,8 @@ public class SClassBean implements Serializable {
         this.page = page;
     }
 
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
     public int getPageCount() {
-        this.pageCount = (int) Math.ceil(this.count() / (double) pageSize);
+        this.pageCount = (int) Math.ceil(this.count() / (double) PAGE_SIZE);
         return pageCount;
     }
 
@@ -89,6 +78,30 @@ public class SClassBean implements Serializable {
 
     public String getDetailPage() {
         return DETAIL_PAGE;
+    }
+
+    public Student getMiddleStudent() {
+        return middleStudent;
+    }
+
+    public void setMiddleStudent(Student middleStudent) {
+        this.middleStudent = middleStudent;
+    }
+
+    public SClass getMiddleSClass() {
+        return middleSClass;
+    }
+
+    public void setMiddleSClass(SClass middleSClass) {
+        this.middleSClass = middleSClass;
+    }
+
+    public Student getMiddleMentor() {
+        return middleMentor;
+    }
+
+    public void setMiddleMentor(Student middleMentor) {
+        this.middleMentor = middleMentor;
     }
 
     public String getNavigateSClassPage() {
@@ -108,41 +121,35 @@ public class SClassBean implements Serializable {
     }
 
     public List<Integer> getSelectedSClassList() {
-        this.selectedSClassList = this.getSelectedSClassMap().entrySet()
+        return this.getSelectedSClassMap().entrySet()
                 .stream()
                 .filter(Map.Entry::getValue)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
-        return selectedSClassList;
     }
 
     public List<Integer> getSelectedStudentIdList() {
-        this.selectedStudentIdList = this.getSelectedStudentMap().entrySet()
+        return this.getSelectedStudentMap().entrySet()
                 .stream()
                 .filter(Map.Entry::getValue)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
-        return selectedStudentIdList;
     }
 
-    public List<Integer> getStudentsIdInClassList() {
-        return studentsIdInClassList;
+    public List<Integer> getStudentsIdListOfClass() {
+        return studentsIdListOfClass;
     }
 
-    public void setStudentsIdInClassList(List<Integer> studentsIdInClassList) {
-        this.studentsIdInClassList = studentsIdInClassList;
+    public void setStudentsIdListOfClass(List<Integer> studentsIdListOfClass) {
+        this.studentsIdListOfClass = studentsIdListOfClass;
     }
 
-    public void setSelectedStudentIdList(List<Integer> selectedStudentIdList) {
-        this.selectedStudentIdList = selectedStudentIdList;
+    public List<Student> getStudentListOfClass() {
+        return studentListOfClass;
     }
 
-    public List<Student> getStudentsInClassList() {
-        return studentsInClassList;
-    }
-
-    public void setStudentsInClassList(List<Student> studentsInClassList) {
-        this.studentsInClassList = studentsInClassList;
+    public void setStudentListOfClass(List<Student> studentListOfClass) {
+        this.studentListOfClass = studentListOfClass;
     }
 
     public Map<Integer, Boolean> getSelectedSClassMap() {
@@ -166,25 +173,17 @@ public class SClassBean implements Serializable {
     }
 
     public void initConversation() {
-        try {
-            conversation.begin();
-        } catch (IllegalStateException e) {
-            System.out.println("Warning! Long-running conversation running!");
-        }
+        if (conversation.isTransient()) conversation.begin();
     }
 
     public void endConversation() {
-        try {
-            conversation.end();
-        } catch (IllegalStateException e) {
-            System.out.println("Warning! Transient conversation cannot end!");
-        }
+        if (!conversation.isTransient()) conversation.end();
     }
 
     public void getAllByPage() {
         this.endConversation();
         this.initConversation();
-        this.classes = sClassRepo.getAllByPage(page, pageSize);
+        this.classes = sClassRepo.getAllByPage(page, PAGE_SIZE);
     }
 
     public void validateName(FacesContext context, UIComponent component, Object value) throws ValidatorException {
@@ -197,27 +196,14 @@ public class SClassBean implements Serializable {
     }
 
     public void create() {
-        SClass newSClass = new SClass();
-        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("newSClass", newSClass);
+        middleSClass = new SClass();
         this.getAllByPage();
-        classes.add(newSClass);
+        classes.add(middleSClass);
     }
 
     public void createStudent() {
-        Student student = new Student();
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("newStudent", student);
-        this.studentsInClassList.add(student);
-    }
-
-    public void getSClassMentor(Integer mentorId) {
-        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        try {
-            sessionMap.put("mentorName", studentRepo.getById(mentorId).getsName());
-        } catch (SQLException throwables) {
-            FacesContext.getCurrentInstance().addMessage("sClassDetail",
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cannot find student ID:" + mentorId, null));
-        }
+        middleStudent = new Student();
+        this.studentListOfClass.add(middleStudent);
     }
 
     public void save(SClass sClass) {
@@ -229,18 +215,6 @@ public class SClassBean implements Serializable {
         this.cancelAdd();
     }
 
-    public void saveStudent(Integer sclassId, Integer studentId) {
-        if (true) {
-            sClassRepo.saveStudentIntoClass(sclassId, studentId);
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Save new student into class successfully", null);
-            FacesContext.getCurrentInstance().addMessage("studentInClass", facesMessage);
-        } else {
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Student ID " + studentId + "not in this class", null);
-            FacesContext.getCurrentInstance().addMessage("studentInClass", facesMessage);
-        }
-        this.cancelAddStudent(sclassId);
-    }
-
     public void update(SClass sClass) {
         if (sClass != null) {
             sClassRepo.update(sClass);
@@ -248,20 +222,13 @@ public class SClassBean implements Serializable {
         }
     }
 
-    public void cancelEdit() {
-        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("editSClass", null);
-    }
-
     public void cancelAdd() {
-        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("newSClass", null);
+        middleSClass = null;
         this.getAllByPage();
     }
 
     public void cancelAddStudent(Integer sclassId) {
-        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        sessionMap.put("newStudent", null);
+        middleStudent = null;
         this.getSClassStudentsList(sclassId);
     }
 
@@ -290,25 +257,19 @@ public class SClassBean implements Serializable {
     }
 
     public void moveToDetailPage(SClass sClass) {
-        Integer mentorId = sClassRepo.getSClassMentorId(sClass.getId());
-        Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        if (mentorId == null) {
-            FacesContext.getCurrentInstance().addMessage("sClassDetail", new FacesMessage(FacesMessage.SEVERITY_INFO, "Class does not have mentor yet", null));
-            sessionMap.put("mentorName", null);
-        } else {
-            try {
-                sessionMap.put("mentorName", studentRepo.getById(mentorId).getsName());
-            } catch (SQLException e) {
-                FacesContext.getCurrentInstance().addMessage("sClassDetail",
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cannot find student ID:" + mentorId, null));
-            }
+        this.middleSClass = sClass;
+        this.middleMentor = sClass.getMentor();
+        this.clearStudentListOfClass();
+        for (Integer studentId : sClassRepo.getStudentsIdByClassId(sClass.getId())) {
+            studentListOfClass.add(studentRepo.getById(studentId));
         }
-        sessionMap.put("editSClass", sClass);
-        sessionMap.put("mentorId", mentorId);
-        this.studentsInClassList.clear();
         this.selectedStudentMap.clear();
-        this.getSClassStudentsList(sClass.getId());
         this.navigateSClassPage = DETAIL_PAGE;
+
+    }
+
+    public void clearStudentListOfClass() {
+        this.studentListOfClass.clear();
     }
 
     public void updateSClassMentor(Integer sClassId, Integer studentId) {
@@ -317,11 +278,7 @@ public class SClassBean implements Serializable {
         if (studentIdList.contains(studentId)) {
             sClassRepo.setSClassMentor(sClassId, studentId);
             FacesContext.getCurrentInstance().addMessage("sClassDetail", new FacesMessage(FacesMessage.SEVERITY_INFO, "Update mentor at " + new Date(), null));
-            try {
-                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("mentorName", studentRepo.getById(studentId).getsName());
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("mentorName", studentRepo.getById(studentId).getsName());
         } else {
             FacesContext.getCurrentInstance().addMessage("sClassDetail",
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Not found student ID " + studentId + " in class", null));
@@ -373,26 +330,23 @@ public class SClassBean implements Serializable {
     }
 
     public void selectAllStudents() {
-        for (Integer studentId : studentsIdInClassList) {
+        for (Integer studentId : studentsIdListOfClass) {
             selectedStudentMap.put(studentId, true);
         }
     }
 
     public void unselectAllStudents() {
-        for (Integer studentId : studentsIdInClassList) {
+        for (Integer studentId : studentsIdListOfClass) {
             selectedStudentMap.put(studentId, false);
         }
     }
 
     public void getSClassStudentsList(Integer sClassId) {
-        studentsInClassList.clear();
-        studentsIdInClassList = sClassRepo.getStudentsIdByClassId(sClassId);
-        for (Integer studentId : studentsIdInClassList) {
-            try {
-                studentsInClassList.add(studentRepo.getById(studentId));
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
+        studentListOfClass.clear();
+        studentsIdListOfClass = sClassRepo.getStudentsIdByClassId(sClassId);
+        for (Integer studentId : studentsIdListOfClass) {
+            studentListOfClass.add(studentRepo.getById(studentId));
         }
     }
+
 }
