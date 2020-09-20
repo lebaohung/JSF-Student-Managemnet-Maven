@@ -11,11 +11,13 @@ import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.faces.convert.ConverterException;
+import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -260,37 +262,62 @@ public class SClassBean implements Serializable {
         this.middleSClass = sClass;
         this.middleMentor = sClass.getMentor();
         this.clearStudentListOfClass();
-        for (Integer studentId : sClassRepo.getStudentsIdByClassId(sClass.getId())) {
+        this.studentsIdListOfClass = sClassRepo.getStudentsIdByClassId(sClass.getId());
+        for (Integer studentId : this.studentsIdListOfClass) {
             studentListOfClass.add(studentRepo.getById(studentId));
         }
         this.selectedStudentMap.clear();
         this.navigateSClassPage = DETAIL_PAGE;
-
     }
 
     public void clearStudentListOfClass() {
         this.studentListOfClass.clear();
     }
 
+    public void clearStudentIdListOfClass() {
+        this.studentsIdListOfClass.clear();
+    }
+
     public void updateSClassMentor(Integer sClassId, Integer studentId) {
-        List<Integer> studentIdList = new ArrayList<>();
-        studentIdList = sClassRepo.getStudentsIdByClassId(sClassId);
-        if (studentIdList.contains(studentId)) {
             sClassRepo.setSClassMentor(sClassId, studentId);
-            FacesContext.getCurrentInstance().addMessage("sClassDetail", new FacesMessage(FacesMessage.SEVERITY_INFO, "Update mentor at " + new Date(), null));
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("mentorName", studentRepo.getById(studentId).getsName());
-        } else {
-            FacesContext.getCurrentInstance().addMessage("sClassDetail",
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Not found student ID " + studentId + " in class", null));
-        }
+            middleMentor = studentRepo.getById(studentId);
+    }
+
+    public Validator validatorMentorId() {
+        return new Validator() {
+            @Override
+            public void validate(FacesContext facesContext, UIComponent uiComponent, Object o) throws ValidatorException {
+                Integer studentId = Integer.parseInt(o.toString());
+                if (!studentsIdListOfClass.contains(studentId)) {
+                    FacesMessage notFoundIdMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Not found student ID " + studentId + " in student list", null);
+                    throw new ValidatorException(notFoundIdMsg);
+                }
+            }
+        };
+    }
+
+    public Converter getMentorConverter() {
+        return new Converter() {
+            @Override
+            public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
+                Integer mentorId = Integer.parseInt(s);
+                if (!studentsIdListOfClass.contains(mentorId)) {
+                    middleMentor = studentRepo.getById(mentorId);
+                } else throw new ConverterException("Not found student ID " + mentorId + " in class");
+                return middleMentor;
+            }
+
+            @Override
+            public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object o) {
+                return o.toString();
+            }
+        };
     }
 
     public void updateStudent(Integer sClassId, Integer studentId) {
-        List<Integer> studentIdList = new ArrayList<>();
-        List<Integer> studentIdInClassList = new ArrayList<>();
+        List<Integer> studentIdList = studentRepo.getAllStudentsId();
         studentIdList = studentRepo.getAllStudentsId();
-        studentIdInClassList = sClassRepo.getStudentsIdByClassId(sClassId);
-        if (studentIdInClassList.contains(studentId)) {
+        if (studentsIdListOfClass.contains(studentId)) {
             FacesContext.getCurrentInstance().addMessage("studentInClass", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Student " + studentId + " existed in class", null));
         } else if (studentIdList.contains(studentId)) {
             sClassRepo.saveStudentIntoClass(sClassId, studentId);
@@ -348,5 +375,7 @@ public class SClassBean implements Serializable {
             studentListOfClass.add(studentRepo.getById(studentId));
         }
     }
+
+
 
 }

@@ -31,7 +31,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
     private static final String COUNT_CLASSES = "SELECT COUNT(id) FROM sclass;";
     private static final String GET_STUDENTS_BY_CLASS_ID = "SELECT student_id FROM student_and_sclass WHERE sclass_id = ? ORDER BY student_id;";
     private static final String GET_MENTOR_BY_CLASS_ID = "SELECT student_id FROM student_and_sclass WHERE MENTOR = TRUE AND SCLASS_ID = ?;";
-    private static final String UPDATE_MENTOR_BY_CLASS_ID = "UPDATE student_and_sclass SET mentor = false WHERE sclass_id = ? AND mentor = true;";
+    private static final String UPDATE_MENTOR_BY_CLASS_ID = "UPDATE sclass SET mentor_id = ? WHERE id = ?;";
     private static final String SET_MENTOR_BY_CLASS_ID = "UPDATE student_and_sclass SET mentor = TRUE WHERE sclass_id = ? and student_id = ?;";
     private static final String DELETE_STUDENT_IN_CLASS = "DELETE FROM student_and_sclass WHERE sclass_id = ? and student_id = ?";
     private static final String SAVE_STUDENT_INTO_CLASS = "INSERT INTO student_and_sclass (sclass_id, student_id, mentor) VALUES (?, ?, false);";
@@ -76,7 +76,11 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
                 SClass sClass = new SClass();
                 sClass.setId(resultSet.getInt(2));
                 sClass.setName(resultSet.getString(1));
-                sClass.setMentor(studentRepo.getById(resultSet.getInt(3)));
+                if (resultSet.getInt(3) == 0) {
+                    sClass.setMentor(null);
+                } else {
+                    sClass.setMentor(studentRepo.getById(resultSet.getInt(3)));
+                }
                 sClasses.add(sClass);
             }
         } catch (Exception e) {
@@ -264,13 +268,9 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
                 Connection connection = JdbcConnection.getConnection();
         ) {
             PreparedStatement updateMentor = connection.prepareStatement(UPDATE_MENTOR_BY_CLASS_ID);
-            updateMentor.setInt(1, sClassId);
-            updateMentor.execute();
-
-            PreparedStatement setMentor = connection.prepareStatement(SET_MENTOR_BY_CLASS_ID);
-            setMentor.setInt(1, sClassId);
-            setMentor.setInt(2, studentId);
-            setMentor.execute();
+            updateMentor.setInt(1, studentId);
+            updateMentor.setInt(2, sClassId);
+            updateMentor.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

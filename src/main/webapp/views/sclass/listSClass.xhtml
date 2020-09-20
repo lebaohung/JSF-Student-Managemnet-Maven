@@ -45,7 +45,7 @@
                         <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{sClass.id eq null}"
                                      id="editName" required="true"
                                      requiredMessage="Name required!" validator="#{sClassBean.validateName}"
-                                     p:placeholder="Required" value="#{newSClass.name}">
+                                     p:placeholder="Required" value="#{sClassBean.middleSClass.name}">
                             <f:ajax event="change" execute="@this" render="@form"/>
                             <f:converter converterId="nameConverter"/>
                         </h:inputText><br/>
@@ -92,16 +92,16 @@
                     <f:ajax execute="@form" render="@form"/>
                 </h:commandButton>
 
-                <h:commandButton rendered="#{newSClass eq null}" value="#{msg.AddClass}"
+                <h:commandButton rendered="#{sClassBean.middleSClass eq null}" value="#{msg.AddClass}"
                                  action="#{sClassBean.create}">
                     <f:ajax execute="@form" render="@form"/>
                 </h:commandButton>
 
-                <h:commandButton rendered="#{newSClass ne null}" immediate="true" action="#{sClassBean.cancelAdd}"
+                <h:commandButton rendered="#{sClassBean.middleSClass ne null}" immediate="true" action="#{sClassBean.cancelAdd}"
                                  value="#{msg.Cancel}">
                     <f:ajax render="@form"/>
                 </h:commandButton>
-                <h:commandButton rendered="#{newSClass ne null}" action="#{sClassBean.save(newSClass)}"
+                <h:commandButton rendered="#{sClassBean.middleSClass ne null}" action="#{sClassBean.save(sClassBean.middleSClass)}"
                                  value="#{msg.Save}">
                     <f:ajax execute="@form" render="@form"/>
                 </h:commandButton>
@@ -130,7 +130,9 @@
                 <br/>
 
                 <h:outputText value="Mentor: "/>
-                <h:inputText onkeypress="return event.keyCode !== 13" value="#{sClassBean.middleMentor.id}" p:placeholder="Mentor ID">
+                <h:inputText onkeypress="return event.keyCode !== 13" value="#{sClassBean.middleMentor.id}"
+                             p:placeholder="Mentor ID" >
+                    <f:validator binding="#{sClassBean.validatorMentorId()}" />
                     <f:ajax listener="#{sClassBean.updateSClassMentor(sClassBean.middleSClass.id, sClassBean.middleMentor.id)}"
                             event="change" execute="@this" render="@form"/>
                 </h:inputText>
@@ -140,13 +142,13 @@
 
                 <h:messages infoStyle="color: green" errorStyle="color: #c21b1b" layout="table"/>
 
-                <h:dataTable id="test" binding="#{studentSClass}" value="#{sClassBean.studentListOfClass}"
+                <h:dataTable binding="#{studentInClass}" value="#{sClassBean.studentListOfClass}"
                              var="student">
                     <h:column>
                         <f:facet name="header">
                             #{msg.No}
                         </f:facet>
-                        <h:outputText value="#{studentSClass.rowIndex + 1}"/>
+                        <h:outputText value="#{studentInClass.rowIndex + 1}"/>
                     </h:column>
 
                     <h:column>
@@ -155,8 +157,9 @@
                         </f:facet>
                         <h:outputText rendered="#{student.id ne null}" value="#{student.id}"/>
                         <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{student.id eq null}"
-                                     p:placeholder="Student ID" value="#{newStudent.id}">
-                            <f:ajax listener="#{sClassBean.updateStudent(editSClass.id, student.id)}" event="change" execute="@this" render="@form"/>
+                                     p:placeholder="Student ID" value="#{sClassBean.middleStudent.id}">
+                            <f:ajax listener="#{sClassBean.updateStudent(sClassBean.middleSClass.id, sClassBean.middleStudent.id)}"
+                                    event="change" execute="@this" render="@form"/>
                         </h:inputText>
                     </h:column>
 
@@ -165,7 +168,7 @@
                             #{msg.StudentName}
                         </f:facet>
                         <h:outputText value="#{student.sName}"/>
-                        <h:outputText value="#{newStudent.sName}"/>
+                        <h:outputText value="#{sClassBean.middleStudent.sName}"/>
                     </h:column>
 
                     <h:column>
@@ -175,7 +178,7 @@
                         <h:outputText value="#{student.birthday}">
                             <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
                         </h:outputText>
-                        <h:outputText value="#{newStudent.birthday}">
+                        <h:outputText value="#{sClassBean.middleStudent.birthday}">
                             <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
                         </h:outputText>
                     </h:column>
@@ -203,12 +206,12 @@
 
                 <h:commandButton value="Delete selected"
                                  disabled="#{!sClassBean.selectedStudentMap.containsValue(true)}"
-                                 action="#{sClassBean.deleteSelectedStudent(editSClass)}"
+                                 action="#{sClassBean.deleteSelectedStudent(sClassBean.middleSClass)}"
                                  onclick="return confirm('#{msg.PermanentlyDeleteStudent}')">
                     <f:ajax execute="@form" render="@form"/>
                 </h:commandButton>
 
-                <h:commandButton rendered="#{newStudent eq null}" value="#{msg.AddStudent}"
+                <h:commandButton rendered="#{sClassBean.middleStudent eq null}" value="#{msg.AddStudent}"
                                  action="#{sClassBean.createStudent}">
                     <f:ajax execute="@form" render="@form"/>
                 </h:commandButton>
