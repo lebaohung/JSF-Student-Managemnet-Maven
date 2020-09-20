@@ -122,6 +122,22 @@ public class SClassBean implements Serializable {
         this.classes = classes;
     }
 
+    public Map<Integer, Boolean> getSelectedSClassMap() {
+        return selectedSClassMap;
+    }
+
+    public void setSelectedSClassMap(Map<Integer, Boolean> selectedSClassMap) {
+        this.selectedSClassMap = selectedSClassMap;
+    }
+
+    public Map<Integer, Boolean> getSelectedStudentMap() {
+        return selectedStudentMap;
+    }
+
+    public void setSelectedStudentMap(Map<Integer, Boolean> selectedStudentMap) {
+        this.selectedStudentMap = selectedStudentMap;
+    }
+
     public List<Integer> getSelectedSClassList() {
         return this.getSelectedSClassMap().entrySet()
                 .stream()
@@ -154,22 +170,6 @@ public class SClassBean implements Serializable {
         this.studentListOfClass = studentListOfClass;
     }
 
-    public Map<Integer, Boolean> getSelectedSClassMap() {
-        return selectedSClassMap;
-    }
-
-    public void setSelectedSClassMap(Map<Integer, Boolean> selectedSClassMap) {
-        this.selectedSClassMap = selectedSClassMap;
-    }
-
-    public Map<Integer, Boolean> getSelectedStudentMap() {
-        return selectedStudentMap;
-    }
-
-    public void setSelectedStudentMap(Map<Integer, Boolean> selectedStudentMap) {
-        this.selectedStudentMap = selectedStudentMap;
-    }
-
     public List<SClass> getAll() {
         return sClassRepo.getAll();
     }
@@ -180,62 +180,6 @@ public class SClassBean implements Serializable {
 
     public void endConversation() {
         if (!conversation.isTransient()) conversation.end();
-    }
-
-    public void getAllByPage() {
-        this.endConversation();
-        this.initConversation();
-        this.classes = sClassRepo.getAllByPage(page, PAGE_SIZE);
-    }
-
-    public void validateName(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-        String sName = value.toString();
-        if (sName.length() < MINIMUM_LENGTH_NAME) {
-            FacesMessage facesMessage = new FacesMessage("Minimum name length is 2. Please enter again!");
-            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
-            throw new ValidatorException(facesMessage);
-        }
-    }
-
-    public void create() {
-        middleSClass = new SClass();
-        this.getAllByPage();
-        classes.add(middleSClass);
-    }
-
-    public void createStudent() {
-        middleStudent = new Student();
-        this.studentListOfClass.add(middleStudent);
-    }
-
-    public void save(SClass sClass) {
-        if (sClass != null) {
-            sClassRepo.save(sClass);
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Save new class successfully", null);
-            FacesContext.getCurrentInstance().addMessage("sclassList", facesMessage);
-        }
-        this.cancelAdd();
-    }
-
-    public void update(SClass sClass) {
-        if (sClass != null) {
-            sClassRepo.update(sClass);
-            FacesContext.getCurrentInstance().addMessage("sClassDetail", new FacesMessage(FacesMessage.SEVERITY_INFO, "Saved at " + new Date(), null));
-        }
-    }
-
-    public void cancelAdd() {
-        middleSClass = null;
-        this.getAllByPage();
-    }
-
-    public void cancelAddStudent(Integer sclassId) {
-        middleStudent = null;
-        this.getSClassStudentsList(sclassId);
-    }
-
-    public int countClassSize(Integer classId) {
-        return sClassRepo.countClassSize(classId);
     }
 
     public int count() {
@@ -258,11 +202,66 @@ public class SClassBean implements Serializable {
         this.selectedSClassMap.clear();
     }
 
+    public void getAllByPage() {
+        this.endConversation();
+        this.initConversation();
+        this.classes = sClassRepo.getAllByPage(page, PAGE_SIZE);
+    }
+
+    public void create() {
+        middleSClass = new SClass();
+        this.getAllByPage();
+        classes.add(middleSClass);
+    }
+
+
+    public void save(SClass sClass) {
+        if (sClass != null) {
+            sClassRepo.save(sClass);
+        }
+        this.cancelAdd();
+    }
+
+    public void update(SClass sClass) {
+        if (sClass != null) {
+            sClassRepo.update(sClass);
+        }
+    }
+
+    public void cancelAdd() {
+        middleSClass = null;
+        this.getAllByPage();
+    }
+
+    public int countClassSize(Integer classId) {
+        return sClassRepo.countClassSize(classId);
+    }
+
+    public void deleteSelectedSClass() {
+        for (Integer sClassId : this.getSelectedSClassList()) {
+            sClassRepo.delete(sClassId);
+        }
+        this.getAllByPage();
+        this.selectedSClassMap.clear();
+    }
+
+    public void selectAll() {
+        for (SClass sClass : this.getClasses()) {
+            selectedSClassMap.put(sClass.getId(), true);
+        }
+    }
+
+    public void unselectAll() {
+        for (SClass sClass : this.getClasses()) {
+            selectedSClassMap.put(sClass.getId(), false);
+        }
+    }
+
     public void moveToDetailPage(SClass sClass) {
         this.middleSClass = sClass;
         this.middleMentor = sClass.getMentor();
         this.clearStudentListOfClass();
-        this.studentsIdListOfClass = sClassRepo.getStudentsIdByClassId(sClass.getId());
+        this.studentsIdListOfClass = sClassRepo.getStudentsIdListByClassId(sClass.getId());
         for (Integer studentId : this.studentsIdListOfClass) {
             studentListOfClass.add(studentRepo.getById(studentId));
         }
@@ -274,13 +273,62 @@ public class SClassBean implements Serializable {
         this.studentListOfClass.clear();
     }
 
-    public void clearStudentIdListOfClass() {
-        this.studentsIdListOfClass.clear();
+    public void createStudent() {
+        middleStudent = new Student();
+        this.studentListOfClass.add(middleStudent);
+    }
+
+    public void cancelAddStudent(Integer sclassId) {
+        middleStudent = null;
+        this.clearStudentListOfClass();
+        this.studentsIdListOfClass = sClassRepo.getStudentsIdListByClassId(sclassId);
+        for (Integer studentId : this.studentsIdListOfClass) {
+            studentListOfClass.add(studentRepo.getById(studentId));
+        }
     }
 
     public void updateSClassMentor(Integer sClassId, Integer studentId) {
-            sClassRepo.setSClassMentor(sClassId, studentId);
-            middleMentor = studentRepo.getById(studentId);
+        sClassRepo.updateMentorByClassId(sClassId, studentId);
+        middleMentor = studentRepo.getById(studentId);
+    }
+
+    public void updateStudent(Integer sClassId, Integer studentId) {
+        sClassRepo.saveStudentIntoClass(sClassId, studentId);
+        this.cancelAddStudent(sClassId);
+    }
+
+    public void selectAllStudents() {
+        for (Integer studentId : studentsIdListOfClass) {
+            selectedStudentMap.put(studentId, true);
+        }
+    }
+
+    public void unselectAllStudents() {
+        for (Integer studentId : studentsIdListOfClass) {
+            selectedStudentMap.put(studentId, false);
+        }
+    }
+
+    public void deleteSelectedStudent(SClass sClass) {
+        for (Integer studentId : this.getSelectedStudentIdList()) {
+            sClassRepo.deleteStudentInClass(sClass.getId(), studentId);
+        }
+        this.moveToDetailPage(sClass);
+        this.selectedStudentMap.clear();
+    }
+
+    public Validator validatorName() {
+        return new Validator() {
+            @Override
+            public void validate(FacesContext facesContext, UIComponent uiComponent, Object o) throws ValidatorException {
+                String sName = o.toString();
+                if (sName.length() < MINIMUM_LENGTH_NAME) {
+                    FacesMessage facesMessage = new FacesMessage("Minimum name length is 2. Please enter again!");
+                    facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
+                    throw new ValidatorException(facesMessage);
+                }
+            }
+        };
     }
 
     public Validator validatorMentorId() {
@@ -314,68 +362,19 @@ public class SClassBean implements Serializable {
         };
     }
 
-    public void updateStudent(Integer sClassId, Integer studentId) {
-        List<Integer> studentIdList = studentRepo.getAllStudentsId();
-        studentIdList = studentRepo.getAllStudentsId();
-        if (studentsIdListOfClass.contains(studentId)) {
-            FacesContext.getCurrentInstance().addMessage("studentInClass", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Student " + studentId + " existed in class", null));
-        } else if (studentIdList.contains(studentId)) {
-            sClassRepo.saveStudentIntoClass(sClassId, studentId);
-            FacesContext.getCurrentInstance().addMessage("studentInClass", new FacesMessage(FacesMessage.SEVERITY_INFO, "Update student at " + new Date(), null));
-        } else {
-            FacesContext.getCurrentInstance().addMessage("studentInClass", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Not found student ID " + studentId + " in student list", null));
-        }
-        this.cancelAddStudent(sClassId);
+    public Validator validatorStudentId() {
+        return new Validator() {
+            @Override
+            public void validate(FacesContext facesContext, UIComponent uiComponent, Object o) throws ValidatorException {
+                Integer studentId = Integer.parseInt(o.toString());
+                List<Integer> studentIdList = studentRepo.getAllStudentsId();
+                if (studentsIdListOfClass.contains(studentId)) {
+                    throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Student " + studentId + " existed in class", null));
+                } else if (!studentIdList.contains(studentId)) {
+                    throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Not found student ID " + studentId + " in student list", null));
+                }
+
+            }
+        };
     }
-
-    public void deleteSelectedSClass() {
-        for (Integer sClassId : this.getSelectedSClassList()) {
-            sClassRepo.delete(sClassId);
-        }
-        this.getAllByPage();
-        this.selectedSClassMap.clear();
-    }
-
-    public void deleteSelectedStudent(SClass sClass) {
-        for (Integer studentId : this.getSelectedStudentIdList()) {
-            sClassRepo.deleteStudentInClass(sClass.getId(), studentId);
-        }
-        this.moveToDetailPage(sClass);
-        this.selectedStudentMap.clear();
-    }
-
-    public void selectAll() {
-        for (SClass sClass : this.getClasses()) {
-            selectedSClassMap.put(sClass.getId(), true);
-        }
-    }
-
-    public void unselectAll() {
-        for (SClass sClass : this.getClasses()) {
-            selectedSClassMap.put(sClass.getId(), false);
-        }
-    }
-
-    public void selectAllStudents() {
-        for (Integer studentId : studentsIdListOfClass) {
-            selectedStudentMap.put(studentId, true);
-        }
-    }
-
-    public void unselectAllStudents() {
-        for (Integer studentId : studentsIdListOfClass) {
-            selectedStudentMap.put(studentId, false);
-        }
-    }
-
-    public void getSClassStudentsList(Integer sClassId) {
-        studentListOfClass.clear();
-        studentsIdListOfClass = sClassRepo.getStudentsIdByClassId(sClassId);
-        for (Integer studentId : studentsIdListOfClass) {
-            studentListOfClass.add(studentRepo.getById(studentId));
-        }
-    }
-
-
-
 }
