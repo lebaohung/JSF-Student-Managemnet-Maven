@@ -204,8 +204,8 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
         List<Integer> studentsIdList = new ArrayList<>();
         try (
                 Connection connection = JdbcConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(GET_STUDENTS_BY_CLASS_ID);
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(GET_STUDENTS_BY_CLASS_ID);
             preparedStatement.setInt(1, sClassId);
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();

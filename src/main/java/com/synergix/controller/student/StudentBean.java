@@ -151,34 +151,6 @@ public class StudentBean implements Serializable {
         this.selectedStudentMap.clear();
     }
 
-    public void validateName(FacesContext facesContext, UIComponent component, Object value) throws ValidatorException {
-        String sName = value.toString();
-        if (sName.length() < MINIMUM_LENGTH_NAME) {
-            FacesMessage facesMessage = new FacesMessage("Minimum name length is 2. Please enter again!");
-            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
-            tempStudent = new Student();
-            throw new ValidatorException(facesMessage);
-        }
-    }
-
-    public void validateEmail(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-        String email = value.toString();
-        if (!email.isEmpty() && !email.matches(EMAIL_REGEX)) {
-            FacesMessage facesMessage = new FacesMessage("  Invalid email! Please enter email again!");
-            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
-            throw new ValidatorException(facesMessage);
-        }
-    }
-
-    public void validatePhone(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-        String phone = value.toString();
-        if (!phone.isEmpty() && !phone.matches(PHONE_REGEX)) {
-            FacesMessage facesMessage = new FacesMessage("Phone length is 10, starts with 0. Please enter again!");
-            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
-            throw new ValidatorException(facesMessage);
-        }
-    }
-
     public void create() {
         tempStudent = new Student();
         this.getAllByPage();
@@ -225,6 +197,34 @@ public class StudentBean implements Serializable {
     public void update(Student student) {
         if (student != null) {
             studentRepo.update(student);
+        }
+    }
+
+    public void validateName(FacesContext facesContext, UIComponent component, Object value) throws ValidatorException {
+        String sName = value.toString();
+        if (sName.length() < MINIMUM_LENGTH_NAME) {
+            FacesMessage facesMessage = new FacesMessage("Minimum name length is 2. Please enter again!");
+            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
+            tempStudent = new Student();
+            throw new ValidatorException(facesMessage);
+        }
+    }
+
+    public void validateEmail(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+        String email = value.toString();
+        if (!email.isEmpty() && !email.matches(EMAIL_REGEX)) {
+            FacesMessage facesMessage = new FacesMessage("  Invalid email! Please enter email again!");
+            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
+            throw new ValidatorException(facesMessage);
+        }
+    }
+
+    public void validatePhone(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+        String phone = value.toString();
+        if (!phone.isEmpty() && !phone.matches(PHONE_REGEX)) {
+            FacesMessage facesMessage = new FacesMessage("Phone length is 10, starts with 0. Please enter again!");
+            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
+            throw new ValidatorException(facesMessage);
         }
     }
 }

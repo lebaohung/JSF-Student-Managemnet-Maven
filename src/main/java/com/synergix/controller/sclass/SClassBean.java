@@ -271,10 +271,6 @@ public class SClassBean implements Serializable {
         this.studentListOfClass.add(middleStudent);
     }
 
-    public void clearMiddleStudent() {
-        this.middleStudent = null;
-    }
-
     public void cancelAddStudent(Integer sclassId) {
         this.middleStudent = null;
         this.clearStudentListOfClass();

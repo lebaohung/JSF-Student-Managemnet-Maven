@@ -60,8 +60,6 @@ public class HomeBean implements Serializable {
     }
 
     public void showClassesManagement() {
-        sClassBean.cancelAdd();
-        sClassBean.getAllByPage();
         this.navigateHomePage = SHOW_CLASSES_MANAGEMENT;
     }
 
