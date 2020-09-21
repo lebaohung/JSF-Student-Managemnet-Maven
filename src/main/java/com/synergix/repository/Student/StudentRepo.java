@@ -34,8 +34,8 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
         List<Student> students = new ArrayList<>();
         try (
                 Connection connection = JdbcConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_STUDENTS);
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_STUDENTS);
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
             while (resultSet.next()) {
@@ -44,13 +44,12 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
                 student.setsName(resultSet.getString(2));
                 student.setEmail(resultSet.getString(3));
                 student.setPhone(resultSet.getString(4));
-//                student.setsClassId(resultSet.getInt(5));
                 students.add(student);
             }
         } catch (Exception e) {
             FacesMessage getAllError = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cannot get student list ", null);
             FacesContext.getCurrentInstance().addMessage("studentsList", getAllError);
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return students;
     }
@@ -61,8 +60,8 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
         List<Student> students = new ArrayList<>();
         try (
                 Connection connection = JdbcConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_STUDENTS_BY_PAGE);
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_STUDENTS_BY_PAGE);
             preparedStatement.setInt(1, pageSize);
             preparedStatement.setInt(2, start);
             preparedStatement.execute();
@@ -89,8 +88,8 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
         int studentNumber = 0;
         try (
                 Connection connection = JdbcConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(COUNT_STUDENTS);
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(COUNT_STUDENTS);
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
 
@@ -109,8 +108,8 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
     public void save(Student student) {
         try (
                 Connection connection = JdbcConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_STUDENT);
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_STUDENT);
             preparedStatement.setString(1, student.getsName());
             preparedStatement.setString(2, student.getEmail());
             preparedStatement.setString(3, student.getPhone());
@@ -134,7 +133,6 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
         student.setEmail(null);
         student.setId(0);
         student.setPhone(null);
-//        student.setsClassId(0);
     }
 
     @Override
@@ -165,8 +163,8 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
     public void update(Student student) {
         try (
                 Connection connection = JdbcConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_STUDENT);
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_STUDENT);
             preparedStatement.setString(1, student.getsName());
             preparedStatement.setString(2, student.getEmail());
             preparedStatement.setString(3, student.getPhone());
@@ -218,8 +216,8 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
         List<Integer> studentsIdList = new ArrayList<>();
         try (
                 Connection connection = JdbcConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_STUDENTS_ID);
         ) {
-            PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_STUDENTS_ID);
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
 
