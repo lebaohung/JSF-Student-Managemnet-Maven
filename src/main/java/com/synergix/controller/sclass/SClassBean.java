@@ -9,8 +9,10 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.component.EditableValueHolder;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.context.PartialViewContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.validator.Validator;
@@ -30,13 +32,13 @@ public class SClassBean implements Serializable {
     private static final String MANAGER_PAGE = "showManagerPage";
     private static final String DETAIL_PAGE = "showDetailPage";
     private static final int MINIMUM_LENGTH_NAME = 2;
+    private static final String NOT_FOUND_STUDENT = "Not Found Student!";
 
     private int page = INIT_PAGE;
     private int pageCount;
     private String navigateSClassPage;
     private Student middleStudent;
     private SClass middleSClass;
-    private Student middleMentor;
     private Map<Integer, Boolean> selectedSClassMap = new HashMap<>();
     private Map<Integer, Boolean> selectedStudentMap = new HashMap<>();
     private List<Integer> studentsIdListOfClass = new ArrayList<>();
@@ -96,14 +98,6 @@ public class SClassBean implements Serializable {
 
     public void setMiddleSClass(SClass middleSClass) {
         this.middleSClass = middleSClass;
-    }
-
-    public Student getMiddleMentor() {
-        return middleMentor;
-    }
-
-    public void setMiddleMentor(Student middleMentor) {
-        this.middleMentor = middleMentor;
     }
 
     public String getNavigateSClassPage() {
@@ -259,7 +253,6 @@ public class SClassBean implements Serializable {
 
     public void moveToDetailPage(SClass sClass) {
         this.middleSClass = sClass;
-        this.middleMentor = sClass.getMentor();
         this.clearStudentListOfClass();
         this.studentsIdListOfClass = sClassRepo.getStudentsIdListByClassId(sClass.getId());
         for (Integer studentId : this.studentsIdListOfClass) {
@@ -278,8 +271,12 @@ public class SClassBean implements Serializable {
         this.studentListOfClass.add(middleStudent);
     }
 
+    public void clearMiddleStudent() {
+        this.middleStudent = null;
+    }
+
     public void cancelAddStudent(Integer sclassId) {
-        middleStudent = null;
+        this.middleStudent = null;
         this.clearStudentListOfClass();
         this.studentsIdListOfClass = sClassRepo.getStudentsIdListByClassId(sclassId);
         for (Integer studentId : this.studentsIdListOfClass) {
@@ -289,10 +286,9 @@ public class SClassBean implements Serializable {
 
     public void updateSClassMentor(Integer sClassId, Integer studentId) {
         sClassRepo.updateMentorByClassId(sClassId, studentId);
-        middleMentor = studentRepo.getById(studentId);
     }
 
-    public void updateStudent(Integer sClassId, Integer studentId) {
+    public void saveStudentIntoClass(Integer sClassId, Integer studentId) {
         sClassRepo.saveStudentIntoClass(sClassId, studentId);
         this.cancelAddStudent(sClassId);
     }
@@ -317,7 +313,7 @@ public class SClassBean implements Serializable {
         this.selectedStudentMap.clear();
     }
 
-    public Validator validatorName() {
+    public Validator nameValidator() {
         return new Validator() {
             @Override
             public void validate(FacesContext facesContext, UIComponent uiComponent, Object o) throws ValidatorException {
@@ -331,49 +327,79 @@ public class SClassBean implements Serializable {
         };
     }
 
-    public Validator validatorMentorId() {
+    public Converter mentorConverter() {
+        return new Converter() {
+            @Override
+            public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
+                Integer mentorId = null;
+                try {
+                    mentorId = Integer.parseInt(s);
+                } catch (NumberFormatException e) {
+                    return new Student();
+                }
+                return studentRepo.getById(mentorId);
+            }
+
+            @Override
+            public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object o) {
+                Student mentor = (Student) o;
+                if (mentor.getId() == null) return null;
+                return ((Student) o).getId().toString();
+            }
+        };
+    }
+
+    public Validator mentorValidator() {
         return new Validator() {
             @Override
-            public void validate(FacesContext facesContext, UIComponent uiComponent, Object o) throws ValidatorException {
-                Integer studentId = Integer.parseInt(o.toString());
-                if (!studentsIdListOfClass.contains(studentId)) {
-                    FacesMessage notFoundIdMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Not found student ID " + studentId + " in student list", null);
+            public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+                Student student = (Student) value;
+                if (!studentsIdListOfClass.contains(student.getId())) {
+                    EditableValueHolder editableValueHolder = (EditableValueHolder) component;
+                    editableValueHolder.resetValue();
+                    FacesMessage notFoundIdMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, NOT_FOUND_STUDENT, null);
                     throw new ValidatorException(notFoundIdMsg);
                 }
             }
         };
     }
 
-    public Converter getMentorConverter() {
+    public Converter studentIntoClassConverter() {
         return new Converter() {
             @Override
-            public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
-                Integer mentorId = Integer.parseInt(s);
-                if (!studentsIdListOfClass.contains(mentorId)) {
-                    middleMentor = studentRepo.getById(mentorId);
-                } else throw new ConverterException("Not found student ID " + mentorId + " in class");
-                return middleMentor;
+            public Object getAsObject(FacesContext context, UIComponent component, String value) {
+                Integer studentID = null;
+                try {
+                    studentID = Integer.parseInt(value);
+                } catch (NumberFormatException e) {
+                    return new Student();
+                }
+                return studentRepo.getById(studentID);
             }
 
             @Override
-            public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object o) {
-                return o.toString();
+            public String getAsString(FacesContext context, UIComponent component, Object value) {
+                Student student = (Student) value;
+                if (student.getId() == null) return null;
+                return student.getId().toString();
             }
         };
     }
 
-    public Validator validatorStudentId() {
+    public Validator studentIntoClassValidator() {
         return new Validator() {
             @Override
-            public void validate(FacesContext facesContext, UIComponent uiComponent, Object o) throws ValidatorException {
-                Integer studentId = Integer.parseInt(o.toString());
+            public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+                Student student = (Student) value;
                 List<Integer> studentIdList = studentRepo.getAllStudentsId();
-                if (studentsIdListOfClass.contains(studentId)) {
-                    throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Student " + studentId + " existed in class", null));
-                } else if (!studentIdList.contains(studentId)) {
-                    throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Not found student ID " + studentId + " in student list", null));
+                if (studentsIdListOfClass.contains(student.getId())) {
+                    cancelAddStudent(middleSClass.getId());
+                    throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Student existed in class", null));
+                } else if (!studentIdList.contains(student.getId())) {
+                    cancelAddStudent(middleSClass.getId());
+                    throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, NOT_FOUND_STUDENT, null));
                 }
-
+                cancelAddStudent(middleSClass.getId());
             }
         };
     }

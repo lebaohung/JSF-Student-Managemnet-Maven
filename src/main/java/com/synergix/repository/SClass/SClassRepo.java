@@ -1,21 +1,19 @@
 package com.synergix.repository.SClass;
 
 import com.synergix.model.SClass;
+import com.synergix.model.Student;
 import com.synergix.repository.IPagingRepository;
 import com.synergix.repository.JdbcConnection;
 import com.synergix.repository.Student.StudentRepo;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.sql.Types.INTEGER;
 
 @Named(value = "sClassRepo")
 public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<SClass> {
@@ -58,6 +56,25 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
         return sClasses;
     }
 
+    public int countClassSize(Integer classId) {
+        int classSize = 0;
+        try (
+                Connection connection = JdbcConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(COUNT_CLASS_SIZE);
+        ) {
+            preparedStatement.setInt(1, classId);
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getResultSet();
+
+            while (resultSet.next()) {
+                classSize = resultSet.getInt(1);
+            }
+        } catch (SQLException throwables) {
+            System.out.println("Some Class empty");
+        }
+        return classSize;
+    }
+
     @Override
     public List<SClass> getAllByPage(int page, int pageSize) {
         int start = (page - 1) * pageSize;
@@ -75,14 +92,14 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
                 sClass.setId(resultSet.getInt(2));
                 sClass.setName(resultSet.getString(1));
                 if (resultSet.getInt(3) == 0) {
-                    sClass.setMentor(null);
+                    sClass.setMentor(new Student());
                 } else {
                     sClass.setMentor(studentRepo.getById(resultSet.getInt(3)));
                 }
                 sClasses.add(sClass);
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return sClasses;
     }
@@ -117,24 +134,6 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
         } finally {
             clear(sClass);
         }
-    }
-
-    public void saveStudentIntoClass(Integer sclassId, Integer studentId) {
-        try (
-                Connection connection = JdbcConnection.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(SAVE_STUDENT_INTO_CLASS);
-        ) {
-            preparedStatement.setInt(1, sclassId);
-            preparedStatement.setInt(2, studentId);
-            preparedStatement.executeUpdate();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
-
-    public void clear(SClass sClass) {
-        sClass.setName(null);
-        sClass.setId(0);
     }
 
     @Override
@@ -201,25 +200,6 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
         }
     }
 
-    public int countClassSize(Integer classId) {
-        int classSize = 0;
-        try (
-                Connection connection = JdbcConnection.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(COUNT_CLASS_SIZE);
-        ) {
-            preparedStatement.setInt(1, classId);
-            preparedStatement.execute();
-            ResultSet resultSet = preparedStatement.getResultSet();
-
-            while (resultSet.next()) {
-                classSize = resultSet.getInt(1);
-            }
-        } catch (SQLException throwables) {
-            System.out.println("Some Class empty");
-        }
-        return classSize;
-    }
-
     public List<Integer> getStudentsIdListByClassId(Integer sClassId) {
         List<Integer> studentsIdList = new ArrayList<>();
         try (
@@ -238,12 +218,38 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
         return studentsIdList;
     }
 
+    public void saveStudentIntoClass(Integer sclassId, Integer studentId) {
+        try (
+                Connection connection = JdbcConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(SAVE_STUDENT_INTO_CLASS);
+        ) {
+            preparedStatement.setInt(1, sclassId);
+            if (studentId == null) {
+                preparedStatement.setNull(2, INTEGER);
+            } else {
+                preparedStatement.setInt(2, studentId);
+            }
+            preparedStatement.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void clear(SClass sClass) {
+        sClass.setName(null);
+        sClass.setId(0);
+    }
+
     public void updateMentorByClassId(Integer sClassId, Integer studentId) {
         try (
                 Connection connection = JdbcConnection.getConnection();
+                PreparedStatement updateMentor = connection.prepareStatement(UPDATE_MENTOR_BY_CLASS_ID);
         ) {
-            PreparedStatement updateMentor = connection.prepareStatement(UPDATE_MENTOR_BY_CLASS_ID);
-            updateMentor.setInt(1, studentId);
+            if (studentId == null) {
+                updateMentor.setNull(1, INTEGER);
+            } else {
+                updateMentor.setInt(1, studentId);
+            }
             updateMentor.setInt(2, sClassId);
             updateMentor.executeUpdate();
         } catch (SQLException throwables) {

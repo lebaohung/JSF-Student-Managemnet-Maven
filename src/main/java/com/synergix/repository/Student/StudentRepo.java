@@ -148,8 +148,7 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
 
-            if (resultSet != null) {
-                resultSet.next();
+            while (resultSet.next()) {
                 student.setId(resultSet.getInt(1));
                 student.setsName(resultSet.getString(2));
                 student.setEmail(resultSet.getString(3));
