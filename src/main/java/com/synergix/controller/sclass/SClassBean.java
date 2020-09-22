@@ -374,7 +374,6 @@ public class SClassBean implements Serializable {
                 Integer studentID = null;
                 try {
                     studentID = Integer.parseInt(value);
-                    System.out.println("converter: " + studentID);
                 } catch (NumberFormatException e) {
                     return new Student();
                 }
