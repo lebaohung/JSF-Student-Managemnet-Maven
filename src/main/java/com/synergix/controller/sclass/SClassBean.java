@@ -334,6 +334,7 @@ public class SClassBean implements Serializable {
             @Override
             public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
                 Integer mentorId = null;
+                if (s.isEmpty() || s == null) return null;
                 try {
                     mentorId = Integer.parseInt(s);
                 } catch (NumberFormatException e) {
@@ -356,7 +357,7 @@ public class SClassBean implements Serializable {
             @Override
             public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
                 Student student = (Student) value;
-                if (!studentsIdListOfClass.contains(student.getId())) {
+                if (value != null && !studentsIdListOfClass.contains(student.getId())) {
                     EditableValueHolder editableValueHolder = (EditableValueHolder) component;
                     editableValueHolder.resetValue();
                     FacesMessage notFoundIdMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, NOT_FOUND_STUDENT, null);

@@ -152,7 +152,6 @@ public class StudentRepo implements Serializable, IStudentRepo, IPagingRepositor
                 student.setEmail(resultSet.getString(3));
                 student.setPhone(resultSet.getString(4));
                 student.setBirthday(resultSet.getDate(5));
-                System.out.println("getbyid studentrepo : " + student.getId() );
             }
         } catch (SQLException e) {
             e.printStackTrace();
