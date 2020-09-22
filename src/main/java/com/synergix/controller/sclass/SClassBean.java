@@ -56,6 +56,8 @@ public class SClassBean implements Serializable {
 
     @PostConstruct
     public void initNavigator() {
+        this.clearMiddleClass();
+        this.getAllByPage();
         this.navigateSClassPage = MANAGER_PAGE;
     }
 
@@ -222,8 +224,12 @@ public class SClassBean implements Serializable {
         }
     }
 
+    public void clearMiddleClass() {
+        this.middleSClass = null;
+    }
+
     public void cancelAdd() {
-        middleSClass = null;
+        this.clearMiddleClass();
         this.getAllByPage();
     }
 
@@ -367,6 +373,7 @@ public class SClassBean implements Serializable {
                 Integer studentID = null;
                 try {
                     studentID = Integer.parseInt(value);
+                    System.out.println("converter: " + studentID);
                 } catch (NumberFormatException e) {
                     return new Student();
                 }
@@ -395,7 +402,7 @@ public class SClassBean implements Serializable {
                     cancelAddStudent(middleSClass.getId());
                     throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, NOT_FOUND_STUDENT, null));
                 }
-                cancelAddStudent(middleSClass.getId());
+                System.out.println("validate student : " + student.getId());
             }
         };
     }
