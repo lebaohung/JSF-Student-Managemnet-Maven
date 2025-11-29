@@ -1,9 +1,9 @@
-package com.synergix.controller.sclass;
+package com.ptit.controller.sclass;
 
-import com.synergix.model.SClass;
-import com.synergix.model.Student;
-import com.synergix.repository.SClass.SClassRepo;
-import com.synergix.repository.Student.StudentRepo;
+import com.ptit.model.SClass;
+import com.ptit.model.Student;
+import com.ptit.repository.SClass.SClassRepo;
+import com.ptit.repository.Student.StudentRepo;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
@@ -12,9 +12,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.EditableValueHolder;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.context.PartialViewContext;
 import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;

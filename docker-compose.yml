@@ -1,0 +1,18 @@
+services:
+  wildfly:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jsf-wildfly
+    environment:
+      DB_HOST: host.docker.internal
+      DB_PORT: 5432
+      DB_NAME: jsfstudent
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+

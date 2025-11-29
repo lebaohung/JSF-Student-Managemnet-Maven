@@ -1,4 +1,4 @@
-package com.synergix.controller;
+package com.ptit.controller;
 
 import java.util.List;
 

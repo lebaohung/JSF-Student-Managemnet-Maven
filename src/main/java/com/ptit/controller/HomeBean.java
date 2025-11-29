@@ -1,7 +1,7 @@
-package com.synergix.controller;
+package com.ptit.controller;
 
-import com.synergix.controller.sclass.SClassBean;
-import com.synergix.controller.student.StudentBean;
+import com.ptit.controller.sclass.SClassBean;
+import com.ptit.controller.student.StudentBean;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;

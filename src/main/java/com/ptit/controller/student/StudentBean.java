@@ -1,7 +1,7 @@
-package com.synergix.controller.student;
+package com.ptit.controller.student;
 
-import com.synergix.model.Student;
-import com.synergix.repository.Student.StudentRepo;
+import com.ptit.model.Student;
+import com.ptit.repository.Student.StudentRepo;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;

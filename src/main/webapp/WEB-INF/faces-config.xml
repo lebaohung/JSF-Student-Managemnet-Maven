@@ -10,7 +10,7 @@
             <supported-locale>vn</supported-locale>
         </locale-config>
         <resource-bundle>
-            <base-name>com.synergix.i18n.messages</base-name>
+            <base-name>com.ptit.i18n.messages</base-name>
             <var>msg</var>
         </resource-bundle>
     </application>

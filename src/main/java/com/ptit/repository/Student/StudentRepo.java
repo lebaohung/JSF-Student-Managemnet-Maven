@@ -1,9 +1,8 @@
-package com.synergix.repository.Student;
+package com.ptit.repository.Student;
 
-import com.synergix.model.Student;
-import com.synergix.repository.IPagingRepository;
-import com.synergix.repository.IRepository;
-import com.synergix.repository.JdbcConnection;
+import com.ptit.model.Student;
+import com.ptit.repository.IPagingRepository;
+import com.ptit.repository.JdbcConnection;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;

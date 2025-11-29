@@ -1,4 +1,4 @@
-package com.synergix.repository;
+package com.ptit.repository;
 
 import java.util.List;
 

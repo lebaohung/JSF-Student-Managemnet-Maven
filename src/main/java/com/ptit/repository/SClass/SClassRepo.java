@@ -1,10 +1,10 @@
-package com.synergix.repository.SClass;
+package com.ptit.repository.SClass;
 
-import com.synergix.model.SClass;
-import com.synergix.model.Student;
-import com.synergix.repository.IPagingRepository;
-import com.synergix.repository.JdbcConnection;
-import com.synergix.repository.Student.StudentRepo;
+import com.ptit.model.SClass;
+import com.ptit.model.Student;
+import com.ptit.repository.IPagingRepository;
+import com.ptit.repository.JdbcConnection;
+import com.ptit.repository.Student.StudentRepo;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -25,7 +25,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
     private static final String UPDATE_CLASS = "UPDATE public.sclass SET name=? WHERE id = ?;";
     private static final String DELETE_CLASS_ID_WITH_STUDENT = "DELETE FROM student_and_sclass WHERE sclass_id = ?;";
     private static final String DELETE_CLASS = "DELETE FROM public.sclass WHERE id=?;";
-    private static final String COUNT_CLASS_SIZE = "SELECT COUNT(id) FROM student_and_sclass GROUP BY sclass_id HAVING sclass_id = ?;";
+    private static final String COUNT_CLASS_SIZE = "SELECT COUNT(*) FROM student_and_sclass WHERE sclass_id = ?;";
     private static final String COUNT_CLASSES = "SELECT COUNT(id) FROM sclass;";
     private static final String GET_STUDENTS_BY_CLASS_ID = "SELECT student_id FROM student_and_sclass WHERE sclass_id = ? ORDER BY student_id;";
     private static final String UPDATE_MENTOR_BY_CLASS_ID = "UPDATE sclass SET mentor_id = ? WHERE id = ?;";
@@ -46,8 +46,8 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
             ResultSet resultSet = preparedStatement.getResultSet();
             while (resultSet.next()) {
                 SClass sClass = new SClass();
-                sClass.setId(resultSet.getInt(2));
-                sClass.setName(resultSet.getString(1));
+                sClass.setId(resultSet.getInt("id"));
+                sClass.setName(resultSet.getString("name"));
                 sClasses.add(sClass);
             }
         } catch (Exception e) {
@@ -70,7 +70,8 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
                 classSize = resultSet.getInt(1);
             }
         } catch (SQLException throwables) {
-            System.out.println("Some Class empty");
+            throwables.printStackTrace();
+            System.out.println("Some Class empty");        
         }
         return classSize;
     }
@@ -89,12 +90,13 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
             ResultSet resultSet = preparedStatement.getResultSet();
             while (resultSet.next()) {
                 SClass sClass = new SClass();
-                sClass.setId(resultSet.getInt(2));
-                sClass.setName(resultSet.getString(1));
-                if (resultSet.getInt(3) == 0) {
+                sClass.setId(resultSet.getInt("id"));
+                sClass.setName(resultSet.getString("name"));
+                int mentorId = resultSet.getInt("mentor_id");
+                if (resultSet.wasNull() || mentorId == 0) {
                     sClass.setMentor(new Student());
                 } else {
-                    sClass.setMentor(studentRepo.getById(resultSet.getInt(3)));
+                    sClass.setMentor(studentRepo.getById(mentorId));
                 }
                 sClasses.add(sClass);
             }
@@ -148,10 +150,9 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getResultSet();
 
-            if (resultSet != null) {
-                resultSet.next();
-                sClass.setName(resultSet.getString(1));
-                sClass.setId(resultSet.getInt(2));
+            if (resultSet != null && resultSet.next()) {
+                sClass.setId(resultSet.getInt("id"));
+                sClass.setName(resultSet.getString("name"));
             }
         } catch (SQLException throwables) {
             System.out.println("Exception at sClassRepo getByID()");
@@ -260,11 +261,37 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
     public void deleteStudentInClass(Integer sClassId, Integer studentId) {
         try (
                 Connection connection = JdbcConnection.getConnection();
-                PreparedStatement deleteStudentInClass = connection.prepareStatement(DELETE_STUDENT_IN_CLASS);
         ) {
-            deleteStudentInClass.setInt(1, sClassId);
-            deleteStudentInClass.setInt(2, studentId);
-            deleteStudentInClass.executeUpdate();
+            connection.setAutoCommit(false);
+            try (
+                    PreparedStatement checkMentor = connection.prepareStatement("SELECT mentor_id FROM sclass WHERE id = ?");
+                    PreparedStatement clearMentor = connection.prepareStatement(UPDATE_MENTOR_BY_CLASS_ID);
+                    PreparedStatement deleteStudentInClass = connection.prepareStatement(DELETE_STUDENT_IN_CLASS);
+            ) {
+                checkMentor.setInt(1, sClassId);
+                ResultSet rs = checkMentor.executeQuery();
+                if (rs.next()) {
+                    int mentorId = rs.getInt("mentor_id");
+                    if (!rs.wasNull() && mentorId == studentId) {
+                        clearMentor.setNull(1, INTEGER);
+                        clearMentor.setInt(2, sClassId);
+                        clearMentor.executeUpdate();
+                    }
+                }
+                
+                deleteStudentInClass.setInt(1, sClassId);
+                deleteStudentInClass.setInt(2, studentId);
+                deleteStudentInClass.executeUpdate();
+                
+                connection.commit();
+            } catch (SQLException e) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+                throw e;
+            }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

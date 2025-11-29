@@ -1,4 +1,4 @@
-package com.synergix.model;
+package com.ptit.model;
 
 import java.io.Serializable;
 import java.util.Date;

@@ -1,4 +1,4 @@
-package com.synergix;
+package com.ptit;
 
 import javax.faces.annotation.FacesConfig;
 
