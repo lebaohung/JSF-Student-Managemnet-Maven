@@ -48,7 +48,7 @@
                                      p:placeholder="Required" value="#{sClassBean.middleSClass.name}">
                             <f:converter converterId="nameConverter"/>
                             <f:validator binding="#{sClassBean.nameValidator()}"/>
-                            <f:ajax event="change" execute="@this" render="@form"/>
+                            <f:ajax event="change" execute="@this" render="@this"/> 
                         </h:inputText><br/>
                     </h:column>
 
@@ -215,7 +215,7 @@
                                  disabled="#{!sClassBean.selectedStudentMap.containsValue(true)}"
                                  action="#{sClassBean.deleteSelectedStudent(sClassBean.middleSClass)}"
                                  onclick="return confirm('#{msg.PermanentlyDeleteStudent}')">
-                    <f:ajax execute="@form" render="@form"/>
+                    <f:ajax execute="@form" render="@all"/>
                 </h:commandButton>
 
                 <h:commandButton rendered="#{sClassBean.middleStudent eq null}" value="#{msg.AddStudent}"

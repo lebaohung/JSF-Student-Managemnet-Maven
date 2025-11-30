@@ -46,7 +46,7 @@
                                  required="true"
                                  requiredMessage="Name required!" validator="#{studentBean.validateName}"
                                  p:placeholder="Required" value="#{studentBean.tempStudent.sName}">
-                        <f:ajax event="change" execute="@this" render="@form"/>
+                        <f:ajax event="change" execute="@this" render="@this"/>
                         <f:converter converterId="nameConverter"/>
                     </h:inputText>
                 </h:column>
@@ -59,7 +59,7 @@
                     <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{student.id eq null}"
                                  required="false" id="email"
                                  value="#{studentBean.tempStudent.email}" validator="#{studentBean.validateEmail}">
-                        <f:ajax event="change" execute="@this" render="@form"/>
+                        <f:ajax event="change" execute="@this" render="@this"/>
                         <f:converter converterId="emailConverter"/>
                     </h:inputText>
                 </h:column>
@@ -72,7 +72,7 @@
                     <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{student.id eq null}"
                                  required="false" id="phone"
                                  value="#{studentBean.tempStudent.phone}" validator="#{studentBean.validatePhone}">
-                        <f:ajax event="change" execute="@this" render="@form"/>
+                        <f:ajax event="change" execute="@this" render="@this"/>
                     </h:inputText>
                 </h:column>
 
@@ -88,7 +88,7 @@
                                  value="#{studentBean.tempStudent.birthday}"
                                  converterMessage="Birthday is not provide in dd/MM/yyyy format">
                         <f:convertDateTime pattern="dd/MM/yyyy"/>
-                        <f:ajax event="change" execute="@this" render="@form"/>
+                        <f:ajax event="change" execute="@this" render="@this"/>
                     </h:inputText>
                 </h:column>
 

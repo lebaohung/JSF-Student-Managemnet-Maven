@@ -21,7 +21,7 @@ brew services start postgresql@15
 
 psql -U postgres -c "CREATE DATABASE jsfstudent;"
 
-psql -U postgres -d jsfstudent -f schema.sql
+psql -U postgres -d jsfstudent -f src/main/resources/com/ptit/sql/schema.sql
 ```
 
 ### 3. Run deployment
@@ -31,4 +31,20 @@ psql -U postgres -d jsfstudent -f schema.sql
 
 ### 4. Test URLs
 - Application: http://localhost:8080/studentManagement/
+
+### 5. Shutdown & Restart
+**Shutdown:**
+```bash
+docker-compose down
+```
+
+**Rebuild (after code changes):**
+```bash
+docker-compose build wildfly
+```
+
+**Restart (Quick):**
+```bash
+docker-compose up -d
+```
 

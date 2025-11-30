@@ -309,6 +309,9 @@ public class SClassBean implements Serializable {
         for (Integer studentId : this.getSelectedStudentIdList()) {
             sClassRepo.deleteStudentInClass(sClass.getId(), studentId);
         }
+        if (sClass.getMentor() != null && this.getSelectedStudentIdList().contains(sClass.getMentor().getId())) {
+            sClass.setMentor(null);
+        }
         this.moveToDetailPage(sClass);
         this.selectedStudentMap.clear();
     }
