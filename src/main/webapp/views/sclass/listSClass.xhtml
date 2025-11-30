@@ -63,12 +63,12 @@
                         <f:facet name="header">
                             <h:commandButton
                                     rendered="#{sClassBean.selectedSClassMap.isEmpty() or sClassBean.selectedSClassMap.containsValue(false)}"
-                                    value="Select All" action="#{sClassBean.selectAll}">
+                                    value="#{msg.SelectAll}" action="#{sClassBean.selectAll}">
                                 <f:ajax render="@form"/>
                             </h:commandButton>
                             <h:commandButton
                                     rendered="#{!sClassBean.selectedSClassMap.isEmpty() and !sClassBean.selectedSClassMap.containsValue(false)}"
-                                    value="Unselect All" action="#{sClassBean.unselectAll}">
+                                    value="#{msg.UnselectAll}" action="#{sClassBean.unselectAll}">
                                 <f:ajax render="@form"/>
                             </h:commandButton>
                         </f:facet>
@@ -76,7 +76,7 @@
                                                  value="#{sClassBean.selectedSClassMap[sClass.id]}">
                             <f:ajax execute="@form" render="@form"/>
                         </h:selectBooleanCheckbox>
-                        <h:commandButton rendered="#{sClass.id ne null}" value="Detail"
+                        <h:commandButton rendered="#{sClass.id ne null}" value="#{msg.Detail}"
                                          action="#{sClassBean.moveToDetailPage(sClass)}">
                             <f:ajax render="@all"/>
                         </h:commandButton>
@@ -86,7 +86,7 @@
 
                 <h:messages id="sclassList" infoStyle="color: green" errorStyle="color: darkred" layout="table"/>
 
-                <h:commandButton value="Delete selected"
+                <h:commandButton value="#{msg.DeleteSelected}"
                                  disabled="#{!sClassBean.selectedSClassMap.containsValue(true)}"
                                  action="#{sClassBean.deleteSelectedSClass}"
                                  onclick="return confirm('#{msg.PermanentlyDeleteClass}')">
@@ -112,19 +112,25 @@
 
             <h:form id="sClassDetail" rendered="#{sClassBean.navigateSClassPage eq sClassBean.getDetailPage()}">
 
-                <h:commandButton value="&lt; Class Management Page" action="#{sClassBean.initNavigator}">
+                <h:commandButton value="&lt; #{msg.ClassManagementPage}" action="#{sClassBean.initNavigator}">
                     <f:ajax render="@all"/>
                 </h:commandButton>
                 <br/><br/>
 
-                <h5><h:outputText value="Class ID: #{sClassBean.middleSClass.id}"/></h5>
+                <h:panelGroup style="background-color: #e7f3ff; border: 1px solid #2196F3; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    <h:outputText value="ℹ️ Change will auto saved to database when finish editing a field." 
+                                 style="color: #1976D2; font-size: 14px;"/>
+                </h:panelGroup>
+                <br/>
+
+                <h5><h:outputText value="#{msg.ClassID}: #{sClassBean.middleSClass.id}"/></h5>
 
                 <h:outputText value="#{msg.ClassName}: "/>
                 <h:inputText onkeypress="return event.keyCode !== 13" required="true" requiredMessage="Name required!"
                              p:placeholder="Required" value="#{sClassBean.middleSClass.name}">
                     <f:validator binding="#{sClassBean.nameValidator()}"/>
                     <f:ajax listener="#{sClassBean.update(sClassBean.middleSClass)}" event="change" execute="@this"
-                            render="@form"/>
+                            render="@this"/>
                     <f:converter converterId="nameConverter"/>
                 </h:inputText>
                 <br/>
@@ -133,16 +139,16 @@
                 <h:outputText value="#{sClassBean.countClassSize(sClassBean.middleSClass.id)}"/>
                 <br/>
 
-                <h:outputText value="Mentor: "/>
-                <h:inputText onkeypress="return event.keyCode !== 13" value="#{sClassBean.middleSClass.mentor}"
-                             p:placeholder="Mentor ID">
-                    <f:converter binding="#{sClassBean.mentorConverter()}"/>
-                    <f:validator binding="#{sClassBean.mentorValidator()}"/>
-                    <f:ajax listener="#{sClassBean.updateSClassMentor(sClassBean.middleSClass.id, sClassBean.middleSClass.mentor.id)}"
+                <h:outputText value="#{msg.Monitor}: "/>
+                <h:inputText onkeypress="return event.keyCode !== 13" value="#{sClassBean.middleSClass.monitor}"
+                             p:placeholder="#{msg.MonitorID}">
+                    <f:converter binding="#{sClassBean.monitorConverter()}"/>
+                    <f:validator binding="#{sClassBean.monitorValidator()}"/>
+                    <f:ajax listener="#{sClassBean.updateSClassMonitor(sClassBean.middleSClass.id, sClassBean.middleSClass.monitor.id)}"
                             execute="@this" render="@form"/>
                 </h:inputText>
 
-                <h:outputText value="  #{sClassBean.middleSClass.mentor.sName}">
+                <h:outputText value="  #{sClassBean.middleSClass.monitor.sName}">
                 </h:outputText>
 
                 <h:messages infoStyle="color: green" errorStyle="color: #c21b1b" layout="table"/>
@@ -162,7 +168,7 @@
                         </f:facet>
                         <h:outputText rendered="#{student.id ne null}" value="#{student.id}"/>
                         <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{student.id eq null}"
-                                     p:placeholder="Student ID" value="#{sClassBean.middleStudent}">
+                                     p:placeholder="#{msg.StudentIDPlaceholder}" value="#{sClassBean.middleStudent}">
                             <f:converter binding="#{sClassBean.studentIntoClassConverter()}"/>
                             <f:validator binding="#{sClassBean.studentIntoClassValidator()}"/>
                             <f:ajax listener="#{sClassBean.saveStudentIntoClass(sClassBean.middleSClass.id, sClassBean.middleStudent.id)}"
@@ -180,7 +186,7 @@
 
                     <h:column>
                         <f:facet name="header">
-                            Birthday
+                            #{msg.StudentBirthday}
                         </f:facet>
                         <h:outputText value="#{student.birthday}">
                             <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
@@ -194,12 +200,12 @@
                         <f:facet name="header">
                             <h:commandButton
                                     rendered="#{sClassBean.selectedStudentMap.isEmpty() or sClassBean.selectedStudentMap.containsValue(false)}"
-                                    value="Select All" action="#{sClassBean.selectAllStudents()}">
+                                    value="#{msg.SelectAll}" action="#{sClassBean.selectAllStudents()}">
                                 <f:ajax event="click" render="@form"/>
                             </h:commandButton>
                             <h:commandButton
                                     rendered="#{!sClassBean.selectedStudentMap.isEmpty() and !sClassBean.selectedStudentMap.containsValue(false)}"
-                                    value="Unselect All" action="#{sClassBean.unselectAllStudents()}">
+                                    value="#{msg.UnselectAll}" action="#{sClassBean.unselectAllStudents()}">
                                 <f:ajax event="click" render="@form"/>
                             </h:commandButton>
                         </f:facet>
@@ -211,7 +217,7 @@
                     </h:column>
                 </h:dataTable>
 
-                <h:commandButton value="Delete selected"
+                <h:commandButton value="#{msg.DeleteSelected}"
                                  disabled="#{!sClassBean.selectedStudentMap.containsValue(true)}"
                                  action="#{sClassBean.deleteSelectedStudent(sClassBean.middleSClass)}"
                                  onclick="return confirm('#{msg.PermanentlyDeleteStudent}')">

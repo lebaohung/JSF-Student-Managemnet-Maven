@@ -78,7 +78,7 @@
 
                 <h:column>
                     <f:facet name="header">
-                        Birthday
+                        #{msg.StudentBirthday}
                     </f:facet>
                     <h:outputText rendered="#{student.id ne null}" value="#{student.birthday}">
                         <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
@@ -96,12 +96,12 @@
                     <f:facet name="header">
                         <h:commandButton
                                 rendered="#{studentBean.selectedStudentMap.isEmpty() or studentBean.selectedStudentMap.containsValue(false)}"
-                                value="Select All" action="#{studentBean.selectAll}">
+                                value="#{msg.SelectAll}" action="#{studentBean.selectAll}">
                             <f:ajax render="@form"/>
                         </h:commandButton>
                         <h:commandButton
                                 rendered="#{!studentBean.selectedStudentMap.isEmpty() and !studentBean.selectedStudentMap.containsValue(false)}"
-                                value="Unselect All" action="#{studentBean.unselectAll}">
+                                value="#{msg.UnselectAll}" action="#{studentBean.unselectAll}">
                             <f:ajax render="@form"/>
                         </h:commandButton>
                     </f:facet>
@@ -109,7 +109,7 @@
                                              value="#{studentBean.selectedStudentMap[student.id]}">
                         <f:ajax execute="@form" render="@form"/>
                     </h:selectBooleanCheckbox>
-                    <h:commandButton rendered="#{student.id ne null}" value="Detail"
+                    <h:commandButton rendered="#{student.id ne null}" value="#{msg.Detail}"
                                      action="#{studentBean.moveToDetailPage(student)}">
                         <f:ajax render="@all"/>
                     </h:commandButton>
@@ -119,7 +119,7 @@
 
             <h:messages id="studentsList" infoStyle="color: green" errorStyle="color: darkred" layout="table"/>
 
-            <h:commandButton value="Delete selected"
+            <h:commandButton value="#{msg.DeleteSelected}"
                              disabled="#{!studentBean.selectedStudentMap.containsValue(true)}"
                              action="#{studentBean.deleteSelectedStudent}"
                              onclick="return confirm('#{msg.PermanentlyDeleteStudent}')">
@@ -144,47 +144,53 @@
         </h:form>
 
         <h:form id="studentDetail" rendered="#{studentBean.navigateStudentPage eq studentBean.getDetailPage()}">
-            <h:commandButton value="&lt; Student Management Page" action="#{studentBean.initNavigator}">
+            <h:commandButton value="&lt; #{msg.StudentManagementPage}" action="#{studentBean.initNavigator}">
                 <f:ajax render="@all"/>
             </h:commandButton>
             <br/><br/>
 
-            <h5><h:outputText value="Student ID: #{studentBean.tempStudent.id}"/></h5>
+            <h:panelGroup style="background-color: #e7f3ff; border: 1px solid #2196F3; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                <h:outputText value="ℹ️ Change will auto saved to database when finish editing a field." 
+                             style="color: #1976D2; font-size: 14px;"/>
+            </h:panelGroup>
+            <br/>
 
-            <h:outputText value="Student Name: "/>
-            <h:inputText onkeypress="return event.keyCode !== 13" required="true" label="Student Name"
+            <h5><h:outputText value="#{msg.StudentID}: #{studentBean.tempStudent.id}"/></h5>
+
+            <h:outputText value="#{msg.StudentName}: "/>
+            <h:inputText onkeypress="return event.keyCode !== 13" required="true" label="#{msg.StudentName}"
                          requiredMessage="Name required!" validator="#{studentBean.validateName}"
                          p:placeholder="Required" value="#{studentBean.tempStudent.sName}">
                 <f:ajax listener="#{studentBean.update(studentBean.tempStudent)}" event="change" execute="@this"
-                        render="@all"/>
+                        render="@this"/>
                 <f:converter converterId="nameConverter"/>
             </h:inputText>
             <br/><br/>
 
-            <h:outputText value="Email: "/>
+            <h:outputText value="#{msg.StudentEmail}: "/>
             <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{student.id eq null}" required="false"
                          value="#{studentBean.tempStudent.email}" validator="#{studentBean.validateEmail}">
                 <f:ajax listener="#{studentBean.update(studentBean.tempStudent)}" event="change" execute="@this"
-                        render="@all"/>
+                        render="@this"/>
                 <f:converter converterId="emailConverter"/>
             </h:inputText>
             <br/><br/>
 
-            <h:outputText value="Phone: "/>
+            <h:outputText value="#{msg.StudentPhone}: "/>
             <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{student.id eq null}" required="false"
                          value="#{studentBean.tempStudent.phone}" validator="#{studentBean.validatePhone}">
                 <f:ajax listener="#{studentBean.update(studentBean.tempStudent)}" event="change" execute="@this"
-                        render="@all"/>
+                        render="@this"/>
             </h:inputText>
             <br/><br/>
 
-            <h:outputText value="Birthday: "/>
+            <h:outputText value="#{msg.StudentBirthday}: "/>
             <h:inputText onkeypress="return event.keyCode !== 13" rendered="#{student.id eq null}" required="false"
                          value="#{studentBean.tempStudent.birthday}"
                          converterMessage="Birthday is not provide in dd/MM/yyyy format">
                 <f:convertDateTime pattern="dd/MM/yyyy"/>
                 <f:ajax listener="#{studentBean.update(studentBean.tempStudent)}" event="change" execute="@this"
-                        render="@all"/>
+                        render="@this"/>
             </h:inputText>
             <br/>
 

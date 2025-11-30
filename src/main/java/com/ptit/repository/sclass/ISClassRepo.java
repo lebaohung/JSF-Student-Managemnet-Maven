@@ -1,4 +1,4 @@
-package com.ptit.repository.SClass;
+package com.ptit.repository.sclass;
 
 import com.ptit.model.SClass;
 import com.ptit.repository.IRepository;

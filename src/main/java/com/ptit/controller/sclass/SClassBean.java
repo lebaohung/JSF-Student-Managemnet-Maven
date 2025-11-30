@@ -2,8 +2,8 @@ package com.ptit.controller.sclass;
 
 import com.ptit.model.SClass;
 import com.ptit.model.Student;
-import com.ptit.repository.SClass.SClassRepo;
-import com.ptit.repository.Student.StudentRepo;
+import com.ptit.repository.sclass.SClassRepo;
+import com.ptit.repository.student.StudentRepo;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
@@ -30,7 +30,7 @@ public class SClassBean implements Serializable {
     private static final String MANAGER_PAGE = "showManagerPage";
     private static final String DETAIL_PAGE = "showDetailPage";
     private static final int MINIMUM_LENGTH_NAME = 2;
-    private static final String NOT_FOUND_STUDENT = "Not Found Student!";
+    private static final String NOT_FOUND_STUDENT = "Not found student in class!";
 
     private int page = INIT_PAGE;
     private int pageCount;
@@ -284,8 +284,8 @@ public class SClassBean implements Serializable {
         }
     }
 
-    public void updateSClassMentor(Integer sClassId, Integer studentId) {
-        sClassRepo.updateMentorByClassId(sClassId, studentId);
+    public void updateSClassMonitor(Integer sClassId, Integer studentId) {
+        sClassRepo.updateMonitorByClassId(sClassId, studentId);
     }
 
     public void saveStudentIntoClass(Integer sClassId, Integer studentId) {
@@ -309,8 +309,8 @@ public class SClassBean implements Serializable {
         for (Integer studentId : this.getSelectedStudentIdList()) {
             sClassRepo.deleteStudentInClass(sClass.getId(), studentId);
         }
-        if (sClass.getMentor() != null && this.getSelectedStudentIdList().contains(sClass.getMentor().getId())) {
-            sClass.setMentor(null);
+        if (sClass.getMonitor() != null && this.getSelectedStudentIdList().contains(sClass.getMonitor().getId())) {
+            sClass.setMonitor(null);
         }
         this.moveToDetailPage(sClass);
         this.selectedStudentMap.clear();
@@ -330,30 +330,30 @@ public class SClassBean implements Serializable {
         };
     }
 
-    public Converter mentorConverter() {
+    public Converter monitorConverter() {
         return new Converter() {
             @Override
             public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
-                Integer mentorId = null;
+                Integer monitorId = null;
                 if (s.isEmpty() || s == null) return null;
                 try {
-                    mentorId = Integer.parseInt(s);
+                    monitorId = Integer.parseInt(s);
                 } catch (NumberFormatException e) {
                     return new Student();
                 }
-                return studentRepo.getById(mentorId);
+                return studentRepo.getById(monitorId);
             }
 
             @Override
             public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object o) {
-                Student mentor = (Student) o;
-                if (mentor.getId() == null) return null;
+                Student monitor = (Student) o;
+                if (monitor.getId() == null) return null;
                 return ((Student) o).getId().toString();
             }
         };
     }
 
-    public Validator mentorValidator() {
+    public Validator monitorValidator() {
         return new Validator() {
             @Override
             public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {

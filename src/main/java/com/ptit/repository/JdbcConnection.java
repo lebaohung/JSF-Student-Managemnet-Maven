@@ -8,8 +8,6 @@ public class JdbcConnection {
 
     public static Connection getConnection() {
         Connection con = null;
-        // Use host.docker.internal to connect from Docker container to host machine
-        // On Linux, you might need to use the actual host IP address
         String host = System.getenv("DB_HOST") != null ? System.getenv("DB_HOST") : "host.docker.internal";
         String port = System.getenv("DB_PORT") != null ? System.getenv("DB_PORT") : "5432";
         String dbName = System.getenv("DB_NAME") != null ? System.getenv("DB_NAME") : "jsfstudent";

@@ -1,4 +1,3 @@
-#!/bin/bash
 # Quick deployment script for Docker
 
 set -e
@@ -41,7 +40,6 @@ echo -e "${GREEN}=== Deployment Complete! ===${NC}"
 echo ""
 echo "Application URLs:"
 echo "  - Application: http://localhost:8080/studentManagement/"
-echo "  - Management Console: http://localhost:9990"
 
 
 

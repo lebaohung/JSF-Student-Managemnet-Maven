@@ -1,10 +1,10 @@
-package com.ptit.repository.SClass;
+package com.ptit.repository.sclass;
 
 import com.ptit.model.SClass;
 import com.ptit.model.Student;
 import com.ptit.repository.IPagingRepository;
 import com.ptit.repository.JdbcConnection;
-import com.ptit.repository.Student.StudentRepo;
+import com.ptit.repository.student.StudentRepo;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,7 +28,7 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
     private static final String COUNT_CLASS_SIZE = "SELECT COUNT(*) FROM student_and_sclass WHERE sclass_id = ?;";
     private static final String COUNT_CLASSES = "SELECT COUNT(id) FROM sclass;";
     private static final String GET_STUDENTS_BY_CLASS_ID = "SELECT student_id FROM student_and_sclass WHERE sclass_id = ? ORDER BY student_id;";
-    private static final String UPDATE_MENTOR_BY_CLASS_ID = "UPDATE sclass SET mentor_id = ? WHERE id = ?;";
+    private static final String UPDATE_MONITOR_BY_CLASS_ID = "UPDATE sclass SET monitor_id = ? WHERE id = ?;";
     private static final String DELETE_STUDENT_IN_CLASS = "DELETE FROM student_and_sclass WHERE sclass_id = ? and student_id = ?";
     private static final String SAVE_STUDENT_INTO_CLASS = "INSERT INTO student_and_sclass (sclass_id, student_id) VALUES (?, ?);";
 
@@ -92,11 +92,11 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
                 SClass sClass = new SClass();
                 sClass.setId(resultSet.getInt("id"));
                 sClass.setName(resultSet.getString("name"));
-                int mentorId = resultSet.getInt("mentor_id");
-                if (resultSet.wasNull() || mentorId == 0) {
-                    sClass.setMentor(new Student());
+                int monitorId = resultSet.getInt("monitor_id");
+                if (resultSet.wasNull() || monitorId == 0) {
+                    sClass.setMonitor(new Student());
                 } else {
-                    sClass.setMentor(studentRepo.getById(mentorId));
+                    sClass.setMonitor(studentRepo.getById(monitorId));
                 }
                 sClasses.add(sClass);
             }
@@ -241,18 +241,18 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
         sClass.setId(0);
     }
 
-    public void updateMentorByClassId(Integer sClassId, Integer studentId) {
+    public void updateMonitorByClassId(Integer sClassId, Integer studentId) {
         try (
                 Connection connection = JdbcConnection.getConnection();
-                PreparedStatement updateMentor = connection.prepareStatement(UPDATE_MENTOR_BY_CLASS_ID);
+                PreparedStatement updateMonitor = connection.prepareStatement(UPDATE_MONITOR_BY_CLASS_ID);
         ) {
             if (studentId == null) {
-                updateMentor.setNull(1, INTEGER);
+                updateMonitor.setNull(1, INTEGER);
             } else {
-                updateMentor.setInt(1, studentId);
+                updateMonitor.setInt(1, studentId);
             }
-            updateMentor.setInt(2, sClassId);
-            updateMentor.executeUpdate();
+            updateMonitor.setInt(2, sClassId);
+            updateMonitor.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -264,18 +264,18 @@ public class SClassRepo implements Serializable, ISClassRepo, IPagingRepository<
         ) {
             connection.setAutoCommit(false);
             try (
-                    PreparedStatement checkMentor = connection.prepareStatement("SELECT mentor_id FROM sclass WHERE id = ?");
-                    PreparedStatement clearMentor = connection.prepareStatement(UPDATE_MENTOR_BY_CLASS_ID);
+                    PreparedStatement checkMonitor = connection.prepareStatement("SELECT monitor_id FROM sclass WHERE id = ?");
+                    PreparedStatement clearMonitor = connection.prepareStatement(UPDATE_MONITOR_BY_CLASS_ID);
                     PreparedStatement deleteStudentInClass = connection.prepareStatement(DELETE_STUDENT_IN_CLASS);
             ) {
-                checkMentor.setInt(1, sClassId);
-                ResultSet rs = checkMentor.executeQuery();
+                checkMonitor.setInt(1, sClassId);
+                ResultSet rs = checkMonitor.executeQuery();
                 if (rs.next()) {
-                    int mentorId = rs.getInt("mentor_id");
-                    if (!rs.wasNull() && mentorId == studentId) {
-                        clearMentor.setNull(1, INTEGER);
-                        clearMentor.setInt(2, sClassId);
-                        clearMentor.executeUpdate();
+                    int monitorId = rs.getInt("monitor_id");
+                    if (!rs.wasNull() && monitorId == studentId) {
+                        clearMonitor.setNull(1, INTEGER);
+                        clearMonitor.setInt(2, sClassId);
+                        clearMonitor.executeUpdate();
                     }
                 }
                 

@@ -6,7 +6,7 @@ public class SClass implements Serializable {
 
     private Integer id;
     private String name;
-    private Student mentor;
+    private Student monitor;
 
     public SClass() {
     }
@@ -16,10 +16,10 @@ public class SClass implements Serializable {
         this.name = name;
     }
 
-    public SClass(Integer id, String name, Student mentor) {
+    public SClass(Integer id, String name, Student monitor) {
         this.id = id;
         this.name = name;
-        this.mentor = mentor;
+        this.monitor = monitor;
     }
 
     public Integer getId() {
@@ -38,11 +38,11 @@ public class SClass implements Serializable {
         this.name = name;
     }
 
-    public Student getMentor() {
-        return mentor;
+    public Student getMonitor() {
+        return monitor;
     }
 
-    public void setMentor(Student mentor) {
-        this.mentor = mentor;
+    public void setMonitor(Student monitor) {
+        this.monitor = monitor;
     }
 }

@@ -1,7 +1,7 @@
 package com.ptit.controller.student;
 
 import com.ptit.model.Student;
-import com.ptit.repository.Student.StudentRepo;
+import com.ptit.repository.student.StudentRepo;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;

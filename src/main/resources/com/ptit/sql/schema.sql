@@ -14,9 +14,9 @@ CREATE TABLE public.student (
 CREATE TABLE public.sclass (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    mentor_id INTEGER,
-    CONSTRAINT fk_sclass_mentor 
-        FOREIGN KEY (mentor_id) 
+    monitor_id INTEGER,
+    CONSTRAINT fk_sclass_monitor 
+        FOREIGN KEY (monitor_id) 
         REFERENCES public.student(id) 
         ON DELETE SET NULL
 );
@@ -36,7 +36,7 @@ CREATE TABLE public.student_and_sclass (
 );
 
 CREATE INDEX idx_student_email ON public.student(email);
-CREATE INDEX idx_sclass_mentor ON public.sclass(mentor_id);
+CREATE INDEX idx_sclass_monitor ON public.sclass(monitor_id);
 CREATE INDEX idx_student_and_sclass_sclass ON public.student_and_sclass(sclass_id);
 CREATE INDEX idx_student_and_sclass_student ON public.student_and_sclass(student_id);
 
